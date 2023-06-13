@@ -3,7 +3,7 @@
 
 #include "vex.h"
 #include "../../../Common/include/evNamespace.h"
-#include "../../../Common/include/arduinoDef.h"
+#include "../../../Common/include/generalFunctions.h"
 
 namespace evAPI
 {

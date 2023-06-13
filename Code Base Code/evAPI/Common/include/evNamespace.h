@@ -1,6 +1,9 @@
 #ifndef __EVNAMESPACE_H__
 #define __EVNAMESPACE_H__ 
 
+//Format Year/Month/Day
+#define EVAPI_VERSION 20230613
+
 namespace evAPI
 {
   using namespace vex;

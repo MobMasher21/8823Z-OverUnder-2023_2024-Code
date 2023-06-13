@@ -52,13 +52,13 @@ void preAuto()
   Drivetrain.setBaseType(HDriveStandard);
   Drivetrain.setControlType(RCControl, leftStick);
 
-  Drivetrain.leftPortSetup(12, 13);
-  Drivetrain.rightPortSetup(19, 20);
-  Drivetrain.leftReverseSetup(false, true);
-  Drivetrain.rightReverseSetup(false, true);
-  Drivetrain.geartrainSetup(3.25, 48, 72);
+  Drivetrain.leftPortSetup(7, 8);
+  Drivetrain.rightPortSetup(9, 10);
+  Drivetrain.leftReverseSetup(true, true);
+  Drivetrain.rightReverseSetup(false, false);
+  Drivetrain.geartrainSetup(4, 48, 72);
 
-  Drivetrain.setGeneralHandicap(.9);
+  Drivetrain.setGeneralHandicap(1);
   Drivetrain.setTurningHandicap(.75);
 
   //Setup Preauto UI

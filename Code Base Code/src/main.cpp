@@ -1,17 +1,8 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// trigger              digital_out   B               
-// stringLauncher       digital_out   A               
-// rollerDistance       distance      17              
+// Controller1          Controller    
 // ---- END VEXCODE CONFIGURED DEVICES ----
-
-// --- Start EVAPI CONFIGURED DEVICES -------
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// primaryController    Controller
-// secondaryController  Controller             
-// ---- END EVAPI CONFIGURED DEVICES ------
 
 /** code ideas
 * write automatic controller debouncing code as a class
