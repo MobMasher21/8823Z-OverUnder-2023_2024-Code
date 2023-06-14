@@ -11,6 +11,17 @@ namespace evAPI
   Drive::Drive(gearSetting driveGear) {
     currentGear = driveGear;
   }
+
+  /****** debug ******/
+  void Drive::setDebugState(bool mode) { //allows you to toggle debug mode
+    isDebugMode = mode;
+  }
+  
+  void Drive::printAllEncoderData() {  //prints all 3 encoder values to the terminal
+    printf("%f, ", getLeftPosition(degrees));
+    printf("%f, ", getRightPosition(degrees));
+    printf("%f\n", getBackPosition(degrees));
+  }
   
   /************ movement ************/  
   /*----- manual movement -----*/
@@ -30,6 +41,114 @@ namespace evAPI
   }
 
   /*----- automatic -----*/
+    void Drive::setDriveSpeed(int speed) {  //sets the drive speed for when one is not entered
+      driveSpeed = speed;
+    }
+
+    void Drive::setTurnSpeed(int speed) {  //sets the drive speed for when one is not entered
+      turnSpeed = speed;
+    }
+
+    void Drive::driveForward(double distance, int speed) {  //enter a distance and speed to go forward
+
+      //*setup of all variables*
+      double leftPosition;  //angle of left encoder
+      double rightPosition;  //angle of right encoder
+      double averagePosition;  //average position of both encoders
+      int error;  // desired value - sensor value
+      int preError;  // error of last run cycle
+      int derivative;  // pre error - error
+      int totalError = 0;  // total error + error
+      int desiredValue;  // angle of rotation sensor that we want
+      bool isPIDRunning = true;  // is true as the PID is running
+      int moveSpeed;  // the speed the motors are set to every cycle;
+      int stopCounter;  //how many times it has been within stop range
+
+      //*checks to see if you have encoders and then sets the desired angle of the pid*
+      if(leftEncoder) {
+        desiredValue = distance * leftEncoderDegsPerInch;
+      } else {
+        desiredValue = distance * degsPerInch;
+      }
+
+      //*resets encoders*
+      resetLeftPosition();
+      resetRightPosition();
+
+      //*print debug header*
+      if(isDebugMode) printf("error, preError, derivative, totalError, moveSpeed");
+
+      //*main PID loop*
+      while(isPIDRunning) {
+        //*get encoder positions*
+        leftPosition = getLeftPosition(degrees);
+        rightPosition = getRightPosition(degrees);
+        averagePosition = (leftPosition + rightPosition) / 2; 
+
+        //*sets PID variables for this cycle*
+        preError = error;
+        error =  desiredValue - averagePosition;
+        derivative = preError - error;
+        totalError += error;
+
+        //*adding all tunning values*
+        moveSpeed = (error * driveP + derivative * driveD + totalError * driveI);
+
+        //*speed cap
+        if(moveSpeed > speed) moveSpeed = speed;
+        if(moveSpeed < -speed) moveSpeed = -speed;
+
+        //*setting motor speeds*
+        spinBase(moveSpeed, moveSpeed);
+
+        //*stopping code*
+        //checks if we are in our stopping range
+        if(abs(error) < driveMaxStopError) {
+          stopCounter ++;
+        } else {
+          stopCounter = 0;
+        }
+        //looks to see if it has been "there" for long enough
+        if(stopCounter >= driveTimeToStop) {
+          isPIDRunning = false;
+        }
+
+        //*print debug data*
+        if(isDebugMode) {
+          printf("%i, ", error);
+          printf("%i, ", preError);
+          printf("%i, ", derivative);
+          printf("%i, ", totalError);
+          printf("%i\n", moveSpeed);
+        }
+
+        //*wait to avoid overloading*
+        vex::task::sleep(20);
+      }
+      stopRobot(brake);
+
+    }
+
+    void Drive::driveForward(double distance) {  //enter a distance to go forward
+      driveForward(distance, driveSpeed);
+    }
+
+    void Drive::driveBackward(double distance, int speed) {  //enter a distance and speed to go backward
+      driveForward(-distance, speed);
+    }
+
+    void Drive::driveBackward(double distance) {  //enter a distance to go backward
+      driveForward(distance, driveSpeed);
+    }
+
+    void Drive::turnToHeading(int angle, int speed) {  //enter an angle and speed to turn
+
+    }
+
+    void Drive::turnToHeading(int angle) {  //enter an angle to turn
+      turnToHeading(angle, turnSpeed);
+    }
+
   
   //======================================== private =============================================
   /****** formulas ******/

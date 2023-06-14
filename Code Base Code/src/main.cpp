@@ -8,7 +8,7 @@
 * write automatic controller debouncing code as a class
 */
 
-#include "vex.h"
+#include "../include/vex.h"
 #include "../include/evAPI.h"
 
 using namespace vex;
@@ -32,13 +32,14 @@ int rightSpeed;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  codeBase.setDebugState(true);
   codeBase.leftPortSetup(7, 8);
   codeBase.rightPortSetup(9, 10);
   codeBase.leftReverseSetup(true, true);
   codeBase.rightReverseSetup(false, false);
   codeBase.leftEncoderSetup(1, 2.75, false);
-  codeBase.rightEncoderSetup(2, 2.75, false);
-  codeBase.backEncoderSetup(6, 2.75, false);
+  codeBase.rightEncoderSetup(2, 2.75, true);
+  codeBase.backEncoderSetup(14, 2.75, false);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -66,6 +67,12 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  
+  codeBase.setDriveSpeed(50);
+  codeBase.driveForward(36);
+
+  printf("left, right, back\n");
+
   while(1) {
     //=================================================================================
 

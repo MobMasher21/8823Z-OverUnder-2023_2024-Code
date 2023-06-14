@@ -4,11 +4,6 @@ namespace evAPI
 {
   //======================================== public =============================================
   /*********** setup ***********/
-  /*----- debug -----*/
-  void Drive::setDebugState(bool mode) { //allows you to toggle debug mode
-    isDebugMode = mode;
-  }
-  
   /*----- Base Setup -----*/
   void Drive::geartrainSetup(float diameter, int gearIN, int gearOUT) { //used for setting up the wheel size and gear
     wheelSize = diameter;                                           //ratios for using auto commands
@@ -118,17 +113,17 @@ namespace evAPI
   /*----- encoder setup -----*/
   void Drive::leftEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for left encoder
     leftEncoder = new rotation(smartPortLookupTable[port], reverse);
-    leftEncoderSize = (360 / (wheelSize * M_PI));
+    leftEncoderDegsPerInch = (360 / (wheelSize * M_PI));
   }
 
   void Drive::rightEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for right encoder
     rightEncoder = new rotation(smartPortLookupTable[port], reverse);
-    rightEncoderSize = (360 / (wheelSize * M_PI));
+    rightEncoderDegsPerInch = (360 / (wheelSize * M_PI));
   }
 
   void Drive::backEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for back encoder
     backEncoder = new rotation(smartPortLookupTable[port], reverse);
-    backEncoderSize = (360 / (wheelSize * M_PI));
+    backEncoderDegsPerInch = (360 / (wheelSize * M_PI));
   }
 
 }

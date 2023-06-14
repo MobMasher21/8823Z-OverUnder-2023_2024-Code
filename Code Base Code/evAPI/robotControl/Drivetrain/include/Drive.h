@@ -1,9 +1,26 @@
 #ifndef __DRIVE_H__
 #define __DRIVE_H__
 
-#include "vex.h"
+#include "../../../../include/vex.h"
 #include "../../../Common/include/evNamespace.h"
 #include "../../../Common/include/generalFunctions.h"
+
+/**
+ * ! Remember to keep code well documented
+ * * Item order is only and idea
+ * * Some things can be done simultaneously
+ * TODO: write setup code for pid constants
+ * //TODO: write pid for driving
+ * TODO: write drift contorl for driving
+ * TODO: write setup code of inertial sensor
+ * TODO: write pid for turning
+ * TODO: write automatic controller Configuration for driver contorl
+ * TODO: write odometry position tracking
+ * TODO: write drive to point for odometry
+ * TODO: write path finding for odometry
+ * TODO: integrate vision tracking
+ * 
+*/
 
 namespace evAPI
 {
@@ -11,17 +28,17 @@ namespace evAPI
     private:
   
     /****** drive variables ******/
-      int driveSpeed = 80;
-      int turnSpeed = 40;
-
-      int minTurnSpeed = 2;
-      
-      double driveP = 0.2;
+      double driveP = 0.08;
       double driveI = 0;
       double driveD = 0;
-      double driveStop = 5;
+      int driveMaxStopError = 5;  //max amount of degrees to be considered "there"
+      int driveTimeToStop = 5;  //how many pid cycles of being "there" till it stops
+      int minDriveSpeed = 2;
 
       double turnP = 0.35;
+      int turnMaxStopError = 5;  //max amount of degrees to be considered "there"
+      int turnTimeToStop = 5;  //how many pid cycles of being "there" till it stops
+      int minTurnSpeed = 2;
   
     public:
   
@@ -29,10 +46,11 @@ namespace evAPI
       Drive( void );    //empty constructor
       Drive(gearSetting driveGear);    //sets gearbox for all motors
   
-      /*********** setup ***********/
-      /*----- debug -----*/
+      /****** debug ******/
       void setDebugState(bool mode); //allows you to toggle debug mode
-  
+      void printAllEncoderData();  //prints all 3 encoder values to the terminal
+
+      /*********** setup ***********/
       /*----- Base Setup -----*/
       void geartrainSetup(float diameter, int gearIN, int gearOUT);  //used for setting up wheel size and gear ratio
 
@@ -110,9 +128,9 @@ namespace evAPI
       rotation * leftEncoder;  //pointer to left encoder object
       rotation * rightEncoder;  //pointer to right encoder object
       rotation * backEncoder;  //pointer to back encoder object
-      double leftEncoderSize;  //degrees per inch of wheel on left encoder
-      double rightEncoderSize;  //degrees per inch of wheel on right encoder
-      double backEncoderSize;  //degrees per inch of wheel on back encoder
+      double leftEncoderDegsPerInch;  //degrees per inch of wheel on left encoder
+      double rightEncoderDegsPerInch;  //degrees per inch of wheel on right encoder
+      double backEncoderDegsPerInch;  //degrees per inch of wheel on back encoder
   
       /****** motor and wheel settings ******/
       bool isDebugMode = false;  //is debug mode on
@@ -124,6 +142,8 @@ namespace evAPI
       float degsPerInch;  //store the calculated degrees per inch.
   
       /****** drive variables ******/
+      int driveSpeed;
+      int turnSpeed;
 
       /****** formulas ******/
       int turnError(leftAndRight direction, int startAngle, int endAngle);

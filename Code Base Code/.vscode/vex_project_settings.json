@@ -4,8 +4,8 @@
 		"json": 1
 	},
 	"project": {
-		"name": "MOA",
-		"description": "Competition code for Mall of America.",
+		"name": "Code Base",
+		"description": "Code writter to develope drive functions",
 		"creationDate": "11/11/2022, 9:45:11 PM",
 		"platform": "V5",
 		"language": "cpp",
