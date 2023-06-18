@@ -40,6 +40,8 @@ void pre_auton(void) {
   codeBase.leftEncoderSetup(1, 2.75, false);
   codeBase.rightEncoderSetup(2, 2.75, true);
   codeBase.backEncoderSetup(14, 2.75, false);
+  codeBase.setupDrivePID(0.08, 0, 0, 5, 5, 500);
+  codeBase.setupTurnPID(0, 0, 0, 0, 5, 500);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -69,7 +71,8 @@ void autonomous(void) {
 void usercontrol(void) {
   
   codeBase.setDriveSpeed(50);
-  codeBase.driveForward(36);
+  codeBase.driveForward(60);
+  codeBase.driveBackward(60);
 
   printf("left, right, back\n");
 

@@ -4,12 +4,13 @@
 #include "../../../../include/vex.h"
 #include "../../../Common/include/evNamespace.h"
 #include "../../../Common/include/generalFunctions.h"
+#include "../../../Common/include/PID.h"
 
 /**
  * ! Remember to keep code well documented
  * * Item order is only and idea
  * * Some things can be done simultaneously
- * TODO: write setup code for pid constants
+ * //TODO: write setup code for pid constants
  * //TODO: write pid for driving
  * TODO: write drift contorl for driving
  * TODO: write setup code of inertial sensor
@@ -25,21 +26,6 @@
 namespace evAPI
 {
   class Drive {
-    private:
-  
-    /****** drive variables ******/
-      double driveP = 0.08;
-      double driveI = 0;
-      double driveD = 0;
-      int driveMaxStopError = 5;  //max amount of degrees to be considered "there"
-      int driveTimeToStop = 5;  //how many pid cycles of being "there" till it stops
-      int minDriveSpeed = 2;
-
-      double turnP = 0.35;
-      int turnMaxStopError = 5;  //max amount of degrees to be considered "there"
-      int turnTimeToStop = 5;  //how many pid cycles of being "there" till it stops
-      int minTurnSpeed = 2;
-  
     public:
   
       /****** constructors ******/
@@ -82,6 +68,10 @@ namespace evAPI
       void rightEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for right encoder
       void backEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for back encoder
 
+      /*----- pid setup -----*/
+      void setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+      void setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+      
       /************ movement ************/
       /*----- manual movement -----*/
       void spinBase(int leftSpeed, int rightSpeed);  //spins both sides at speeds that are set in the function
@@ -142,8 +132,22 @@ namespace evAPI
       float degsPerInch;  //store the calculated degrees per inch.
   
       /****** drive variables ******/
+      PID turnPID;
+      PID drivePID;
       int driveSpeed;
       int turnSpeed;
+
+      double driveP;
+      double driveI;
+      double driveD;
+      int driveMaxStopError;  //max amount of degrees to be considered "there"
+      int driveTimeToStop;  //how many pid cycles of being "there" till it stops
+
+      double turnP;
+      double turnI;
+      double turnD;
+      int turnMaxStopError;  //max amount of degrees to be considered "there"
+      int turnTimeToStop;  //how many pid cycles of being "there" till it stops
 
       /****** formulas ******/
       int turnError(leftAndRight direction, int startAngle, int endAngle);

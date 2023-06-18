@@ -56,13 +56,10 @@ namespace evAPI
       double rightPosition;  //angle of right encoder
       double averagePosition;  //average position of both encoders
       int error;  // desired value - sensor value
-      int preError;  // error of last run cycle
-      int derivative;  // pre error - error
-      int totalError = 0;  // total error + error
       int desiredValue;  // angle of rotation sensor that we want
       bool isPIDRunning = true;  // is true as the PID is running
-      int moveSpeed;  // the speed the motors are set to every cycle;
-      int stopCounter;  //how many times it has been within stop range
+      int moveSpeed;  // the speed the motors are set to every cycle
+      drivePID.setTotalError(0);
 
       //*checks to see if you have encoders and then sets the desired angle of the pid*
       if(leftEncoder) {
@@ -76,7 +73,7 @@ namespace evAPI
       resetRightPosition();
 
       //*print debug header*
-      if(isDebugMode) printf("error, preError, derivative, totalError, moveSpeed");
+      if(isDebugMode) printf("error, moveSpeed");
 
       //*main PID loop*
       while(isPIDRunning) {
@@ -85,14 +82,11 @@ namespace evAPI
         rightPosition = getRightPosition(degrees);
         averagePosition = (leftPosition + rightPosition) / 2; 
 
-        //*sets PID variables for this cycle*
-        preError = error;
+        //*calculate error for this cycle*
         error =  desiredValue - averagePosition;
-        derivative = preError - error;
-        totalError += error;
 
         //*adding all tunning values*
-        moveSpeed = (error * driveP + derivative * driveD + totalError * driveI);
+        moveSpeed = drivePID.compute(error);
 
         //*speed cap
         if(moveSpeed > speed) moveSpeed = speed;
@@ -102,23 +96,11 @@ namespace evAPI
         spinBase(moveSpeed, moveSpeed);
 
         //*stopping code*
-        //checks if we are in our stopping range
-        if(abs(error) < driveMaxStopError) {
-          stopCounter ++;
-        } else {
-          stopCounter = 0;
-        }
-        //looks to see if it has been "there" for long enough
-        if(stopCounter >= driveTimeToStop) {
-          isPIDRunning = false;
-        }
+        if(drivePID.isSettled()) {isPIDRunning = false;}
 
         //*print debug data*
         if(isDebugMode) {
           printf("%i, ", error);
-          printf("%i, ", preError);
-          printf("%i, ", derivative);
-          printf("%i, ", totalError);
           printf("%i\n", moveSpeed);
         }
 
@@ -138,7 +120,7 @@ namespace evAPI
     }
 
     void Drive::driveBackward(double distance) {  //enter a distance to go backward
-      driveForward(distance, driveSpeed);
+      driveForward(-distance, driveSpeed);
     }
 
     void Drive::turnToHeading(int angle, int speed) {  //enter an angle and speed to turn

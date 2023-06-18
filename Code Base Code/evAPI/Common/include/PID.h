@@ -33,9 +33,11 @@ namespace evAPI
 
       PID(double kp, double ki, double kd);
 
+      PID( void );
+
       double compute(double error);
 
-      bool is_settled();
+      bool isSettled();
 
       /**
        * @brief Sets constants used for the PID function.

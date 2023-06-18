@@ -126,4 +126,25 @@ namespace evAPI
     backEncoderDegsPerInch = (360 / (wheelSize * M_PI));
   }
 
+  /*----- pid setup -----*/
+  void Drive::setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+    drivePID.setConstants(kp, ki, kd);
+    drivePID.setSettle(maxStopError, timeToStop, timeoutTime);
+    driveP = kp;
+    driveI = ki;
+    driveD = kd;
+    driveMaxStopError = maxStopError;
+    driveTimeToStop = timeToStop;    
+  }
+
+  void Drive::setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+    turnPID.setConstants(kp, ki, kd);
+    turnPID.setSettle(maxStopError, timeToStop, timeoutTime);
+    turnP = kp;
+    turnI = ki;
+    turnD = kd;
+    turnMaxStopError = maxStopError;
+    turnTimeToStop = timeToStop;    
+  }
+
 }

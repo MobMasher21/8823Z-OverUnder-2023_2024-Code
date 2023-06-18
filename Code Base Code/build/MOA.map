@@ -110,9 +110,9 @@ Discarded input sections
                 0x00000000       0xd4 build/evAPI/Common/src/PID.o
  .ARM.exidx.text._ZN5evAPI3PID7computeEd
                 0x00000000        0x8 build/evAPI/Common/src/PID.o
- .text._ZN5evAPI3PID10is_settledEv
+ .text._ZN5evAPI3PID10isSettledEv
                 0x00000000       0x40 build/evAPI/Common/src/PID.o
- .ARM.exidx.text._ZN5evAPI3PID10is_settledEv
+ .ARM.exidx.text._ZN5evAPI3PID10isSettledEv
                 0x00000000        0x8 build/evAPI/Common/src/PID.o
  .text._ZN5evAPI3PID12setConstantsEddd
                 0x00000000       0x1c build/evAPI/Common/src/PID.o

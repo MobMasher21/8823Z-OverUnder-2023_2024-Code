@@ -26,12 +26,16 @@ namespace evAPI
     KD = kd;
   }
 
+  PID::PID( void ) {
+    
+  }
+
   double PID::compute(double error){
     totalError+=error;
 
-    output = KP * error + KI * totalError + KD * (error-previousError);
+    output = KP * error + KI * totalError + KD * (previousError - error);
 
-    previousError=error;
+    previousError = error;
 
     if(fabs(error) < settleError) {
       cyclesSpentSettled += 1;
@@ -44,9 +48,9 @@ namespace evAPI
     return output;
   }
 
-  bool PID::is_settled()
+  bool PID::isSettled()
   {
-    if((cyclesSpentRunning > timeout && timeout != 0) || (cyclesSpentSettled > settleCycles))
+    if((cyclesSpentRunning >= timeout && timeout != 0) || (cyclesSpentSettled >= settleCycles))
     { return(true); }
     
     return(false);
@@ -67,5 +71,6 @@ namespace evAPI
 
   void PID::setTotalError(long iIn) {
     totalError = iIn;
+    cyclesSpentRunning = 0;
   }
 }
