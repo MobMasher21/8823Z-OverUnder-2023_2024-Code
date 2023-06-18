@@ -10,41 +10,28 @@
 #ifndef PID_H
 #define PID_H
 
+#include <math.h>
+
 namespace evAPI
 {
   class PID
   {
-    private:
-      //double error = 0;
-      double KP = 0;
-      double KI = 0;
-      double KD = 0;
-      double starti = 0;
-      double settle_error = 0;
-      double settle_time = 0;
-      double timeout = 0;
-      long accumulated_error = 0;
-      double previous_error = 0;
-      double output = 0;
-      double time_spent_settled = 0;
-      double time_spent_running = 0;
-
     public:
 
       /**
        * @brief Creates a PID object.
+       * 
        * @param error Starting error
        * @param kp KP Value
        * @param ki KI Value
        * @param kd KD Value
-       * @param starti
-       * @param settle_error
-       * @param settle_time
-       * @param timeout
+       * @param settleErrorIn
+       * @param settleCyclesIn
+       * @param timeoutIn
       */
-      PID(double error, double kp, double ki, double kd, double starti, double settle_error, double settle_time, double timeout);
+      PID(double kp, double ki, double kd, double settleErrorIn, int settleCyclesIn, int timeoutIn);
 
-      PID(double error, double kp, double ki, double kd, double starti);
+      PID(double kp, double ki, double kd);
 
       double compute(double error);
 
@@ -52,11 +39,42 @@ namespace evAPI
 
       /**
        * @brief Sets constants used for the PID function.
+       * 
        * @param kp The KP factor.
        * @param ki The KI factor.
        * @param kd The KD factor.
       */
       void setConstants(double kp, double ki, double kd);
+
+      /**
+       * @brief Set the settle error and time as well as timeout
+       * 
+       * @param settleErrorIn
+       * @param settleCyclesIn
+       * @param timeoutIn
+       */
+      void setSettle(int settleErrorIn, int settleCyclesIn, int timeoutIn);
+
+      /**
+       * @brief Set the total error
+       * 
+       * @param iIn what the total error is
+       */
+      void setTotalError(long iIn);
+
+    private:
+      double KP = 0;
+      double KI = 0;
+      double KD = 0;
+      double settleError = 0;
+      int settleCycles = 0;
+      int timeout = 0;
+      long totalError = 0;
+      double previousError = 0;
+      double output = 0;
+      int cyclesSpentSettled = 0;
+      int cyclesSpentRunning = 0;
+   
   };
 }
 

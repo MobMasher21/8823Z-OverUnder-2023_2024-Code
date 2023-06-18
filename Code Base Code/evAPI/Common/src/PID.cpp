@@ -7,55 +7,46 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#include <math.h>
 #include "../../Common/include/PID.h"
 
 namespace evAPI
 {
-  PID::PID(double error, double kp, double ki, double kd, double starti) :
-    //error(error),
-    KP(kp),
-    KI(ki),
-    KD(kd),
-    starti(starti)
-  {};
+  PID::PID(double kp, double ki, double kd, double settleErrorIn, int settleCyclesIn, int timeoutIn) {
+    KP = kp;
+    KI = ki;
+    KD = kd;
+    settleError = settleErrorIn;
+    settleCycles = settleCyclesIn;
+    timeout = timeoutIn;
+  }
 
-  PID::PID(double error, double kp, double ki, double kd, double starti, double settle_error, double settle_time, double timeout) :
-    //error(error),
-    KP(kp),
-    KI(ki),
-    KD(kd),
-    starti(starti),
-    settle_error(settle_error),
-    settle_time(settle_time),
-    timeout(timeout)
-  {};
+  PID::PID(double kp, double ki, double kd) {
+    KP = kp;
+    KI = ki;
+    KD = kd;
+  }
 
   double PID::compute(double error){
-    if (fabs(error) < starti){
-      accumulated_error+=error;
-    }
-    if ((error>0 && previous_error<0)||(error<0 && previous_error>0)){ 
-      accumulated_error = 0; 
-    }
-    output = KP*error + KI*accumulated_error + KD*(error-previous_error);
+    totalError+=error;
 
-    previous_error=error;
+    output = KP * error + KI * totalError + KD * (error-previousError);
 
-    if(fabs(error)<settle_error){
-      time_spent_settled+=10;
+    previousError=error;
+
+    if(fabs(error) < settleError) {
+      cyclesSpentSettled += 1;
     } else {
-      time_spent_settled = 0;
+      cyclesSpentSettled = 0;
     }
 
-    time_spent_running+=10;
+    cyclesSpentRunning += 1;
 
     return output;
   }
 
   bool PID::is_settled()
   {
-    if((time_spent_running > timeout && timeout != 0) || (time_spent_settled > settle_time))
+    if((cyclesSpentRunning > timeout && timeout != 0) || (cyclesSpentSettled > settleCycles))
     { return(true); }
     
     return(false);
@@ -66,5 +57,15 @@ namespace evAPI
     KP = kp;
     KI = ki;
     KD = kd;
+  }
+
+  void PID::setSettle(int settleErrorIn, int settleCyclesIn, int timeoutIn) {
+    settleError = settleErrorIn;
+    settleCycles = settleCyclesIn;
+    timeout = timeoutIn;
+  }
+
+  void PID::setTotalError(long iIn) {
+    totalError = iIn;
   }
 }
