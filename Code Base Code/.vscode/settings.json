@@ -9,7 +9,10 @@
     "cmath": "cpp",
     "chrono": "cpp",
     "ratio": "cpp",
-    "type_traits": "cpp"
+    "type_traits": "cpp",
+    "cstdlib": "cpp",
+    "*.tcc": "cpp",
+    "limits": "cpp"
   },
   "better-comments.highlightPlainText": true,
   "better-comments.tags": [
