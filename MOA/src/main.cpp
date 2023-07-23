@@ -13,11 +13,15 @@
 
 using namespace evAPI;
 
-Drive driveBase;
+intake Intake;
+flywheel Flywheel;
+drive driveBase;
 competition Competition;
 
 int leftSpeed;
 int rightSpeed;
+
+bool hasTriball = false;
 
 //Temp UI Testing
 
@@ -37,13 +41,24 @@ double batteryTemp = 0;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-  driveBase.leftPortSetup(7, 8);
-  driveBase.rightPortSetup(9, 10);
+  //Setup Base
+  driveBase.leftPortSetup(19, 10);
+  driveBase.rightPortSetup(9, 20);
   driveBase.leftReverseSetup(true, true);
-  /* driveBase.rightReverseSetup(false, false);
-  driveBase.leftEncoderSetup(1, 2.75, false);
+  driveBase.rightReverseSetup(false, false);
+  /* driveBase.leftEncoderSetup(1, 2.75, false);
   driveBase.rightEncoderSetup(2, 2.75, false);
   driveBase.backEncoderSetup(6, 2.75, false); */
+
+  //Setup Flywheel
+  Flywheel.flywheelSetup(2, 3, false, true);
+  Flywheel.setMaxTorque(100, percent);
+  Flywheel.setVelocity(100, percent);
+
+  //Setup Intake
+  Intake.intakeSetup(6, 7, true, false);
+  Intake.setMaxTorque(100, percent);
+  Intake.setVelocity(100, percent);
 
   //Setup Preauto UI
   UI.setDebugMode(false);
@@ -55,7 +70,7 @@ void pre_auton(void) {
   UI.addButton(blue, "Red Auto Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
   UI.addButton(blue, "Red Auto Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addButton(vexClrBeige, "Skills 1", "Skills Auto 1", UI.Icons.skills);
+  UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
   UI.setDisplayTime(2000);
 
   //Setup Match UI
@@ -107,6 +122,18 @@ void autonomous(void) {
     case 1:
 
       break;
+
+    case 4:
+
+      break;
+    
+    case 5:
+
+      break;
+
+    case 7:
+
+      break;
   }
 }
 
@@ -121,12 +148,67 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  static bool switchingFlywheelDirection = false;
+  uint8_t nextFlywheelMode = 0; //0 is off, 1 is shooting, 2 is intaking.
+
   while(1) {
     //=================================================================================
 
     leftSpeed = (Controller1.Axis3.position(pct) + Controller1.Axis1.position(pct));
     rightSpeed = (Controller1.Axis3.position(pct) - Controller1.Axis1.position(pct));
     driveBase.spinBase(leftSpeed, rightSpeed);
+
+    //Intake Control   
+    if(Controller1.ButtonR1.pressing() && !hasTriball)
+    { Intake.spin(fwd); }
+
+    else if(Controller1.ButtonR2.pressing())
+    { Intake.spin(reverse); }
+
+    //Flywheel Control
+    if(fabs(Flywheel.velocity(percent)) <= 45)
+    {
+      switchingFlywheelDirection = false;
+
+      switch(nextFlywheelMode)
+      {
+        default:
+          Flywheel.stop();
+          break;
+
+        case 1:
+          Flywheel.spin(fwd, 100, percent);
+          break;
+
+        case 2:
+          Flywheel.spin(reverse, 50, percent);
+          break;
+      }
+    }
+
+    if(!switchingFlywheelDirection)
+    {
+      if(Controller1.ButtonL1.pressing() && Flywheel.velocity(percent) <= 0)
+      {
+        switchingFlywheelDirection = true;
+        nextFlywheelMode = 1;
+        Flywheel.stop();
+      }
+
+      else if(Controller1.ButtonL2.pressing() && Flywheel.velocity(percent) > 0)
+      {
+        switchingFlywheelDirection = true;
+        nextFlywheelMode = 2;
+        Flywheel.stop();
+      }
+    }
+
+    if(Controller1.ButtonL1.pressing() && Controller1.ButtonL2.pressing())
+    { 
+      switchingFlywheelDirection = true;
+      nextFlywheelMode = 0;
+      Flywheel.stop();
+    }
 
     //=================================================================================
     vex::task::sleep(20); // Sleep the task for a short amount of time to

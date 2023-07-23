@@ -4,27 +4,27 @@ namespace evAPI
 {
   //======================================== public =============================================
   /****** constructors ******/
-  Drive::Drive( void ) {
+  drive::drive( void ) {
   
   }
   
-  Drive::Drive(gearSetting driveGear) {
+  drive::drive(gearSetting driveGear) {
     currentGear = driveGear;
   }
   
   /************ movement ************/  
   /*----- manual movement -----*/
-  void Drive::spinBase(int leftSpeed, int rightSpeed) {
+  void drive::spinBase(int leftSpeed, int rightSpeed) {
     spinLeftMotors(leftSpeed);
     spinRightMotors(rightSpeed); 
   }
   
-  void Drive::stopRobot() {  //stops robot with type coast
+  void drive::stopRobot() {  //stops robot with type coast
     stopLeftMotors(coast);
     stopRightMotors(coast);
   }
   
-  void Drive::stopRobot(brakeType stoppingMode) {  //stops robot with given type
+  void drive::stopRobot(brakeType stoppingMode) {  //stops robot with given type
     stopLeftMotors(stoppingMode);
     stopRightMotors(stoppingMode);
   }
@@ -33,7 +33,7 @@ namespace evAPI
   
   //======================================== private =============================================
   /****** formulas ******/
-  leftAndRight Drive::findDir(int startingAngle, int endingAngle) {
+  leftAndRight drive::findDir(int startingAngle, int endingAngle) {
     leftAndRight output;
     int leftDegs;
     int rightDegs;
@@ -59,7 +59,7 @@ namespace evAPI
     return(output);
   }
   
-  int Drive::turnError(leftAndRight direction, int startAngle, int endAngle) {
+  int drive::turnError(leftAndRight direction, int startAngle, int endAngle) {
     int turnError = 0;
     if(direction == LEFT) {
     

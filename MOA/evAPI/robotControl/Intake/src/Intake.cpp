@@ -8,30 +8,35 @@
 /*----------------------------------------------------------------------------*/
 
 #include "../include/Intake.h"
+#include "../../../Common/include/evNamespace.h"
+
 
 namespace evAPI
 {
-  Intake::Intake(int32_t motorPort, bool reversed)
-  { intakeMotors[0] = new motor(motorPort, reversed); }
+  intake::intake()
+  {}
 
-  Intake::Intake(int32_t motorPort, gearSetting gears, bool reversed)
-  { intakeMotors[0] = new motor(motorPort, gears, reversed); }
+  void intake::intakeSetup(int32_t motorPort, bool reversed)
+  { intakeMotors[0] = new motor(smartPortLookupTable[motorPort], reversed); }
 
-  Intake::Intake(int32_t firstMotorPort, int32_t secondMotorPort, bool firstMotorReversed, bool secondMotorReversed)
+  void intake::intakeSetup(int32_t motorPort, gearSetting gears, bool reversed)
+  { intakeMotors[0] = new motor(smartPortLookupTable[motorPort], gears, reversed); }
+
+  void intake::intakeSetup(int32_t firstMotorPort, int32_t secondMotorPort, bool firstMotorReversed, bool secondMotorReversed)
   {
-    intakeMotors[0] = new motor(firstMotorPort, firstMotorReversed);
-    intakeMotors[1] = new motor(secondMotorPort, secondMotorReversed);
+    intakeMotors[0] = new motor(smartPortLookupTable[firstMotorPort], firstMotorReversed);
+    intakeMotors[1] = new motor(smartPortLookupTable[secondMotorPort], secondMotorReversed);
     usingSecondMotor = true;
   }
 
-  Intake::Intake(int32_t firstMotorPort, int32_t secondMotorPort, gearSetting firstMotorGears, gearSetting secondMotorMotorGears, bool firstMotorReversed, bool secondMotorReversed)
+  void intake::intakeSetup(int32_t firstMotorPort, int32_t secondMotorPort, gearSetting firstMotorGears, gearSetting secondMotorMotorGears, bool firstMotorReversed, bool secondMotorReversed)
   {
-    intakeMotors[0] = new motor(firstMotorPort, firstMotorGears, firstMotorReversed);
-    intakeMotors[1] = new motor(secondMotorPort, secondMotorMotorGears, secondMotorReversed);
+    intakeMotors[0] = new motor(smartPortLookupTable[firstMotorPort], firstMotorGears, firstMotorReversed);
+    intakeMotors[1] = new motor(smartPortLookupTable[secondMotorPort], secondMotorMotorGears, secondMotorReversed);
     usingSecondMotor = true;
   }
   
-  Intake::~Intake()
+  intake::~intake()
   {
     delete intakeMotors[0];
 
@@ -39,7 +44,7 @@ namespace evAPI
     { delete intakeMotors[1]; }
   }
 
-  void Intake::setVelocity(double velocity, velocityUnits units)
+  void intake::setVelocity(double velocity, velocityUnits units)
   {
     intakeMotors[0]->setVelocity(velocity, units);
     
@@ -47,7 +52,7 @@ namespace evAPI
     { intakeMotors[1]->setVelocity(velocity, units); }
   }
 
-  void Intake::setVelocity(double velocity, percentUnits units)
+  void intake::setVelocity(double velocity, percentUnits units)
   {
     intakeMotors[0]->setVelocity(velocity, units);
     
@@ -55,7 +60,7 @@ namespace evAPI
     { intakeMotors[1]->setVelocity(velocity, units); }
   }
 
-  void Intake::spin(directionType dir)
+  void intake::spin(directionType dir)
   {
     intakeMotors[0]->spin(dir);
     
@@ -63,7 +68,7 @@ namespace evAPI
     { intakeMotors[1]->spin(dir); }
   }
 
-  void Intake::spin(directionType dir, double velocity, velocityUnits units)
+  void intake::spin(directionType dir, double velocity, velocityUnits units)
   {
     intakeMotors[0]->spin(dir, velocity, units);
     
@@ -71,7 +76,7 @@ namespace evAPI
     { intakeMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Intake::spin(directionType dir, double velocity, percentUnits units)
+  void intake::spin(directionType dir, double velocity, percentUnits units)
   {
     intakeMotors[0]->spin(dir, velocity, units);
     
@@ -79,7 +84,7 @@ namespace evAPI
     { intakeMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Intake::spin(directionType dir, double velocity, voltageUnits units)
+  void intake::spin(directionType dir, double velocity, voltageUnits units)
   {
     intakeMotors[0]->spin(dir, velocity, units);
     
@@ -87,7 +92,7 @@ namespace evAPI
     { intakeMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Intake::stop()
+  void intake::stop()
   {
     intakeMotors[0]->stop();
     
@@ -95,7 +100,7 @@ namespace evAPI
     { intakeMotors[1]->stop(); }
   }
 
-  void Intake::setMaxTorque(double value, percentUnits units)
+  void intake::setMaxTorque(double value, percentUnits units)
   {
     intakeMotors[0]->setMaxTorque(value, units);
     
@@ -103,7 +108,7 @@ namespace evAPI
     { intakeMotors[1]->setMaxTorque(value, units); }
   }
 
-  void Intake::setMaxTorque(double value, torqueUnits units)
+  void intake::setMaxTorque(double value, torqueUnits units)
   {
     intakeMotors[0]->setMaxTorque(value, units);
     
@@ -111,7 +116,7 @@ namespace evAPI
     { intakeMotors[1]->setMaxTorque(value, units); }
   }
 
-  void Intake::setMaxTorque(double value, currentUnits units)
+  void intake::setMaxTorque(double value, currentUnits units)
   {
     intakeMotors[0]->setMaxTorque(value, units);
     
@@ -119,10 +124,10 @@ namespace evAPI
     { intakeMotors[1]->setMaxTorque(value, units); }
   }
 
-  directionType Intake::direction()
+  directionType intake::direction()
   { return intakeMotors[0]->direction(); }
 
-  double Intake::velocity(velocityUnits units)
+  double intake::velocity(velocityUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->velocity(units) + intakeMotors[1]->velocity(units)) / 2); }
@@ -130,7 +135,7 @@ namespace evAPI
     return intakeMotors[0]->velocity(units);
   }
 
-  double Intake::velocity(percentUnits units)
+  double intake::velocity(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->velocity(units) + intakeMotors[1]->velocity(units)) / 2); }
@@ -138,7 +143,7 @@ namespace evAPI
     return intakeMotors[0]->velocity(units);
   }
 
-  double Intake::current(currentUnits units)
+  double intake::current(currentUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->current(units) + intakeMotors[1]->current(units)) / 2); }
@@ -146,7 +151,7 @@ namespace evAPI
     return intakeMotors[0]->current(units);
   }
 
-  double Intake::current(percentUnits units)
+  double intake::current(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->current(units) + intakeMotors[1]->current(units)) / 2); }
@@ -154,7 +159,7 @@ namespace evAPI
     return intakeMotors[0]->current(units);
   }
 
-  double Intake::voltage(voltageUnits units)
+  double intake::voltage(voltageUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->voltage(units) + intakeMotors[1]->voltage(units)) / 2); }
@@ -162,7 +167,7 @@ namespace evAPI
     return intakeMotors[0]->voltage(units);
   }
 
-  double Intake::power(powerUnits units)
+  double intake::power(powerUnits units)
   {
     if(usingSecondMotor)
     { return (intakeMotors[0]->power(units) + intakeMotors[1]->power(units)); }
@@ -170,7 +175,7 @@ namespace evAPI
     return intakeMotors[0]->power(units);
   }
 
-  double Intake::torque(torqueUnits units)
+  double intake::torque(torqueUnits units)
   {
     if(usingSecondMotor)
     { return (intakeMotors[0]->torque(units) + intakeMotors[1]->torque(units)); }
@@ -178,7 +183,7 @@ namespace evAPI
     return intakeMotors[0]->torque(units);
   }
 
-  double Intake::efficiency(percentUnits units)
+  double intake::efficiency(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->efficiency(units) + intakeMotors[1]->efficiency(units)) / 2); }
@@ -186,7 +191,7 @@ namespace evAPI
     return intakeMotors[0]->efficiency(units);
   }
 
-  double Intake::temperature(temperatureUnits units)
+  double intake::temperature(temperatureUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->temperature(units) + intakeMotors[1]->temperature(units)) / 2); }
@@ -194,7 +199,7 @@ namespace evAPI
     return intakeMotors[0]->temperature(units);
   }
 
-  double Intake::temperature(percentUnits units)
+  double intake::temperature(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((intakeMotors[0]->temperature(units) + intakeMotors[1]->temperature(units)) / 2); }

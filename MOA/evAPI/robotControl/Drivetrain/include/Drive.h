@@ -7,7 +7,7 @@
 
 namespace evAPI
 {
-  class Drive {
+  class drive {
     private:
   
     /****** drive variables ******/
@@ -26,8 +26,8 @@ namespace evAPI
     public:
   
       /****** constructors ******/
-      Drive( void );    //empty constructor
-      Drive(gearSetting driveGear);    //sets gearbox for all motors
+      drive( void );    //empty constructor
+      drive(gearSetting driveGear);    //sets gearbox for all motors
   
       /*********** setup ***********/
       /*----- debug -----*/

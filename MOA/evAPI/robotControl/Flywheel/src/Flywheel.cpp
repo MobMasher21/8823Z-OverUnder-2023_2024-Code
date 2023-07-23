@@ -12,27 +12,30 @@
 
 namespace evAPI
 {
-  Flywheel::Flywheel(int32_t motorPort, bool reversed)
-  { flywheelMotors[0] = new motor(motorPort, reversed); }
+  flywheel::flywheel()
+  {}
 
-  Flywheel::Flywheel(int32_t motorPort, gearSetting gears, bool reversed)
-  { flywheelMotors[0] = new motor(motorPort, gears, reversed); }
+  void flywheel::flywheelSetup(int32_t motorPort, bool reversed)
+  { flywheelMotors[0] = new motor(smartPortLookupTable[motorPort], reversed); }
 
-  Flywheel::Flywheel(int32_t firstMotorPort, int32_t secondMotorPort, bool firstMotorReversed, bool secondMotorReversed)
+  void flywheel::flywheelSetup(int32_t motorPort, gearSetting gears, bool reversed)
+  { flywheelMotors[0] = new motor(smartPortLookupTable[motorPort], gears, reversed); }
+
+  void flywheel::flywheelSetup(int32_t firstMotorPort, int32_t secondMotorPort, bool firstMotorReversed, bool secondMotorReversed)
   {
-    flywheelMotors[0] = new motor(firstMotorPort, firstMotorReversed);
-    flywheelMotors[1] = new motor(secondMotorPort, secondMotorReversed);
+    flywheelMotors[0] = new motor(smartPortLookupTable[firstMotorPort], firstMotorReversed);
+    flywheelMotors[1] = new motor(smartPortLookupTable[secondMotorPort], secondMotorReversed);
     usingSecondMotor = true;
   }
 
-  Flywheel::Flywheel(int32_t firstMotorPort, int32_t secondMotorPort, gearSetting firstMotorGears, gearSetting secondMotorMotorGears, bool firstMotorReversed, bool secondMotorReversed)
+  void flywheel::flywheelSetup(int32_t firstMotorPort, int32_t secondMotorPort, gearSetting firstMotorGears, gearSetting secondMotorMotorGears, bool firstMotorReversed, bool secondMotorReversed)
   {
-    flywheelMotors[0] = new motor(firstMotorPort, firstMotorGears, firstMotorReversed);
-    flywheelMotors[1] = new motor(secondMotorPort, secondMotorMotorGears, secondMotorReversed);
+    flywheelMotors[0] = new motor(smartPortLookupTable[firstMotorPort], firstMotorGears, firstMotorReversed);
+    flywheelMotors[1] = new motor(smartPortLookupTable[secondMotorPort], secondMotorMotorGears, secondMotorReversed);
     usingSecondMotor = true;
   }
   
-  Flywheel::~Flywheel()
+  flywheel::~flywheel()
   {
     delete flywheelMotors[0];
 
@@ -40,7 +43,7 @@ namespace evAPI
     { delete flywheelMotors[1]; }
   }
 
-  void Flywheel::setVelocity(double velocity, velocityUnits units)
+  void flywheel::setVelocity(double velocity, velocityUnits units)
   {
     flywheelMotors[0]->setVelocity(velocity, units);
     
@@ -48,7 +51,7 @@ namespace evAPI
     { flywheelMotors[1]->setVelocity(velocity, units); }
   }
 
-  void Flywheel::setVelocity(double velocity, percentUnits units)
+  void flywheel::setVelocity(double velocity, percentUnits units)
   {
     flywheelMotors[0]->setVelocity(velocity, units);
     
@@ -56,7 +59,7 @@ namespace evAPI
     { flywheelMotors[1]->setVelocity(velocity, units); }
   }
 
-  void Flywheel::spin(directionType dir)
+  void flywheel::spin(directionType dir)
   {
     flywheelMotors[0]->spin(dir);
     
@@ -64,7 +67,7 @@ namespace evAPI
     { flywheelMotors[1]->spin(dir); }
   }
 
-  void Flywheel::spin(directionType dir, double velocity, velocityUnits units)
+  void flywheel::spin(directionType dir, double velocity, velocityUnits units)
   {
     flywheelMotors[0]->spin(dir, velocity, units);
     
@@ -72,7 +75,7 @@ namespace evAPI
     { flywheelMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Flywheel::spin(directionType dir, double velocity, percentUnits units)
+  void flywheel::spin(directionType dir, double velocity, percentUnits units)
   {
     flywheelMotors[0]->spin(dir, velocity, units);
     
@@ -80,7 +83,7 @@ namespace evAPI
     { flywheelMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Flywheel::spin(directionType dir, double velocity, voltageUnits units)
+  void flywheel::spin(directionType dir, double velocity, voltageUnits units)
   {
     flywheelMotors[0]->spin(dir, velocity, units);
     
@@ -88,7 +91,7 @@ namespace evAPI
     { flywheelMotors[1]->spin(dir, velocity, units); }
   }
 
-  void Flywheel::stop()
+  void flywheel::stop()
   {
     flywheelMotors[0]->stop();
     
@@ -96,7 +99,7 @@ namespace evAPI
     { flywheelMotors[1]->stop(); }
   }
 
-  void Flywheel::setMaxTorque(double value, percentUnits units)
+  void flywheel::setMaxTorque(double value, percentUnits units)
   {
     flywheelMotors[0]->setMaxTorque(value, units);
     
@@ -104,7 +107,7 @@ namespace evAPI
     { flywheelMotors[1]->setMaxTorque(value, units); }
   }
 
-  void Flywheel::setMaxTorque(double value, torqueUnits units)
+  void flywheel::setMaxTorque(double value, torqueUnits units)
   {
     flywheelMotors[0]->setMaxTorque(value, units);
     
@@ -112,7 +115,7 @@ namespace evAPI
     { flywheelMotors[1]->setMaxTorque(value, units); }
   }
 
-  void Flywheel::setMaxTorque(double value, currentUnits units)
+  void flywheel::setMaxTorque(double value, currentUnits units)
   {
     flywheelMotors[0]->setMaxTorque(value, units);
     
@@ -120,10 +123,10 @@ namespace evAPI
     { flywheelMotors[1]->setMaxTorque(value, units); }
   }
 
-  directionType Flywheel::direction()
+  directionType flywheel::direction()
   { return flywheelMotors[0]->direction(); }
 
-  double Flywheel::velocity(velocityUnits units)
+  double flywheel::velocity(velocityUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->velocity(units) + flywheelMotors[1]->velocity(units)) / 2); }
@@ -131,7 +134,7 @@ namespace evAPI
     return flywheelMotors[0]->velocity(units);
   }
 
-  double Flywheel::velocity(percentUnits units)
+  double flywheel::velocity(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->velocity(units) + flywheelMotors[1]->velocity(units)) / 2); }
@@ -139,7 +142,7 @@ namespace evAPI
     return flywheelMotors[0]->velocity(units);
   }
 
-  double Flywheel::current(currentUnits units)
+  double flywheel::current(currentUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->current(units) + flywheelMotors[1]->current(units)) / 2); }
@@ -147,7 +150,7 @@ namespace evAPI
     return flywheelMotors[0]->current(units);
   }
 
-  double Flywheel::current(percentUnits units)
+  double flywheel::current(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->current(units) + flywheelMotors[1]->current(units)) / 2); }
@@ -155,7 +158,7 @@ namespace evAPI
     return flywheelMotors[0]->current(units);
   }
 
-  double Flywheel::voltage(voltageUnits units)
+  double flywheel::voltage(voltageUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->voltage(units) + flywheelMotors[1]->voltage(units)) / 2); }
@@ -163,7 +166,7 @@ namespace evAPI
     return flywheelMotors[0]->voltage(units);
   }
 
-  double Flywheel::power(powerUnits units)
+  double flywheel::power(powerUnits units)
   {
     if(usingSecondMotor)
     { return (flywheelMotors[0]->power(units) + flywheelMotors[1]->power(units)); }
@@ -171,7 +174,7 @@ namespace evAPI
     return flywheelMotors[0]->power(units);
   }
 
-  double Flywheel::torque(torqueUnits units)
+  double flywheel::torque(torqueUnits units)
   {
     if(usingSecondMotor)
     { return (flywheelMotors[0]->torque(units) + flywheelMotors[1]->torque(units)); }
@@ -179,7 +182,7 @@ namespace evAPI
     return flywheelMotors[0]->torque(units);
   }
 
-  double Flywheel::efficiency(percentUnits units)
+  double flywheel::efficiency(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->efficiency(units) + flywheelMotors[1]->efficiency(units)) / 2); }
@@ -187,7 +190,7 @@ namespace evAPI
     return flywheelMotors[0]->efficiency(units);
   }
 
-  double Flywheel::temperature(temperatureUnits units)
+  double flywheel::temperature(temperatureUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->temperature(units) + flywheelMotors[1]->temperature(units)) / 2); }
@@ -195,7 +198,7 @@ namespace evAPI
     return flywheelMotors[0]->temperature(units);
   }
 
-  double Flywheel::temperature(percentUnits units)
+  double flywheel::temperature(percentUnits units)
   {
     if(usingSecondMotor)
     { return ((flywheelMotors[0]->temperature(units) + flywheelMotors[1]->temperature(units)) / 2); }

@@ -11,7 +11,7 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include "vex_color.h"
+#include "vex_color.h" //0x003C3C3C
 
 //Custom colors
 

@@ -5,7 +5,7 @@ namespace evAPI
   //======================================== private =============================================
   /************ motors ************/
   /*----- left motors -----*/
-  void Drive::spinLeftMotors(int speed) {  //spins all motors on the left side
+  void drive::spinLeftMotors(int speed) {  //spins all motors on the left side
     switch(baseMotorCount){
       case 2:
         leftMotor1->spin(fwd, speed, percent);
@@ -28,7 +28,7 @@ namespace evAPI
     }
   }
   
-  void Drive::stopLeftMotors(brakeType type) {  //stop all motors on the left side
+  void drive::stopLeftMotors(brakeType type) {  //stop all motors on the left side
     switch(baseMotorCount){
       case 2:
         leftMotor1->stop(type);
@@ -52,7 +52,7 @@ namespace evAPI
   }
   
   /*----- right motors -----*/
-  void Drive::spinRightMotors(int speed) {  //spins all motors on the right side
+  void drive::spinRightMotors(int speed) {  //spins all motors on the right side
     switch(baseMotorCount){
       case 2:
         rightMotor1->spin(fwd, speed, percent);
@@ -75,7 +75,7 @@ namespace evAPI
     }
   }
   
-  void Drive::stopRightMotors(brakeType type) {  //stop all motors on the right side
+  void drive::stopRightMotors(brakeType type) {  //stop all motors on the right side
     switch(baseMotorCount){
       case 2:
         rightMotor1->stop(type);
