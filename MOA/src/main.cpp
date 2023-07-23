@@ -26,23 +26,6 @@ double batteryVolt = 0;
 double batteryCurrent = 0;
 double batteryTemp = 0;
 
-int axis1 = 0;
-int axis2 = 0;
-int axis3 = 0;
-int axis4 = 0;
-
-int counter = 0;
-double brainTimer = 0;
-
-void countUp()
-{ 
-  if(counter == 256)
-  { counter = 0; }
-
-  else
-  { counter++; }
-}
-
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -57,29 +40,26 @@ void pre_auton(void) {
   driveBase.leftPortSetup(7, 8);
   driveBase.rightPortSetup(9, 10);
   driveBase.leftReverseSetup(true, true);
-  driveBase.rightReverseSetup(false, false);
+  /* driveBase.rightReverseSetup(false, false);
   driveBase.leftEncoderSetup(1, 2.75, false);
   driveBase.rightEncoderSetup(2, 2.75, false);
-  driveBase.backEncoderSetup(6, 2.75, false);
+  driveBase.backEncoderSetup(6, 2.75, false); */
 
   //Setup Preauto UI
   UI.setDebugMode(false);
-  UI.addButton(blue, "Blue Button", "A blue button that does absolutely nothing because this program is for testing and not driving an actual robot around on a field. I'm not really sure what I am doing at this point, but I guess this helps with testing my line breaking code.", UI.Icons.leftArrow);
-  UI.addButton(red, "Red Button", "A red button.\n\nNot much else.\n\nStop reading.", UI.Icons.rightArrow);
-  UI.addButton(green, "ToManyCharacters", "HiThisIsTestingWhatGoesDownIfThereAreTooManyCharactersWithoutAnySpacesOrPunctuationMarks!", UI.Icons.exclamationMark);
-  UI.addButton(vexClrDarkTurquoise);
-  UI.addButton(cyan, "Program 0", UI.Icons.number0);
-  UI.addButton(vexClrForestGreen,"Program 1", UI.Icons.number1);
-  UI.addButton(yellow,"Program 2", UI.Icons.number2);
+  UI.addButton(blue, "Blue Auto Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(blue, "Blue Auto Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
+  UI.addBlank();
   UI.addButton(vexClrSnow, "Snow!", "A nice icon of snow.\nThis serves no other purpose.", UI.Icons.snow);
-  UI.addButton(orange);
+
+  UI.addButton(blue, "Red Auto Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(blue, "Red Auto Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addBlank();
-  UI.addButton(purple);
+  UI.addButton(vexClrBeige, "Skills 1", "Skills Auto 1", UI.Icons.skills);
   UI.setDisplayTime(2000);
 
   //Setup Match UI
-  UI.createFieldDisplay(left);
+  /* UI.createFieldDisplay(left);
   UI.setTileColor(0, red);
   UI.setTileColor(30, red);
   UI.setTileColor(17, red);
@@ -87,7 +67,7 @@ void pre_auton(void) {
   UI.setTileColor(5, blue);
   UI.setTileColor(35, blue);
   UI.setTileColor(12, blue);
-  UI.setTileColor(18, blue);
+  UI.setTileColor(18, blue); */
 
   UI.setDefaultReadOutColor(blue);
 
@@ -95,16 +75,6 @@ void pre_auton(void) {
   UI.createBrainReadOut("Battery Volt: ", batteryVolt);
   UI.createBrainReadOut("Battery Amps: ", batteryCurrent);
   UI.createBrainReadOut("Bat Degrees F: ", batteryTemp, red);
-
-  UI.createBrainReadOut("Primary Axis 1: ", axis1, vexClrDarkCyan);
-  UI.createBrainReadOut("Primary Axis 2: ", axis2, vexClrDarkCyan);
-  UI.createBrainReadOut("Primary Axis 3: ", axis3, vexClrDarkCyan);
-  UI.createBrainReadOut("Primary Axis 4: ", axis4, vexClrDarkCyan);
-
-  UI.createBrainReadOut("Counter: ", counter, vexClrBlueViolet);
-  UI.createBrainReadOut("Timer: ", brainTimer, vexClrSeaGreen);
-  UI.createBlankBrainReadOut();
-  UI.createBrainReadOut("THIS IS TESTING TEXT.", vexClrBlueViolet);
 
   //Setup Controller UI
   UI.createControllerReadOut("Battery: ", batteryCapacity);
@@ -181,15 +151,6 @@ int main() {
     batteryVolt = Brain.Battery.voltage(volt);
     batteryCurrent = Brain.Battery.current(amp);
     batteryTemp = Brain.Battery.temperature(temperatureUnits::fahrenheit);
-
-    axis1 = Controller1.Axis1.position(pct);
-    axis2 = Controller1.Axis2.position(pct);
-    axis3 = Controller1.Axis3.position(pct);
-    axis4 = Controller1.Axis4.position(pct);
-
-    countUp();
-
-    brainTimer = Brain.timer(seconds);
 
     this_thread::sleep_for(10);
   }

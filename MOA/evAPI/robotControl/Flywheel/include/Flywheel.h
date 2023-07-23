@@ -17,7 +17,7 @@ namespace evAPI
   class Flywheel
   {
     private:
-      motor * flywheelMotors[8];
+      motor * flywheelMotors[2];
 
       bool usingSecondMotor = false;
 

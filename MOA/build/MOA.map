@@ -11,7 +11,7 @@ C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(v5_apiver
 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_global.cpp.obj)
                               build/evAPI/vexUI/src/UserInterface.o (vex::mono60)
 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_motor.cpp.obj)
-                              build/evAPI/robotControl/Flywheel/src/Flywheel.o (vex::motor::~motor())
+                              build/evAPI/robotControl/Drivetrain/src/setup.o (vex::motor::setReversed(bool))
 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_rotation.cpp.obj)
                               build/evAPI/robotControl/Drivetrain/src/setup.o (vex::rotation::rotation(long, bool))
 C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5\libv5rt.a(vex_controller.cpp.obj)
@@ -259,24 +259,108 @@ Discarded input sections
  .llvm_addrsig  0x00000000        0x2 build/evAPI/robotControl/Drivetrain/src/setup.o
  .text          0x00000000        0x0 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text._ZN5evAPI8FlywheelC2Elb
-                0x00000000       0x30 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+                0x00000000       0x3c build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .ARM.exidx.text._ZN5evAPI8FlywheelC2Elb
                 0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text._ZN5evAPI8FlywheelC2ElN3vex11gearSettingEb
-                0x00000000       0x30 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+                0x00000000       0x44 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .ARM.exidx.text._ZN5evAPI8FlywheelC2ElN3vex11gearSettingEb
                 0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text._ZN5evAPI8FlywheelC2Ellbb
-                0x00000000       0x30 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+                0x00000000       0x60 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .ARM.exidx.text._ZN5evAPI8FlywheelC2Ellbb
                 0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text._ZN5evAPI8FlywheelC2EllN3vex11gearSettingES2_bb
-                0x00000000       0x30 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+                0x00000000       0x68 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .ARM.exidx.text._ZN5evAPI8FlywheelC2EllN3vex11gearSettingES2_bb
                 0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text._ZN5evAPI8FlywheelD2Ev
-                0x00000000       0x20 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+                0x00000000       0x4c build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .ARM.exidx.text._ZN5evAPI8FlywheelD2Ev
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel11setVelocityEdN3vex13velocityUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel11setVelocityEdN3vex13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel11setVelocityEdN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel11setVelocityEdN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeE
+                0x00000000       0x38 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_13velocityUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_12percentUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_12voltageUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel4spinEN3vex13directionTypeEdNS1_12voltageUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel4stopEv
+                0x00000000       0x30 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel4stopEv
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex11torqueUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex11torqueUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex12currentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel12setMaxTorqueEdN3vex12currentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel9directionEv
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel9directionEv
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel8velocityEN3vex13velocityUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel8velocityEN3vex13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel8velocityEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel8velocityEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel7currentEN3vex12currentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel7currentEN3vex12currentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel7currentEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel7currentEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel7voltageEN3vex12voltageUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel7voltageEN3vex12voltageUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel5powerEN3vex10powerUnitsE
+                0x00000000       0x4c build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel5powerEN3vex10powerUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel6torqueEN3vex11torqueUnitsE
+                0x00000000       0x4c build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel6torqueEN3vex11torqueUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel10efficiencyEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel10efficiencyEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel11temperatureEN3vex16temperatureUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel11temperatureEN3vex16temperatureUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .text._ZN5evAPI8Flywheel11temperatureEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Flywheel/src/Flywheel.o
+ .ARM.exidx.text._ZN5evAPI8Flywheel11temperatureEN3vex12percentUnitsE
                 0x00000000        0x8 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .comment       0x00000000       0x2e build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .note.GNU-stack
@@ -285,13 +369,109 @@ Discarded input sections
                 0x00000000       0x3a build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .llvm_addrsig  0x00000000        0x0 build/evAPI/robotControl/Flywheel/src/Flywheel.o
  .text          0x00000000        0x0 build/evAPI/robotControl/Intake/src/Intake.o
- .text._ZN5evAPI6IntakeC2Ev
-                0x00000000        0x4 build/evAPI/robotControl/Intake/src/Intake.o
- .ARM.exidx.text._ZN5evAPI6IntakeC2Ev
+ .text._ZN5evAPI6IntakeC2Elb
+                0x00000000       0x3c build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6IntakeC2Elb
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6IntakeC2ElN3vex11gearSettingEb
+                0x00000000       0x44 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6IntakeC2ElN3vex11gearSettingEb
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6IntakeC2Ellbb
+                0x00000000       0x60 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6IntakeC2Ellbb
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6IntakeC2EllN3vex11gearSettingES2_bb
+                0x00000000       0x68 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6IntakeC2EllN3vex11gearSettingES2_bb
                 0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
  .text._ZN5evAPI6IntakeD2Ev
-                0x00000000        0x4 build/evAPI/robotControl/Intake/src/Intake.o
+                0x00000000       0x4c build/evAPI/robotControl/Intake/src/Intake.o
  .ARM.exidx.text._ZN5evAPI6IntakeD2Ev
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake11setVelocityEdN3vex13velocityUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake11setVelocityEdN3vex13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake11setVelocityEdN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake11setVelocityEdN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake4spinEN3vex13directionTypeE
+                0x00000000       0x38 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake4spinEN3vex13directionTypeE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_13velocityUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_12percentUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_12voltageUnitsE
+                0x00000000       0x60 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake4spinEN3vex13directionTypeEdNS1_12voltageUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake4stopEv
+                0x00000000       0x30 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake4stopEv
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake12setMaxTorqueEdN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake12setMaxTorqueEdN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake12setMaxTorqueEdN3vex11torqueUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake12setMaxTorqueEdN3vex11torqueUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake12setMaxTorqueEdN3vex12currentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake12setMaxTorqueEdN3vex12currentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake9directionEv
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake9directionEv
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake8velocityEN3vex13velocityUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake8velocityEN3vex13velocityUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake8velocityEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake8velocityEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake7currentEN3vex12currentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake7currentEN3vex12currentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake7currentEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake7currentEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake7voltageEN3vex12voltageUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake7voltageEN3vex12voltageUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake5powerEN3vex10powerUnitsE
+                0x00000000       0x4c build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake5powerEN3vex10powerUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake6torqueEN3vex11torqueUnitsE
+                0x00000000       0x4c build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake6torqueEN3vex11torqueUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake10efficiencyEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake10efficiencyEN3vex12percentUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake11temperatureEN3vex16temperatureUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake11temperatureEN3vex16temperatureUnitsE
+                0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
+ .text._ZN5evAPI6Intake11temperatureEN3vex12percentUnitsE
+                0x00000000       0x54 build/evAPI/robotControl/Intake/src/Intake.o
+ .ARM.exidx.text._ZN5evAPI6Intake11temperatureEN3vex12percentUnitsE
                 0x00000000        0x8 build/evAPI/robotControl/Intake/src/Intake.o
  .comment       0x00000000       0x2e build/evAPI/robotControl/Intake/src/Intake.o
  .note.GNU-stack
