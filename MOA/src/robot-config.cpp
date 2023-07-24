@@ -9,6 +9,7 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
+distance triballSensor = distance(PORT8);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

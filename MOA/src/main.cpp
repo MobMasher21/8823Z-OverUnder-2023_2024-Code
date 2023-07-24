@@ -2,6 +2,7 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          Controller    
+// triballSensor        distance      8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 /** code ideas
@@ -22,6 +23,7 @@ int leftSpeed;
 int rightSpeed;
 
 bool hasTriball = false;
+bool flywheelShootingMode = true;
 
 //Temp UI Testing
 
@@ -56,9 +58,9 @@ void pre_auton(void) {
   Flywheel.setVelocity(100, percent);
 
   //Setup Intake
-  Intake.intakeSetup(6, 7, true, false);
+  Intake.intakeSetup(6, 7, false, true);
   Intake.setMaxTorque(100, percent);
-  Intake.setVelocity(100, percent);
+  Intake.setVelocity(45, percent);
 
   //Setup Preauto UI
   UI.setDebugMode(false);
@@ -90,6 +92,8 @@ void pre_auton(void) {
   UI.createBrainReadOut("Battery Volt: ", batteryVolt);
   UI.createBrainReadOut("Battery Amps: ", batteryCurrent);
   UI.createBrainReadOut("Bat Degrees F: ", batteryTemp, red);
+
+  //UI.createBrainReadOut("Ball:", hasTriball, vexClrDarkGreen);
 
   //Setup Controller UI
   UI.createControllerReadOut("Battery: ", batteryCapacity);
@@ -148,8 +152,7 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  static bool switchingFlywheelDirection = false;
-  uint8_t nextFlywheelMode = 0; //0 is off, 1 is shooting, 2 is intaking.
+  bool intakeOverride = false;
 
   while(1) {
     //=================================================================================
@@ -158,56 +161,39 @@ void usercontrol(void) {
     rightSpeed = (Controller1.Axis3.position(pct) - Controller1.Axis1.position(pct));
     driveBase.spinBase(leftSpeed, rightSpeed);
 
-    //Intake Control   
-    if(Controller1.ButtonR1.pressing() && !hasTriball)
-    { Intake.spin(fwd); }
+    if(triballSensor.objectDistance(mm) <= 35) //Detects if the robot has a triball in the intake.
+    { hasTriball = true; }
 
-    else if(Controller1.ButtonR2.pressing())
-    { Intake.spin(reverse); }
+    else
+    { hasTriball = false; }
 
-    //Flywheel Control
-    if(fabs(Flywheel.velocity(percent)) <= 45)
+    if(Controller1.ButtonR1.pressing() || Controller1.ButtonR2.pressing())
+    { intakeOverride = true; }
+
+    else
+    { intakeOverride = false; }
+
+    if(flywheelShootingMode) //If the flywheel is configured to shoot triballs.
     {
-      switchingFlywheelDirection = false;
-
-      switch(nextFlywheelMode)
+      if(!intakeOverride)
       {
-        default:
-          Flywheel.stop();
-          break;
+        if(!hasTriball)
+        { Intake.spin(fwd); }
 
-        case 1:
-          Flywheel.spin(fwd, 100, percent);
-          break;
-
-        case 2:
-          Flywheel.spin(reverse, 50, percent);
-          break;
-      }
-    }
-
-    if(!switchingFlywheelDirection)
-    {
-      if(Controller1.ButtonL1.pressing() && Flywheel.velocity(percent) <= 0)
-      {
-        switchingFlywheelDirection = true;
-        nextFlywheelMode = 1;
-        Flywheel.stop();
+        else
+        { Intake.stop(); }
       }
 
-      else if(Controller1.ButtonL2.pressing() && Flywheel.velocity(percent) > 0)
+      else
       {
-        switchingFlywheelDirection = true;
-        nextFlywheelMode = 2;
-        Flywheel.stop();
-      }
-    }
+        if(Controller1.ButtonR1.pressing())
+        { Intake.spin(fwd, 100, percent); }
 
-    if(Controller1.ButtonL1.pressing() && Controller1.ButtonL2.pressing())
-    { 
-      switchingFlywheelDirection = true;
-      nextFlywheelMode = 0;
-      Flywheel.stop();
+        else if(Controller1.ButtonR2.pressing())
+        { Intake.spin(reverse, 100, percent); }
+      }
+
+      Flywheel.spin(fwd);
     }
 
     //=================================================================================
