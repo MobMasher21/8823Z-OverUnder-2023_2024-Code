@@ -11,11 +11,11 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include "vex_color.h" //0x003C3C3C
+#include "vex_color.h"
 
 //Custom colors
 
-const color fieldGrey = color(60, 60, 60);
+const color fieldGrey = color(60, 60, 60); //0x003C3C3C
 
 //rgb.txt
 

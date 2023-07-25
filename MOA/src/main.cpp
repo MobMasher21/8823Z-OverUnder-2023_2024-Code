@@ -1,7 +1,6 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          Controller    
 // triballSensor        distance      8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -64,13 +63,13 @@ void pre_auton(void) {
 
   //Setup Preauto UI
   UI.setDebugMode(false);
-  UI.addButton(blue, "Blue Auto Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(blue, "Blue Auto Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
+  UI.addButton(blue, "Blue Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(blue, "Blue Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
   UI.addButton(vexClrSnow, "Snow!", "A nice icon of snow.\nThis serves no other purpose.", UI.Icons.snow);
 
-  UI.addButton(blue, "Red Auto Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(blue, "Red Auto Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
+  UI.addButton(red, "Red Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(red, "Red Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
   UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
   UI.setDisplayTime(2000);
@@ -119,23 +118,23 @@ void autonomous(void) {
   
   switch(UI.getProgNumber())
   {
-    case 0:
+    case 0: //Blue Scoring
 
       break;
 
-    case 1:
+    case 1: //Blue Away
 
       break;
 
-    case 4:
+    case 4: //Red Scoring
 
       break;
     
-    case 5:
+    case 5: //Red Away
 
       break;
 
-    case 7:
+    case 7: //Skills 1
 
       break;
   }
@@ -157,8 +156,8 @@ void usercontrol(void) {
   while(1) {
     //=================================================================================
 
-    leftSpeed = (Controller1.Axis3.position(pct) + Controller1.Axis1.position(pct));
-    rightSpeed = (Controller1.Axis3.position(pct) - Controller1.Axis1.position(pct));
+    leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis1.position(pct));
+    rightSpeed = (primaryController.Axis3.position(pct) - primaryController.Axis1.position(pct));
     driveBase.spinBase(leftSpeed, rightSpeed);
 
     if(triballSensor.objectDistance(mm) <= 60) //Detects if the robot has a triball in the intake.
@@ -167,16 +166,16 @@ void usercontrol(void) {
     else
     { hasTriball = false; }
 
-    if(Controller1.ButtonR1.pressing() || Controller1.ButtonR2.pressing())
+    if(primaryController.ButtonR1.pressing() || primaryController.ButtonR2.pressing())
     { intakeOverride = true; }
 
     else
     { intakeOverride = false; }
 
-    if(Controller1.ButtonL1.pressing()) //Controls the flywheel mode
+    if(primaryController.ButtonL1.pressing()) //Controls the flywheel mode
     { flywheelShootingMode = true; }
 
-    else if(Controller1.ButtonL2.pressing())
+    else if(primaryController.ButtonL2.pressing())
     { flywheelShootingMode = false; }
 
     if(flywheelShootingMode) //If the flywheel is configured to shoot triballs.
@@ -192,10 +191,10 @@ void usercontrol(void) {
 
       else //Controls over override
       {
-        if(Controller1.ButtonR1.pressing())
+        if(primaryController.ButtonR1.pressing())
         { Intake.spin(fwd, 100, percent); }
 
-        else if(Controller1.ButtonR2.pressing())
+        else if(primaryController.ButtonR2.pressing())
         { Intake.spin(reverse, 100, percent); }
       }
 
@@ -215,17 +214,15 @@ void usercontrol(void) {
 
       else //Controls over override
       {
-        if(Controller1.ButtonR1.pressing())
+        if(primaryController.ButtonR1.pressing())
         { Intake.spin(fwd, 80, percent); }
 
-        else if(Controller1.ButtonR2.pressing())
+        else if(primaryController.ButtonR2.pressing())
         { Intake.spin(reverse, 100, percent); }
       }
 
       Flywheel.spin(reverse, 45, percent);
     }
-
-
 
     //=================================================================================
     vex::task::sleep(20); // Sleep the task for a short amount of time to

@@ -2,6 +2,7 @@
 #include "..\include\UserInterface.h"
 #include "..\include\pageArrowsIcons.h"
 #include "../../Common/include/evNamespace.h"
+#include "../../Common/include/Controllers.h"
 
 #define TILE_SIDE_LENGTH 30
 #define TILE_BORDER_DISTANCE 10
@@ -915,7 +916,7 @@ namespace evAPI
     {
       if(!clearedPrimaryScreen) //Clear screen if it has not been.
       {
-        controller(vex::primary).Screen.clearScreen();
+        primaryController.Screen.clearScreen();
         clearedPrimaryScreen = true;
       }
 
@@ -926,9 +927,9 @@ namespace evAPI
           case TEXT:
             if(controllerObjects[i].prevRunIntData != 1) //Prevent the name from being printed multiple times
             {
-              controller(vex::primary).Screen.setCursor(i + 1, 1);
+              primaryController.Screen.setCursor(i + 1, 1);
 
-              controller(vex::primary).Screen.print(controllerObjects[i].Name);
+              primaryController.Screen.print(controllerObjects[i].Name);
 
               controllerObjects[i].prevRunIntData = 1; //Make sure it only runs once.
             }
@@ -937,13 +938,13 @@ namespace evAPI
           case INT:
             if(controllerObjects[i].prevRunIntData != *controllerObjects[i].intData)
             {
-              controller(vex::primary).Screen.setCursor(i + 1, 1); //Select and clear lines
-              controller(vex::primary).Screen.clearLine(i + 1);
+              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
+              primaryController.Screen.clearLine(i + 1);
 
               this_thread::sleep_for(5);
 
-              controller(vex::primary).Screen.print(controllerObjects[i].Name); //Print Name
-              controller(vex::primary).Screen.print("%d", *controllerObjects[i].intData); //Print Data
+              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
+              primaryController.Screen.print("%d", *controllerObjects[i].intData); //Print Data
 
               //Make sure it only runs when the value changes.
               controllerObjects[i].prevRunIntData = *controllerObjects[i].intData;
@@ -953,13 +954,13 @@ namespace evAPI
           case FLOAT:
             if(controllerObjects[i].prevRunFloatData != *controllerObjects[i].floatData)
             {
-              controller(vex::primary).Screen.setCursor(i + 1, 1); //Select and clear lines
-              controller(vex::primary).Screen.clearLine(i + 1);
+              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
+              primaryController.Screen.clearLine(i + 1);
 
               this_thread::sleep_for(5);
 
-              controller(vex::primary).Screen.print(controllerObjects[i].Name); //Print Name
-              controller(vex::primary).Screen.print("%.2f", *controllerObjects[i].floatData); //Print Data
+              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
+              primaryController.Screen.print("%.2f", *controllerObjects[i].floatData); //Print Data
 
               //Make sure it only runs when the value changes.
               controllerObjects[i].prevRunFloatData = *controllerObjects[i].floatData;
@@ -969,13 +970,13 @@ namespace evAPI
           case DOUBLE:
             if(controllerObjects[i].prevRunDoubleData != *controllerObjects[i].doubleData)
             {
-              controller(vex::primary).Screen.setCursor(i + 1, 1); //Select and clear lines
-              controller(vex::primary).Screen.clearLine(i + 1);
+              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
+              primaryController.Screen.clearLine(i + 1);
 
               this_thread::sleep_for(5);
 
-              controller(vex::primary).Screen.print(controllerObjects[i].Name); //Print Name
-              controller(vex::primary).Screen.print("%.2f", *controllerObjects[i].doubleData); //Print Data
+              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
+              primaryController.Screen.print("%.2f", *controllerObjects[i].doubleData); //Print Data
 
               //Make sure it only runs when the value changes.
               controllerObjects[i].prevRunDoubleData = *controllerObjects[i].doubleData;
@@ -993,7 +994,7 @@ namespace evAPI
 
         if(!clearedSecondaryScreen) //Clear screen if it has not been.
         {
-          controller(vex::partner).Screen.clearScreen();
+          secondaryController.Screen.clearScreen();
           clearedSecondaryScreen = true;
         }
 
@@ -1004,10 +1005,10 @@ namespace evAPI
             case TEXT:
               if(controllerObjects[i].prevRunIntData != 1) //Prevent the name from being printed multiple times
               {
-                controller(vex::partner).Screen.setCursor(currentLine, 1);
+                secondaryController.Screen.setCursor(currentLine, 1);
 
                 for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { controller(vex::partner).Screen.print(controllerObjects[ii].Name); }
+                { secondaryController.Screen.print(controllerObjects[ii].Name); }
 
                 controllerObjects[i].prevRunIntData = 1; //Make sure it only runs once.
                 currentLine++;
@@ -1017,13 +1018,13 @@ namespace evAPI
             case INT:
               if(controllerObjects[i].prevRunIntData != *controllerObjects[i].intData)
               {
-                controller(vex::partner).Screen.setCursor(currentLine, 1); //Select and clear lines
-                controller(vex::partner).Screen.clearLine();
+                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
+                secondaryController.Screen.clearLine();
 
                 for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { controller(vex::partner).Screen.print(controllerObjects[ii].Name); }
+                { secondaryController.Screen.print(controllerObjects[ii].Name); }
 
-                controller(vex::partner).Screen.print("%d", *controllerObjects[i].intData);
+                secondaryController.Screen.print("%d", *controllerObjects[i].intData);
 
                 //Make sure it only runs when the value changes.
                 controllerObjects[i].prevRunIntData = *controllerObjects[i].intData;
@@ -1034,13 +1035,13 @@ namespace evAPI
             case FLOAT:
               if(controllerObjects[i].prevRunFloatData != *controllerObjects[i].floatData)
               {
-                controller(vex::partner).Screen.setCursor(currentLine, 1); //Select and clear lines
-                controller(vex::partner).Screen.clearLine();
+                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
+                secondaryController.Screen.clearLine();
 
                 for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { controller(vex::partner).Screen.print(controllerObjects[ii].Name); }
+                { secondaryController.Screen.print(controllerObjects[ii].Name); }
 
-                controller(vex::partner).Screen.print("%.2f", *controllerObjects[i].floatData);
+                secondaryController.Screen.print("%.2f", *controllerObjects[i].floatData);
 
                 //Make sure it only runs when the value changes.
                 controllerObjects[i].prevRunFloatData = *controllerObjects[i].floatData;
@@ -1051,13 +1052,13 @@ namespace evAPI
             case DOUBLE:
               if(controllerObjects[i].prevRunDoubleData != *controllerObjects[i].doubleData)
               {
-                controller(vex::partner).Screen.setCursor(currentLine, 1); //Select and clear lines
-                controller(vex::partner).Screen.clearLine();
+                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
+                secondaryController.Screen.clearLine();
 
                 for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { controller(vex::partner).Screen.print(controllerObjects[ii].Name); }
+                { secondaryController.Screen.print(controllerObjects[ii].Name); }
 
-                controller(vex::partner).Screen.print("%.2f", *controllerObjects[i].doubleData);
+                secondaryController.Screen.print("%.2f", *controllerObjects[i].doubleData);
 
                 //Make sure it only runs when the value changes.
                 controllerObjects[i].prevRunDoubleData = *controllerObjects[i].doubleData;
