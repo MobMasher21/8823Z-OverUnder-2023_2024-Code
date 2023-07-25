@@ -60,6 +60,14 @@ namespace evAPI
     { intakeMotors[1]->setVelocity(velocity, units); }
   }
 
+  void intake::setStopping(brakeType mode)
+  {
+    intakeMotors[0]->setStopping(mode);
+    
+    if(usingSecondMotor)
+    { intakeMotors[1]->setStopping(mode); }
+  }
+
   void intake::spin(directionType dir)
   {
     intakeMotors[0]->spin(dir);
@@ -98,6 +106,14 @@ namespace evAPI
     
     if(usingSecondMotor)
     { intakeMotors[1]->stop(); }
+  }
+
+  void intake::stop(brakeType mode)
+  {
+    intakeMotors[0]->stop(mode);
+    
+    if(usingSecondMotor)
+    { intakeMotors[1]->stop(mode); }
   }
 
   void intake::setMaxTorque(double value, percentUnits units)

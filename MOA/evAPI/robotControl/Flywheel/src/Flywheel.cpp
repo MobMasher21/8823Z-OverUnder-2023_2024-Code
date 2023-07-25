@@ -93,10 +93,10 @@ namespace evAPI
 
   void flywheel::stop()
   {
-    flywheelMotors[0]->stop();
+    flywheelMotors[0]->stop(coast);
     
     if(usingSecondMotor)
-    { flywheelMotors[1]->stop(); }
+    { flywheelMotors[1]->stop(coast); }
   }
 
   void flywheel::setMaxTorque(double value, percentUnits units)

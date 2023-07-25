@@ -42,6 +42,12 @@ namespace evAPI
       void setVelocity(double velocity, percentUnits units);
 
       /** 
+       * @brief Sets the stopping mode of the intake by passing a brake mode as a parameter.
+       * @param mode The stopping mode can be set to coast, brake, or hold.  
+       */
+      void setStopping(brakeType mode);
+
+      /** 
        * @brief Turns the intake on, and spins it in the specified direction.
        * @param dir The direction to spin the intake.
        */
@@ -75,6 +81,12 @@ namespace evAPI
        * @brief Stops the flywheel.
        */
       void stop();
+
+      /** 
+       * @brief Stops the motor using a specified brake mode.
+       * @param mode The brake mode can be set to coast, brake, or hold. 
+       */
+      void stop(brakeType mode);
 
       /** 
        * @brief Sets the max torque of the intake.
@@ -176,4 +188,4 @@ namespace evAPI
   
 } // namespace evAPI
 
-#endif // INTAKE_H
+#endif //INTAKE_H

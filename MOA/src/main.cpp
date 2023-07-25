@@ -161,7 +161,7 @@ void usercontrol(void) {
     rightSpeed = (Controller1.Axis3.position(pct) - Controller1.Axis1.position(pct));
     driveBase.spinBase(leftSpeed, rightSpeed);
 
-    if(triballSensor.objectDistance(mm) <= 35) //Detects if the robot has a triball in the intake.
+    if(triballSensor.objectDistance(mm) <= 60) //Detects if the robot has a triball in the intake.
     { hasTriball = true; }
 
     else
@@ -173,18 +173,24 @@ void usercontrol(void) {
     else
     { intakeOverride = false; }
 
+    if(Controller1.ButtonL1.pressing()) //Controls the flywheel mode
+    { flywheelShootingMode = true; }
+
+    else if(Controller1.ButtonL2.pressing())
+    { flywheelShootingMode = false; }
+
     if(flywheelShootingMode) //If the flywheel is configured to shoot triballs.
     {
-      if(!intakeOverride)
+      if(!intakeOverride) //Standard operation with no user input
       {
         if(!hasTriball)
-        { Intake.spin(fwd); }
+        { Intake.spin(fwd, 45, percent); }
 
         else
         { Intake.stop(); }
       }
 
-      else
+      else //Controls over override
       {
         if(Controller1.ButtonR1.pressing())
         { Intake.spin(fwd, 100, percent); }
@@ -193,8 +199,33 @@ void usercontrol(void) {
         { Intake.spin(reverse, 100, percent); }
       }
 
-      Flywheel.spin(fwd);
+      Flywheel.spin(fwd, 100, percent);
     }
+
+    else //If the flywheel is configured to intake triballs.
+    {
+      if(!intakeOverride) //Standard operation with no user input
+      {
+        if(!hasTriball)
+        { Intake.spin(reverse, 75, percent); }
+
+        else
+        { Intake.stop(); }
+      }
+
+      else //Controls over override
+      {
+        if(Controller1.ButtonR1.pressing())
+        { Intake.spin(fwd, 80, percent); }
+
+        else if(Controller1.ButtonR2.pressing())
+        { Intake.spin(reverse, 100, percent); }
+      }
+
+      Flywheel.spin(reverse, 45, percent);
+    }
+
+
 
     //=================================================================================
     vex::task::sleep(20); // Sleep the task for a short amount of time to
