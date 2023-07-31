@@ -1,4 +1,5 @@
 #include "../../../robotControl/Drivetrain/include/Drive.h"
+#include "../../../Common/include/Controllers.h"
 
 namespace evAPI
 {
@@ -27,6 +28,221 @@ namespace evAPI
   void drive::stopRobot(brakeType stoppingMode) {  //stops robot with given type
     stopLeftMotors(stoppingMode);
     stopRightMotors(stoppingMode);
+  }
+
+  void drive::controllerDrive()
+  {
+    switch(driverMode)
+    {
+      case Custom:
+        break;
+
+      case Arcade:
+        switch(baseType)
+        {
+          case HDriveStandard:
+            double leftSpeed;
+            double rightSpeed;
+
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+                leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis4.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                rightSpeed = (primaryController.Axis3.position(pct) - primaryController.Axis4.position(pct)
+                  * turnHandicap) * generalHandicap;
+                break;
+
+              case rightStick:
+                leftSpeed = (primaryController.Axis2.position(pct) + primaryController.Axis1.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                rightSpeed = (primaryController.Axis2.position(pct) - primaryController.Axis1.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                break;
+
+            }
+            spinBase(leftSpeed, rightSpeed);
+            break;
+
+          case HDriveMecanum:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+
+          case XDrive:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+        }
+
+        break;
+
+      case Tank:
+        switch(baseType)
+        {
+          case HDriveStandard:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+
+                break;
+
+              case rightStick:
+
+                break;
+            }
+            break;
+
+          case HDriveMecanum:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+
+          case XDrive:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+        }
+        break;
+
+      case ServoSteering:
+        switch(baseType)
+        {
+          case HDriveStandard:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+
+                break;
+
+              case rightStick:
+
+                break;
+            }
+            break;
+
+          case HDriveMecanum:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+
+          case XDrive:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+        }
+
+        break;
+
+      case RCControl:
+        switch(baseType)
+        {
+          case HDriveStandard:
+            double leftSpeed;
+            double rightSpeed;
+
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+                leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis1.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                rightSpeed = (primaryController.Axis3.position(pct) - primaryController.Axis1.position(pct)
+                  * turnHandicap) * generalHandicap;
+                break;
+
+              case rightStick:
+                leftSpeed = (primaryController.Axis2.position(pct) + primaryController.Axis4.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                rightSpeed = (primaryController.Axis2.position(pct) - primaryController.Axis4.position(pct)
+                  * turnHandicap) * generalHandicap;
+
+                break;
+
+            }
+            spinBase(leftSpeed, rightSpeed);
+            break;
+
+          case HDriveMecanum:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+
+                break;
+
+              case rightStick:
+
+                break;
+            }
+            break;
+
+          case XDrive:
+            switch(primaryControllerStick)
+            {
+              case leftStick:
+    
+                break;
+    
+              case rightStick:
+    
+                break;
+            }
+            break;
+        }
+        break;
+    }
   }
 
   /*----- automatic -----*/

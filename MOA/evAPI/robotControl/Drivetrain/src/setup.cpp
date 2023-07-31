@@ -131,4 +131,18 @@ namespace evAPI
     backEncoderSize = (360 / (wheelSize * M_PI));
   }
 
+  void drive::setControlType(driveMode drivingMode, joystickType primaryStick)
+  {
+    driverMode = drivingMode;
+    primaryControllerStick = primaryStick;
+  }
+
+  void drive::setBaseType(driveBaseType type)
+  { baseType = type; }
+
+  void drive::setGeneralHandicap(double cap)
+  { generalHandicap = cap; }
+
+  void drive::setTurningHandicap(double cap)
+  { turnHandicap = cap; }
 }

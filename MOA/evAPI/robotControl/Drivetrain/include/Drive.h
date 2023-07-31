@@ -22,6 +22,13 @@ namespace evAPI
       double driveStop = 5;
 
       double turnP = 0.35;
+
+      int baseType;
+      int driverMode;
+      int primaryControllerStick;
+
+      double generalHandicap;
+      double turnHandicap;
   
     public:
   
@@ -36,9 +43,37 @@ namespace evAPI
       /*----- Base Setup -----*/
       void geartrainSetup(float diameter, int gearIN, int gearOUT);  //used for setting up wheel size and gear ratio
 
-      /*----- Limit setup -----*/
+      /*----- Drive Control Setup -----*/
+
+      /**
+       * @brief Configures how the controller joysticks will control the base.
+       * @param type The type of base.
+       * @param primaryStick Optional. Sets which joystick will be the primary one.
+      */
+      void setControlType(driveMode drivingMode, joystickType primaryStick = rightStick);
+
+      /**
+       * @brief Configures how the base motors are setup.
+       * @param type The type of base.
+      */
+      void setBaseType(driveBaseType type);
+
+      /**
+       * @brief Set a handicap on all the joystick inputs to limit the speed of the drive motors.
+       * @param cap The handicap value. Ranges between 0-1.
+      */
       void setGeneralHandicap(double cap);
+
+      /**
+       * @brief Set a handicap on the joystick responsible for turning.
+       * @param cap The handicap value. Ranges between 0-1.
+      */
       void setTurningHandicap(double cap);
+
+      /**
+       * @brief Controls the base motors based on the joystick inputs and the settings set by the configuring functions.
+      */
+      void controllerDrive();
   
       /*----- motor ports and reverses -----*/
       void setGearbox(gearSetting driveGear);    //sets gearbox for all motors

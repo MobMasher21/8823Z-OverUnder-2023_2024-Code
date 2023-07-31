@@ -91,6 +91,10 @@ namespace evAPI
     PORT8,  PORT9,  PORT10, PORT11, PORT12, PORT13, PORT14, PORT15,
     PORT16, PORT17, PORT18, PORT19, PORT20, PORT21
   };
+
+  const gearSetting redGearBox = ratio36_1;
+  const gearSetting greenGearBox = ratio18_1;
+  const gearSetting blueGearBox = ratio6_1;
 }
 
 #endif // __EVNAMESPACE_H__

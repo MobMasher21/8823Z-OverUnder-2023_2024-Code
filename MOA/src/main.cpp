@@ -2,6 +2,8 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // triballSensor        distance      8               
+// ArmDown              digital_out   H               
+// ArmUp                digital_out   G               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 /** code ideas
@@ -21,8 +23,15 @@ competition Competition;
 int leftSpeed;
 int rightSpeed;
 
+enum class flywheelMode
+{
+  flywheelDisabled,
+  flywheelShooting,
+  flywheelIntaking
+};
+
 bool hasTriball = false;
-bool flywheelShootingMode = true;
+flywheelMode flywheelShootingMode = flywheelMode::flywheelShooting;
 
 //Temp UI Testing
 
@@ -30,6 +39,18 @@ int batteryCapacity = 0;
 double batteryVolt = 0;
 double batteryCurrent = 0;
 double batteryTemp = 0;
+
+void TriballArmDown()
+{
+  ArmUp.set(false);
+  ArmDown.set(true);
+}
+
+void TriballArmUp()
+{
+  ArmUp.set(true);
+  ArmDown.set(false);
+}
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -43,10 +64,16 @@ double batteryTemp = 0;
 
 void pre_auton(void) {
   //Setup Base
+  driveBase.setGearbox(blueGearBox);
   driveBase.leftPortSetup(19, 10);
   driveBase.rightPortSetup(9, 20);
   driveBase.leftReverseSetup(true, true);
   driveBase.rightReverseSetup(false, false);
+  driveBase.setBaseType(HDriveStandard);
+  driveBase.setControlType(RCControl, leftStick);
+  driveBase.setGeneralHandicap(0.9);
+  driveBase.setTurningHandicap(0.7);
+
   /* driveBase.leftEncoderSetup(1, 2.75, false);
   driveBase.rightEncoderSetup(2, 2.75, false);
   driveBase.backEncoderSetup(6, 2.75, false); */
@@ -100,7 +127,7 @@ void pre_auton(void) {
   UI.createControllerReadOut("Just some text.");
 
   //Start UI
-  UI.selectButton(0, true);
+  UI.selectButton(7, true);
   UI.startUIThreads();
 }
 
@@ -119,15 +146,15 @@ void autonomous(void) {
   switch(UI.getProgNumber())
   {
     case 0: //Blue Scoring
-
+      
       break;
 
     case 1: //Blue Away
-
+    
       break;
 
     case 4: //Red Scoring
-
+      
       break;
     
     case 5: //Red Away
@@ -135,6 +162,12 @@ void autonomous(void) {
       break;
 
     case 7: //Skills 1
+    
+      // drive forward so arm is at right length
+      TriballArmDown();
+      
+      Flywheel.spin(fwd, 100, percent);
+      Intake.spin(fwd, 100, percent);
 
       break;
   }
@@ -153,12 +186,16 @@ void autonomous(void) {
 void usercontrol(void) {
   bool intakeOverride = false;
 
+  //int standardIntakeVelocity = 45;
+
   while(1) {
     //=================================================================================
 
-    leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis1.position(pct));
+    /* leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis1.position(pct));
     rightSpeed = (primaryController.Axis3.position(pct) - primaryController.Axis1.position(pct));
-    driveBase.spinBase(leftSpeed, rightSpeed);
+    driveBase.spinBase(leftSpeed, rightSpeed); */
+
+    driveBase.controllerDrive();
 
     if(triballSensor.objectDistance(mm) <= 60) //Detects if the robot has a triball in the intake.
     { hasTriball = true; }
@@ -173,12 +210,13 @@ void usercontrol(void) {
     { intakeOverride = false; }
 
     if(primaryController.ButtonL1.pressing()) //Controls the flywheel mode
-    { flywheelShootingMode = true; }
+    { flywheelShootingMode = flywheelMode::flywheelShooting; }
 
     else if(primaryController.ButtonL2.pressing())
-    { flywheelShootingMode = false; }
+    { flywheelShootingMode = flywheelMode::flywheelIntaking; }
 
-    if(flywheelShootingMode) //If the flywheel is configured to shoot triballs.
+    //If the flywheel is configured to shoot triballs.
+    if(flywheelShootingMode == flywheelMode::flywheelShooting) 
     {
       if(!intakeOverride) //Standard operation with no user input
       {
@@ -224,6 +262,12 @@ void usercontrol(void) {
       Flywheel.spin(reverse, 45, percent);
     }
 
+    if(primaryController.ButtonUp.pressing())
+    { TriballArmUp(); }
+
+    else if(primaryController.ButtonDown.pressing())
+    { TriballArmDown(); }
+
     //=================================================================================
     vex::task::sleep(20); // Sleep the task for a short amount of time to
                           // prevent wasted resources.
@@ -238,6 +282,8 @@ int main() {
   vexcodeInit();
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
+
+  TriballArmUp();
 
   // Run the pre-autonomous function.
   pre_auton();
