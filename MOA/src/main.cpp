@@ -11,35 +11,32 @@
 */
 
 #include "vex.h"
-#include "../include/evAPI.h"
+#include "evAPI.h"
 
 using namespace evAPI;
 
-intake Intake;
+intake Intake; //Setup code objects
 flywheel Flywheel;
 drive driveBase;
 competition Competition;
 
-int leftSpeed;
-int rightSpeed;
-
-enum class flywheelMode
+//Custom type to store the mode of the flywheel.
+enum class flywheelMode 
 {
   flywheelDisabled,
   flywheelShooting,
   flywheelIntaking
 };
-
-bool hasTriball = false;
 flywheelMode flywheelShootingMode = flywheelMode::flywheelShooting;
 
-//Temp UI Testing
+bool hasTriball = false;
 
-int batteryCapacity = 0;
+int batteryCapacity = 0; //Variables that store info about the battery
 double batteryVolt = 0;
 double batteryCurrent = 0;
 double batteryTemp = 0;
 
+//Controls for the robot arm.
 void TriballArmDown()
 {
   ArmUp.set(false);
@@ -51,6 +48,9 @@ void TriballArmUp()
   ArmUp.set(true);
   ArmDown.set(false);
 }
+
+/* int leftSpeed;
+int rightSpeed; */
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
