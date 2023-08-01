@@ -101,7 +101,31 @@ void pre_auton(void) {
   UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
   UI.setDisplayTime(2000);
 
+  //Setup Preauto UI (Trimmed for notebook)
+  UI.setDebugMode(false);
+  UI.addButton(blue, "Blue Scoring", "A auto for...", UI.Icons.number1);
+  UI.addButton(blue, "Blue Away", "A auto for a ...", UI.Icons.number2);
+  UI.addBlank();
+  UI.addButton(vexClrSnow, "Snow!", "A nice icon...", UI.Icons.snow);
+
+  UI.addButton(red, "Red Scoring", "A auto for a...", UI.Icons.number1);
+  UI.addButton(red, "Red Away", "A auto for a re...", UI.Icons.number2);
+  UI.addBlank();
+  UI.addButton(vexClrBeige, "Skills 1", "Shoots ...", UI.Icons.skills);
+  UI.setDisplayTime(2000);
+
   //Setup Match UI
+  UI.setDefaultReadOutColor(blue);
+  UI.createBrainReadOut("Battery: ", batteryCapacity);
+  UI.createBrainReadOut("Battery Volt: ", batteryVolt);
+  UI.createBrainReadOut("Battery Amps: ", batteryCurrent);
+  UI.createBrainReadOut("Bat Degrees F: ", batteryTemp, red);
+
+  //Setup Controller UI
+  UI.createControllerReadOut("Battery: ", batteryCapacity);
+  UI.createBlankControllerReadOut();
+  UI.createControllerReadOut("Just some text.");
+
   /* UI.createFieldDisplay(left);
   UI.setTileColor(0, red);
   UI.setTileColor(30, red);
@@ -111,20 +135,6 @@ void pre_auton(void) {
   UI.setTileColor(35, blue);
   UI.setTileColor(12, blue);
   UI.setTileColor(18, blue); */
-
-  UI.setDefaultReadOutColor(blue);
-
-  UI.createBrainReadOut("Battery: ", batteryCapacity);
-  UI.createBrainReadOut("Battery Volt: ", batteryVolt);
-  UI.createBrainReadOut("Battery Amps: ", batteryCurrent);
-  UI.createBrainReadOut("Bat Degrees F: ", batteryTemp, red);
-
-  //UI.createBrainReadOut("Ball:", hasTriball, vexClrDarkGreen);
-
-  //Setup Controller UI
-  UI.createControllerReadOut("Battery: ", batteryCapacity);
-  UI.createBlankControllerReadOut();
-  UI.createControllerReadOut("Just some text.");
 
   //Start UI
   UI.selectButton(7, true);
@@ -142,7 +152,6 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  
   switch(UI.getProgNumber())
   {
     case 0: //Blue Scoring
@@ -163,9 +172,10 @@ void autonomous(void) {
 
     case 7: //Skills 1
     
-      // drive forward so arm is at right length
+      //Put the arm down to make contact with the match load zone
       TriballArmDown();
       
+      //Activate flywheel and intake for shooting.
       Flywheel.spin(fwd, 100, percent);
       Intake.spin(fwd, 100, percent);
 
