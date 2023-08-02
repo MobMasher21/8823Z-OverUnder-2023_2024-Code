@@ -6,6 +6,7 @@ extern brain Brain;
 extern distance triballSensor;
 extern digital_out ArmDown;
 extern digital_out ArmUp;
+extern inertial Inertial;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

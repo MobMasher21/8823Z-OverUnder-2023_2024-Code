@@ -9,8 +9,9 @@ brain  Brain;
 
 // VEXcode device constructors
 distance triballSensor = distance(PORT8);
-digital_out ArmDown = digital_out(Brain.ThreeWirePort.H);
-digital_out ArmUp = digital_out(Brain.ThreeWirePort.G);
+digital_out ArmDown = digital_out(Brain.ThreeWirePort.G);
+digital_out ArmUp = digital_out(Brain.ThreeWirePort.H);
+inertial Inertial = inertial(PORT17);
 
 // VEXcode generated functions
 

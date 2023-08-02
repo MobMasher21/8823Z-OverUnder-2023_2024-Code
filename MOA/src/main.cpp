@@ -2,8 +2,9 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // triballSensor        distance      8               
-// ArmDown              digital_out   H               
-// ArmUp                digital_out   G               
+// ArmDown              digital_out   G               
+// ArmUp                digital_out   H               
+// Inertial             inertial      17              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 /** code ideas
@@ -35,6 +36,8 @@ int batteryCapacity = 0; //Variables that store info about the battery
 double batteryVolt = 0;
 double batteryCurrent = 0;
 double batteryTemp = 0;
+
+int UIIndex = UI.getProgNumber();
 
 //Controls for the robot arm.
 void TriballArmDown()
@@ -103,15 +106,15 @@ void pre_auton(void) {
 
   //Setup Preauto UI (Trimmed for notebook)
   UI.setDebugMode(false);
-  UI.addButton(blue, "Blue Scoring", "A auto for...", UI.Icons.number1);
-  UI.addButton(blue, "Blue Away", "A auto for a ...", UI.Icons.number2);
+  UI.addButton(blue, "Blue Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(blue, "Blue Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addButton(vexClrSnow, "Snow!", "A nice icon...", UI.Icons.snow);
+  UI.addButton(vexClrSnow, "Snow!", "A nice icon of snow.\nThis serves no other purpose.", UI.Icons.snow);
 
-  UI.addButton(red, "Red Scoring", "A auto for a...", UI.Icons.number1);
-  UI.addButton(red, "Red Away", "A auto for a re...", UI.Icons.number2);
+  UI.addButton(red, "Red Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
+  UI.addButton(red, "Red Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addButton(vexClrBeige, "Skills 1", "Shoots ...", UI.Icons.skills);
+  UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
   UI.setDisplayTime(2000);
 
   //Setup Match UI
@@ -123,8 +126,10 @@ void pre_auton(void) {
 
   //Setup Controller UI
   UI.createControllerReadOut("Battery: ", batteryCapacity);
-  UI.createBlankControllerReadOut();
-  UI.createControllerReadOut("Just some text.");
+  UI.createControllerReadOut("Auto: ", UIIndex);
+  UI.createControllerReadOut("MOA Comp");
+
+
 
   /* UI.createFieldDisplay(left);
   UI.setTileColor(0, red);
@@ -196,15 +201,7 @@ void autonomous(void) {
 void usercontrol(void) {
   bool intakeOverride = false;
 
-  //int standardIntakeVelocity = 45;
-
   while(1) {
-    //=================================================================================
-
-    /* leftSpeed = (primaryController.Axis3.position(pct) + primaryController.Axis1.position(pct));
-    rightSpeed = (primaryController.Axis3.position(pct) - primaryController.Axis1.position(pct));
-    driveBase.spinBase(leftSpeed, rightSpeed); */
-
     driveBase.controllerDrive();
 
     if(triballSensor.objectDistance(mm) <= 60) //Detects if the robot has a triball in the intake.
@@ -303,6 +300,7 @@ int main() {
     batteryVolt = Brain.Battery.voltage(volt);
     batteryCurrent = Brain.Battery.current(amp);
     batteryTemp = Brain.Battery.temperature(temperatureUnits::fahrenheit);
+    UIIndex = UI.getProgNumber();
 
     this_thread::sleep_for(10);
   }
