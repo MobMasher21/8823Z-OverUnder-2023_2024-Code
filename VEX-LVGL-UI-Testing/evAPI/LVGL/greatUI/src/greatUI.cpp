@@ -47,15 +47,7 @@ namespace evAPI
       int buttonID = strtol(lv_label_get_text(buttonIDLabel), justWork, 10);
       printf("ButtonID: %d\n", buttonID);
 
-      /* if(buttonList[buttonID].titleLength > 0)
-      {
-        lv_obj_add_flag(pageTabs, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_t * titleText = lv_label_create(lv_scr_act());
-        lv_label_set_text(titleText, buttonList[buttonID].Title);
-        lv_obj_align(titleText, LV_ALIGN_TOP_MID, 0, 0);
-
-        
-      } */
+      UI.selectButton(buttonID, true);
     }
   }
 
