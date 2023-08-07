@@ -37,7 +37,7 @@ double batteryVolt = 0;
 double batteryCurrent = 0;
 double batteryTemp = 0;
 
-int UIIndex = UI.getProgNumber();
+int UIIndex = UI.getProgNumber() + 1;
 
 //Controls for the robot arm.
 void TriballArmDown()
@@ -75,7 +75,7 @@ void pre_auton(void) {
   driveBase.setBaseType(HDriveStandard);
   driveBase.setControlType(RCControl, leftStick);
   driveBase.setGeneralHandicap(0.9);
-  driveBase.setTurningHandicap(0.7);
+  driveBase.setTurningHandicap(0.65);
 
   /* driveBase.leftEncoderSetup(1, 2.75, false);
   driveBase.rightEncoderSetup(2, 2.75, false);
@@ -93,28 +93,16 @@ void pre_auton(void) {
 
   //Setup Preauto UI
   UI.setDebugMode(false);
-  UI.addButton(blue, "Blue Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(blue, "Blue Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
+
+  UI.addButton(blue, "Scoring", "A auto for the scoring side.", UI.Icons.number1);
+  UI.addButton(blue, "Load", "A auto for the scoring side.", UI.Icons.number2);
   UI.addBlank();
   UI.addButton(vexClrSnow, "Snow!", "A nice icon of snow.\nThis serves no other purpose.", UI.Icons.snow);
-
-  UI.addButton(red, "Red Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(red, "Red Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
+  
   UI.addBlank();
-  UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
-  UI.setDisplayTime(2000);
-
-  //Setup Preauto UI (Trimmed for notebook)
-  UI.setDebugMode(false);
-  UI.addButton(blue, "Blue Scoring", "A auto for a blue alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(blue, "Blue Away", "A auto for a blue alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addButton(vexClrSnow, "Snow!", "A nice icon of snow.\nThis serves no other purpose.", UI.Icons.snow);
-
-  UI.addButton(red, "Red Scoring", "A auto for a red alliance robot on the blue scoring side.", UI.Icons.number1);
-  UI.addButton(red, "Red Away", "A auto for a red alliance robot on the red scoring side.", UI.Icons.number2);
   UI.addBlank();
-  UI.addButton(vexClrBeige, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
+  UI.addButton(0xff, 0x10, 0xa0, "Skills 1", "Shoots all match loads into the field.", UI.Icons.skills);
   UI.setDisplayTime(2000);
 
   //Setup Match UI
@@ -129,8 +117,6 @@ void pre_auton(void) {
   UI.createControllerReadOut("Auto: ", UIIndex);
   UI.createControllerReadOut("MOA Comp");
 
-
-
   /* UI.createFieldDisplay(left);
   UI.setTileColor(0, red);
   UI.setTileColor(30, red);
@@ -142,7 +128,14 @@ void pre_auton(void) {
   UI.setTileColor(18, blue); */
 
   //Start UI
-  UI.selectButton(7, true);
+  Inertial.calibrate();
+
+  Inertial.setRotation(5, degrees);
+
+  while(Inertial.isCalibrating())
+  { this_thread::sleep_for(10); }
+
+  UI.selectButton(0, true);
   UI.startUIThreads();
 }
 
@@ -160,20 +153,78 @@ void autonomous(void) {
   switch(UI.getProgNumber())
   {
     case 0: //Blue Scoring
-      
+      Inertial.setRotation(5, degrees);
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(1000);
+      driveBase.stopRobot(brake);
+
+      driveBase.spinBase(20, 20);
+      this_thread::sleep_for(400);
+      driveBase.stopRobot(brake);
+
+      driveBase.spinBase(5, -5);
+      while(Inertial.rotation(degrees) <= 10)
+      { this_thread::sleep_for(10); }
+      driveBase.stopRobot(brake);
+
+      driveBase.spinBase(20, 20);
+      this_thread::sleep_for(1850);
+      driveBase.stopRobot(brake);
+
+      driveBase.spinBase(5, -5);
+      while(Inertial.rotation(degrees) <= 65)
+      { this_thread::sleep_for(10); }
+      driveBase.stopRobot(brake);
+
+      driveBase.spinBase(20, 20);
+      this_thread::sleep_for(1750);
+      driveBase.stopRobot(brake);
+
+      Flywheel.spin(fwd, 100, percent);
+      TriballArmDown();
+
+      this_thread::sleep_for(500);
+      Flywheel.stop();
       break;
 
     case 1: //Blue Away
-    
+      Inertial.setRotation(5, degrees);
+      TriballArmDown();
+      Flywheel.spin(fwd, 100, percent);
+      this_thread::sleep_for(100);
+      driveBase.spinBase(20, -20);
+
+      while(Inertial.rotation(degrees) <= 210)
+      { this_thread::sleep_for(10); }
+
+      driveBase.stopRobot(brake);
+      TriballArmUp();
+
+      driveBase.spinBase(20, 20);
+      this_thread::sleep_for(2200);
+      driveBase.stopRobot(brake);
+
+      /* driveBase.spinBase(-2, 2);
+
+      while(Inertial.rotation(degrees) >= 200)
+      { this_thread::sleep_for(10); }
+
+      driveBase.stopRobot(brake); */
+
+      /* driveBase.spinBase(20, 20);
+      this_thread::sleep_for(300);
+      driveBase.stopRobot(brake); */
+
+      TriballArmDown();
       break;
 
-    case 4: //Red Scoring
+    /* case 4: //Red Scoring
       
       break;
     
     case 5: //Red Away
 
-      break;
+      break; */
 
     case 7: //Skills 1
     
@@ -181,7 +232,7 @@ void autonomous(void) {
       TriballArmDown();
       
       //Activate flywheel and intake for shooting.
-      Flywheel.spin(fwd, 100, percent);
+      Flywheel.spin(fwd, 90, percent);
       Intake.spin(fwd, 100, percent);
 
       break;
@@ -200,11 +251,16 @@ void autonomous(void) {
 
 void usercontrol(void) {
   bool intakeOverride = false;
+  TriballArmUp();
 
   while(1) {
-    driveBase.controllerDrive();
+    if(!primaryController.ButtonA.pressing()) //Base controls
+    { driveBase.controllerDrive(); }
 
-    if(triballSensor.objectDistance(mm) <= 60) //Detects if the robot has a triball in the intake.
+    else
+    { driveBase.stopRobot(hold); }
+
+    if(triballSensor.objectDistance(mm) <= 140) //Detects if the robot has a triball in the intake.
     { hasTriball = true; }
 
     else
@@ -300,7 +356,7 @@ int main() {
     batteryVolt = Brain.Battery.voltage(volt);
     batteryCurrent = Brain.Battery.current(amp);
     batteryTemp = Brain.Battery.temperature(temperatureUnits::fahrenheit);
-    UIIndex = UI.getProgNumber();
+    UIIndex = UI.getProgNumber() + 1;
 
     this_thread::sleep_for(10);
   }
