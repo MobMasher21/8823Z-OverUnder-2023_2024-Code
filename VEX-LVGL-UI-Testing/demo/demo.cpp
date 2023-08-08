@@ -22,26 +22,34 @@ vex::brain       Brain;
 // define your global instances of motors and other devices here
 
 int main() {
-    //! COLORS CURRENTLY DO NOT WORK!
-    UI.addButton(BLUE_SCORING_AUTO, blue);
-    UI.addTitle(BLUE_SCORING_AUTO, "Scoring");
-    UI.addButton(BLUE_LOADING_AUTO, blue);
-    UI.addTitle(BLUE_LOADING_AUTO, "Load");
+  //! COLORS CURRENTLY DO NOT WORK!\
+
+  //Auto Page
+  UI.setTitleName(0, "Auto");
+  UI.addButton(BLUE_SCORING_AUTO, blue);
+  UI.addTitle(BLUE_SCORING_AUTO, "Scoring");
+  UI.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
+
+  UI.addButton(BLUE_LOADING_AUTO, blue);
+  UI.addTitle(BLUE_LOADING_AUTO, "Load");
+  UI.addDescription(BLUE_LOADING_AUTO, "Auto for a blue alliance robot on the match loading side.");
     
-    UI.addButton(SKILLS_AUTO_BASIC, blue);
-    UI.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
+  //Skills Page
+  UI.setTitleName(1, "Skills");
+  UI.addButton(SKILLS_AUTO_BASIC, blue);
+  UI.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
+  UI.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
 
-    UI.addButton(20, blue);
-    UI.addTitle(20, "Testing");
+  //Other Page
+  UI.setTitleName(2, "Other");
+  UI.addButton(20, blue);
+  UI.addTitle(20, "Testing");
 
-    UI.setTitleName(0, "Auto");
-    UI.setTitleName(1, "Skills");
-    UI.setTitleName(2, "Other");
+  UI.setDisplayTime(1500);
+  UI.startUIThreads();
 
-    UI.startUIThreads();
-
-    while(1) {
-        // Allow other tasks to run
-        this_thread::sleep_for(10);
-    }
+  while(1) {
+      // Allow other tasks to run
+      this_thread::sleep_for(10);
+  }
 }

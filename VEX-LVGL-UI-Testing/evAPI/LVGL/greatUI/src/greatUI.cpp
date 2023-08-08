@@ -35,6 +35,12 @@ namespace evAPI
   lv_obj_t * selectorButtonID[MAX_BUTTON_COUNT];
   lv_obj_t * selectorButtonTitle[MAX_BUTTON_COUNT];
 
+  lv_obj_t * buttonInfoBox;
+  timer buttonInfoBoxTime = timer();
+
+  void closeInfoButtonBox()
+  { lv_msgbox_close(buttonInfoBox); }
+
   static void autoButtonPressFunc(lv_event_t * event)
   {
     lv_event_code_t eventCode = lv_event_get_code(event);
@@ -43,11 +49,18 @@ namespace evAPI
     if(eventCode == LV_EVENT_CLICKED) 
     {
       lv_obj_t * buttonIDLabel = lv_obj_get_child(target, 0); //Get ID from button text.
-      char **justWork = nullptr;
-      int buttonID = strtol(lv_label_get_text(buttonIDLabel), justWork, 10);
+      int buttonID = strtol(lv_label_get_text(buttonIDLabel), nullptr, 10);
       printf("ButtonID: %d\n", buttonID);
 
       UI.selectButton(buttonID, true);
+      buttonInfoBoxTime.operator=(0);
+
+      if(buttonList[buttonID]->descriptionLength > 0) //Print button info.
+      {
+        buttonInfoBox = lv_msgbox_create(NULL, buttonList[buttonID]->Title, buttonList[buttonID]->Description, NULL, false);
+        lv_obj_center(buttonInfoBox);
+        buttonInfoBoxTime.event(closeInfoButtonBox, UI.getDisplayTime());
+      }
     }
   }
 
@@ -278,7 +291,11 @@ namespace evAPI
     }
   }
 
+  void greatUI::setDisplayTime(int time)
+  { buttonInfoDisplayTime = time; }
 
+  int greatUI::getDisplayTime()
+  { return buttonInfoDisplayTime; }
 
   int greatUI::getProgNumber()
   { return selectedButtonID; }

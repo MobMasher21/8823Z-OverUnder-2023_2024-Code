@@ -164,10 +164,15 @@ namespace evAPI
       void selectButton(int button, bool doNotShowSettings = false);
 
       /**
-       * @brief Sets the time the text will be displayed on the Brain.
+       * @brief Sets the time the button info box will be displayed on the Brain.
        * @param time The time in ms.
       */
       void setDisplayTime(int time);
+      
+      /**
+       * @returns The time in ms the button info box will be displayed for.
+      */
+      int getDisplayTime();
 
       /**
        * @returns The ID of the selected button.
