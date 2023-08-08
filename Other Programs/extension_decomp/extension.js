@@ -9904,15 +9904,15 @@ var ni = L(require("tar")),
     [511, "Network Authentication Required"],
   ]),
   ps = "catalog.txt",
-  Io = "manifest.json",
-  Yi = "manifest-dev.json",
+  normal_manifest = "manifest.json",
+  dev_manifest = "manifest-dev.json",
   ms = (_) => `https://content.vexrobotics.com/vexos/public/${_}/`,
   Zi = (_, t) =>
     `https://content.vexrobotics.com/vexos/public/${_}/vscode/sdk/${t}`,
-  oi = (_, t) =>
-    `https://content.vexrobotics.com/vexos/public/${_}/vscode/sdk/${t}/${Io}`,
-  er = (_, t) =>
-    `https://content.vexrobotics.com/vexos/public/${_}/vscode/sdk/${t}/${Yi}`,
+  normal_manifest_url = (platform, language) =>
+    `https://content.vexrobotics.com/vexos/public/${platform}/vscode/sdk/${language}/${normal_manifest}`,
+  dev_manifest_url = (platform, language) =>
+    `https://content.vexrobotics.com/vexos/public/${platform}/vscode/sdk/${language}/${dev_manifest}`,
   tr = (_, t, e) =>
     `https://content.vexrobotics.com/vexos/public/${_}/toolchain/${t}/${e}`,
   si = (_, t, e, o = "") =>
@@ -10487,30 +10487,31 @@ var ni = L(require("tar")),
         }
       );
     }
-    async downloadSDK(t, e, o, s) {
+    async downloadSDK(platform, language, version, path) {
       N._logHandler("Download SDK");
-        // t = V5
-        // e = cpp
-        // o = V5_20220726_10_00_00
-        // s = vscode-userdata:/home/chez/.config/VSCodium/User/globalStorage/vexrobotics.vexcode/sdk/cpp
+        // Example for V5:
+        // platform = V5
+        // language = cpp
+        // version = V5_20220726_10_00_00
+        // path = vscode-userdata:/home/chez/.config/VSCodium/User/globalStorage/vexrobotics.vexcode/sdk/cpp
 
-      let n = s
-          ? M.Uri.joinPath(s, t)
-          : M.Uri.joinPath(this._context.globalStorageUri, "sdk", e),
-        a = Zi(t, e),
+      let save_path = path
+          ? M.Uri.joinPath(path, platform)
+          : M.Uri.joinPath(this._context.globalStorageUri, "sdk", language),
+        a = Zi(platform, language),
         r,
         c = async (l, d) => {
-          N._logHandler(`Platform: ${t}`),
-            N._logHandler(`Version: ${o}`),
-            N._logHandler(`Location: ${s}`);
-          let w = (await this._getManifestVersionOnline(t, e)).catalog.filter(
-              (O) => O.includes(o)
+          N._logHandler(`Platform: ${platform}`),
+            N._logHandler(`Version: ${version}`),
+            N._logHandler(`Location: ${path}`);
+          let w = (await this._getManifestVersionOnline(platform, language)).catalog.filter(
+              (O) => O.includes(version)
             ),
             b = w.length
               ? w[0]
-              : (await this._getManifestVersionOnline(t, e)).latest,
-            C = M.Uri.joinPath(n, `${b}.zip`),
-            E = await this._downloadHttpsFile(n, `${a}/${b}.zip`, l, d);
+              : (await this._getManifestVersionOnline(platform, language)).latest,
+            C = M.Uri.joinPath(save_path, `${b}.zip`),
+            E = await this._downloadHttpsFile(save_path, `${a}/${b}.zip`, l, d);
           return (
             console.log(`${E}: ${tt.get(E)}`),
             E !== 200
@@ -10526,8 +10527,8 @@ var ni = L(require("tar")),
                   recursive: !0,
                   useTrash: !1,
                 }),
-                be.existsSync(M.Uri.joinPath(n, "__MACOSX").fsPath) &&
-                  (await M.workspace.fs.delete(M.Uri.joinPath(n, "__MACOSX"), {
+                be.existsSync(M.Uri.joinPath(save_path, "__MACOSX").fsPath) &&
+                  (await M.workspace.fs.delete(M.Uri.joinPath(save_path, "__MACOSX"), {
                     recursive: !0,
                     useTrash: !1,
                   })),
@@ -10649,19 +10650,19 @@ var ni = L(require("tar")),
         r
       );
     }
-    async _getManifestVersionOnline(t, e) {
-      N._logHandler(`Get ${e} SDK Version Online`),
-        N._logHandler(`Platform: ${t}`);
+    async _getManifestVersionOnline(platform, language) {
+      N._logHandler(`Get ${language} SDK Version Online`),
+        N._logHandler(`Platform: ${platform}`);
       let o = M.Uri.joinPath(
           this._context.extensionUri,
           "resources",
           "build",
           "sdk",
-          e,
-          t
+          language,
+          platform
         ),
-        s = M.Uri.joinPath(o, Io),
-        n = i.Extension.Context.isDevEnabled ? er(t, e) : oi(t, e),
+        s = M.Uri.joinPath(o, normal_manifest),
+        n = i.Extension.Context.isDevEnabled ? dev_manifest_url(platform, language) : normal_manifest_url(platform, language),
         a = {
           latest: "",
           catalog: [],
@@ -10672,7 +10673,7 @@ var ni = L(require("tar")),
         (r.httpsCode !== 200 && !i.Extension.Context.isDevEnabled) ||
         (r.httpsCode !== 200 &&
           i.Extension.Context.isDevEnabled &&
-          ((r = await this._readHttpsFile(oi(t, e))),
+          ((r = await this._readHttpsFile(normal_manifest_url(platform, language))),
           N._logHandler(`${r.httpsCode}: ${tt.get(r.httpsCode)}`),
           r.httpsCode !== 200 && !i.Extension.Context.isDevEnabled))
           ? a
@@ -10757,7 +10758,7 @@ var ni = L(require("tar")),
       return a || "";
     }
     async _getVEXaiImageVersionOnline(t) {
-      let e = ii(t, Io),
+      let e = ii(t, normal_manifest),
         o = await this._readHttpsFile(`${e}`);
       if (o.httpsCode !== 200)
         return { latest: "", latest_priv: "", catalog: [""], catalog_priv: [] };
@@ -10770,7 +10771,7 @@ var ni = L(require("tar")),
       );
     }
     async _getVEXaiAppListOnline(t) {
-      let e = or(t, Io),
+      let e = or(t, normal_manifest),
         o = await this._readHttpsFile(`${e}`);
       if (o.httpsCode !== 200) return { apps: [] };
       let s = new dt.TextDecoder("UTF-8").decode(o.buf),
@@ -10823,7 +10824,7 @@ var ni = L(require("tar")),
       );
     }
     async _getVEXaiAppManifestOnline(t, e) {
-      let o = si(t, e, Io),
+      let o = si(t, e, normal_manifest),
         s = await this._readHttpsFile(`${o}`);
       if (s.httpsCode !== 200) return { latest: "", catalog: [] };
       let n = new dt.TextDecoder("UTF-8").decode(s.buf),
