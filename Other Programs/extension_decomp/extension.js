@@ -9839,7 +9839,7 @@ var ni = L(require("tar")),
   dt = require("util"),
   Lo = require("child_process"),
   ci = L(require("tls")),
-  tt = new Map([
+  request_responses = new Map([
     [100, "Continue"],
     [201, "Switching Protocols"],
     [202, "Processing"],
@@ -9903,12 +9903,12 @@ var ni = L(require("tar")),
     [510, "Not Extended"],
     [511, "Network Authentication Required"],
   ]),
-  ps = "catalog.txt",
+  catalog = "catalog.txt",
   normal_manifest = "manifest.json",
   dev_manifest = "manifest-dev.json",
-  ms = (_) => `https://content.vexrobotics.com/vexos/public/${_}/`,
-  Zi = (_, t) =>
-    `https://content.vexrobotics.com/vexos/public/${_}/vscode/sdk/${t}`,
+  platform_url = (platform) => `https://content.vexrobotics.com/vexos/public/${platform}/`,
+  sdk_url = (platform, language) =>
+    `https://content.vexrobotics.com/vexos/public/${platform}/vscode/sdk/${language}`,
   normal_manifest_url = (platform, language) =>
     `https://content.vexrobotics.com/vexos/public/${platform}/vscode/sdk/${language}/${normal_manifest}`,
   dev_manifest_url = (platform, language) =>
@@ -9922,7 +9922,7 @@ var ni = L(require("tar")),
   ii = (_, t, e = "") =>
     `https://content.vexrobotics.com/vexai/${_}/images/${t}${e}`,
   sr = (_, t) => `https://content.vexrobotics.com/vexcode/drivers/${_}/${t}`,
-  ri = new Map([
+  platform_toolchains = new Map([
     ["Windows_NT_x32", ["win", "toolchain_win32.zip"]],
     ["Windows_NT_x64", ["win", "toolchain_win32.zip"]],
     ["Darwin_x32", ["osx", "toolchain_osx32.zip"]],
@@ -9944,8 +9944,8 @@ var ni = L(require("tar")),
       N._logHandler("Download Toolchain");
       let e,
         o = t || M.Uri.joinPath(this._context.globalStorageUri, "tools", "cpp"),
-        s = ri.get(`${ot.type()}_${ot.arch()}`)
-          ? ri.get(`${ot.type()}_${ot.arch()}`)
+        s = platform_toolchains.get(`${ot.type()}_${ot.arch()}`)
+          ? platform_toolchains.get(`${ot.type()}_${ot.arch()}`)
           : [ot.type(), `toolchain_${ot.type()}${ot.arch()}.zip`],
         n = tr(N.ContentFolders.vscode, s[0], s[1]),
         a = M.Uri.joinPath(o, s[1]),
@@ -9953,7 +9953,7 @@ var ni = L(require("tar")),
       N._logHandler(`Info:${ot.type()}_${ot.arch()}, ${s}`);
       let c = async (l, d) => {
         let m = await this._downloadHttpsFile(o, n, l, d);
-        if ((console.log(`${m}: ${tt.get(m)}`), m !== 200))
+        if ((console.log(`${m}: ${request_responses.get(m)}`), m !== 200))
           return (
             N._logHandler(`Download Error: ${m}`),
             M.window.showErrorMessage(`Download Error: ${m}`),
@@ -10086,11 +10086,11 @@ var ni = L(require("tar")),
               increment: -100,
               message: "",
             }),
-            console.log(`${E}: ${tt.get(E)}`),
+            console.log(`${E}: ${request_responses.get(E)}`),
             E !== 200)
           )
             return (
-              M.window.showErrorMessage(`${E}: ${tt.get(E)}`),
+              M.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
               await M.workspace.fs.delete(C, {
                 recursive: !0,
                 useTrash: !1,
@@ -10340,7 +10340,7 @@ var ni = L(require("tar")),
         c,
         l = async (d, m) => {
           let w = await this._downloadHttpsFile(a, `${r}`, d, m);
-          if ((console.log(`${w}: ${tt.get(w)}`), w !== 200)) return w;
+          if ((console.log(`${w}: ${request_responses.get(w)}`), w !== 200)) return w;
         };
       if (this._showUiInfo) {
         let d = M.window.withProgress(
@@ -10359,19 +10359,19 @@ var ni = L(require("tar")),
     async downloadVEXosFile(t, e) {
       N._logHandler("Download VEXOS");
       let o = e || M.Uri.joinPath(this._context.globalStorageUri, "vexos", t),
-        s = ms(t),
+        s = platform_url(t),
         n,
         a = async (r, c) => {
-          let l = await this._readHttpsFile(`${ms(t)}${ps}`);
+          let l = await this._readHttpsFile(`${platform_url(t)}${catalog}`);
           if (
-            (console.log(`${l.httpsCode}: ${tt.get(l.httpsCode)}`),
+            (console.log(`${l.httpsCode}: ${request_responses.get(l.httpsCode)}`),
             l.httpsCode !== 200)
           )
             return l.httpsCode;
           let d = new dt.TextDecoder("UTF-8").decode(l.buf);
           d += ".vexos";
           let m = await this._downloadHttpsFile(o, `${s}/${d}`, r, c);
-          if ((console.log(`${m}: ${tt.get(m)}`), m !== 200)) return m;
+          if ((console.log(`${m}: ${request_responses.get(m)}`), m !== 200)) return m;
         };
       if (this._showUiInfo) {
         let r = M.window.withProgress(
@@ -10498,7 +10498,7 @@ var ni = L(require("tar")),
       let save_path = path
           ? M.Uri.joinPath(path, platform)
           : M.Uri.joinPath(this._context.globalStorageUri, "sdk", language),
-        a = Zi(platform, language),
+        a = sdk_url(platform, language),
         r,
         c = async (l, d) => {
           N._logHandler(`Platform: ${platform}`),
@@ -10513,9 +10513,9 @@ var ni = L(require("tar")),
             C = M.Uri.joinPath(save_path, `${b}.zip`),
             E = await this._downloadHttpsFile(save_path, `${a}/${b}.zip`, l, d);
           return (
-            console.log(`${E}: ${tt.get(E)}`),
+            console.log(`${E}: ${request_responses.get(E)}`),
             E !== 200
-              ? (M.window.showErrorMessage(`${E}: ${tt.get(E)}`),
+              ? (M.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
                 await M.workspace.fs.delete(C, {
                   recursive: !0,
                   useTrash: !1,
@@ -10596,9 +10596,9 @@ var ni = L(require("tar")),
           let d = M.Uri.joinPath(o, s),
             m = await this._downloadHttpsFile(o, `${n}`, c, l);
           return (
-            console.log(`${m}: ${tt.get(m)}`),
+            console.log(`${m}: ${request_responses.get(m)}`),
             m !== 200 &&
-              (M.window.showErrorMessage(`${m}: ${tt.get(m)}`),
+              (M.window.showErrorMessage(`${m}: ${request_responses.get(m)}`),
               await M.workspace.fs.delete(d, {
                 recursive: !0,
                 useTrash: !1,
@@ -10669,12 +10669,12 @@ var ni = L(require("tar")),
         },
         r = await this._readHttpsFile(n);
       return (
-        N._logHandler(`${r.httpsCode}: ${tt.get(r.httpsCode)}`),
+        N._logHandler(`${r.httpsCode}: ${request_responses.get(r.httpsCode)}`),
         (r.httpsCode !== 200 && !i.Extension.Context.isDevEnabled) ||
         (r.httpsCode !== 200 &&
           i.Extension.Context.isDevEnabled &&
           ((r = await this._readHttpsFile(normal_manifest_url(platform, language))),
-          N._logHandler(`${r.httpsCode}: ${tt.get(r.httpsCode)}`),
+          N._logHandler(`${r.httpsCode}: ${request_responses.get(r.httpsCode)}`),
           r.httpsCode !== 200 && !i.Extension.Context.isDevEnabled))
           ? a
           : ((a = JSON.parse(new dt.TextDecoder("UTF-8").decode(r.buf))),
@@ -10750,9 +10750,9 @@ var ni = L(require("tar")),
           "vexos",
           t
         ),
-        o = M.Uri.joinPath(e, ps),
-        s = ms(t),
-        n = await this._readHttpsFile(`${s}${ps}`);
+        o = M.Uri.joinPath(e, catalog),
+        s = platform_url(t),
+        n = await this._readHttpsFile(`${s}${catalog}`);
       if (n.httpsCode !== 200) return "";
       let a = new dt.TextDecoder("UTF-8").decode(n.buf);
       return a || "";
@@ -11123,7 +11123,7 @@ var ni = L(require("tar")),
           (Z = c), o.report({ increment: S / k, message: f });
         }
       return (
-        N._logHandler(`Https Download Result:${d}: ${tt.get(d)}`), r.close(), d
+        N._logHandler(`Https Download Result:${d}: ${request_responses.get(d)}`), r.close(), d
       );
     }
     async _readHttpsFile(t, e, o) {
@@ -11210,7 +11210,7 @@ var ni = L(require("tar")),
       )
         await new Promise((E) => setTimeout(E, 100));
       return (
-        N._logHandler(`Https Download Result:${r}: ${tt.get(r)}`),
+        N._logHandler(`Https Download Result:${r}: ${request_responses.get(r)}`),
         {
           httpsCode: r,
           buf: s,

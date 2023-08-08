@@ -14,9 +14,14 @@ IF A CHANGE IS MADE IT MUST GO IN THIS FILE
 * `async _getManifestVersionOnline(t, e)` -> `async _getManifestVersionOnline(platform, language)`
 * `oi = (_, t)` -> `normal_manifest_url = (platform, language)`
 * `er = (_, t` -> `dev_manifest_url = (platform, language)`
+* `Zi = (_, t)` -> `sdk_url = (platform, language)`
+* `ms = (_)` -> `platform_url = (platform)`
 
 ### Variables Renamed:
 
 * `Io` -> `normal_manifest`
 * `Yi` -> `dev_manifest`
 * `downloadSDK:n` -> `downloadSDK:save_path`
+* `ps` -> `catalog`
+* `tt` -> `request_responses`
+* `ri` -> `platform_toolchains`
