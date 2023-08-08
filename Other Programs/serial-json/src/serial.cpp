@@ -49,6 +49,7 @@ std::string Serial::read_string() {
 
     for (int i = 0; i < size; i++) {
         str[i] = fgetc(this->in);
+        printf("\n\n\n\n\n%s", str[i]);
     }
 
     return std::string(str);
