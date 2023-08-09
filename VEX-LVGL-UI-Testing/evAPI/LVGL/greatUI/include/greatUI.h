@@ -37,8 +37,8 @@ namespace evAPI
   class greatUI
   {
     private:
-      thread * brainThread;
-      thread * controllerThread;
+      thread * matchUIThread;
+      thread * controllerUIThread;
 
       uint finalButtonID = 0;
       uint buttonCount = 0;
@@ -47,29 +47,15 @@ namespace evAPI
       int progMode = 0;
 
       void addButtonCore(int id);
-
-      bool debugMode = false;
-
       
     public:
       greatUI(/* args */);
       ~greatUI();
 
       /**
-       * @brief Sets if debugging is enabled.
-       * @param mode A boolean controlling debug mode.
-      */
-      void setDebugMode(bool mode);
-
-      /**
        * @brief Starts the UI thread handling screen updates and touch detection.
       */
       void startUIThreads();
-
-      /**
-       * @brief Sets the display function to be called when any button is pressed.
-      */
-      /* void setDisplayFunc(void (*callback)(void)); */
 
       /**
        * @brief Creates a new button with an ID and a color.
@@ -154,7 +140,7 @@ namespace evAPI
        * @param Title An array of characters that contains the name.
        * @returns False if it successfully adds the data.
       */
-      bool setTitleName(int id, const char Name[MAX_TAB_NAME_LENGTH]);
+      bool setTabName(int id, const char Name[MAX_TAB_NAME_LENGTH]);
 
       /**
        * @brief Maps a button to a specific alliance. This will not change the color of the button.
@@ -164,27 +150,27 @@ namespace evAPI
       bool addAlliance(int id, allianceType alliance);
 
       /**
-       * @brief Changes the color of a button.
+       * @brief Changes the color of a button. THIS FUNCTION CAN ONLY BE RUN AFTER THE UI HAS BEEN STARTED!
        * @param id The ID of the button.
        * @param r The red value for the color of the button.
        * @param g The green value for the color of the button.
        * @param b The blue value for the color of the button.
       */
-      void changeButtonColor(int button, int r, int g, int b);
+      bool changeButtonColor(int id, int r, int g, int b);
 
       /**
-       * @brief Changes the color of a button.
+       * @brief Changes the color of a button. THIS FUNCTION CAN ONLY BE RUN AFTER THE UI HAS BEEN STARTED!
        * @param id The ID of the button.
        * @param buttonColor A color object that contains the color of the button.
       */
-      void changeButtonColor(int button, color buttonColor);
+      bool changeButtonColor(int id, color buttonColor);
 
       /**
-       * @brief Changes the selected button.
-       * @param button The button that will be selected.
+       * @brief Changes the selected button. THIS FUNCTION CAN ONLY BE RUN AFTER THE UI HAS BEEN STARTED!
+       * @param id The button that will be selected.
        * @param doNotShowSettings Optional. Allows the user to change the program showing the name on the screen.
       */
-      void selectButton(int button, bool doNotShowSettings = false);
+      void selectButton(int id, bool doNotShowSettings = false);
 
       /**
        * @brief Sets the time the button info box will be displayed on the Brain.

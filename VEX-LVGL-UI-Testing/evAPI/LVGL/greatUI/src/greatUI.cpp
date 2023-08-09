@@ -89,7 +89,6 @@ namespace evAPI
         char * name;
         asprintf(&name, "Tab %d", (i+1));
         autoTabs[i] = lv_tabview_add_tab(pageTabs, name);
-        printf("No Name added\n\n");
       }
 
       else
@@ -106,6 +105,7 @@ namespace evAPI
     int verticalOffsetMultiplier = 1;
     int horizontalOffsetMultiplier = 1;
     int buttonTab = 0;
+
 
     for (uint currentButton = 0; currentButton < (UI.getFinalButtonID() + 1); currentButton++)
     {
@@ -205,14 +205,10 @@ namespace evAPI
   {
     for(uint i = 0; i < MAX_TAB_COUNT; i++)
     { autoTabNameLength[i] = 0; }
-    
   }
   
   greatUI::~greatUI()
   {}
-
-  void greatUI::setDebugMode(bool mode)
-  { debugMode = mode; }
 
   void greatUI::startUIThreads()
   {
@@ -225,6 +221,7 @@ namespace evAPI
     { return; }
 
     buttonList[id] = new button;
+    buttonList[id]->buttonCallback = NULL;
     buttonCount++;
 
     if(id > finalButtonID)
@@ -307,7 +304,14 @@ namespace evAPI
     return 0;
   }
 
+  bool greatUI::addCallbackFunc(int id, void (*callback)(int))
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
 
+    buttonList[id]->buttonCallback = callback;
+    return false;
+  }
 
   bool greatUI::addTitle(int id, const char Title[MAX_TITLE_LENGTH])
   {
@@ -335,7 +339,7 @@ namespace evAPI
     return false;
   }
 
-  bool greatUI::setTitleName(int id, const char Name[MAX_TAB_NAME_LENGTH])
+  bool greatUI::setTabName(int id, const char Name[MAX_TAB_NAME_LENGTH])
   {
     int nameLength = strlen(Name);
 
@@ -347,12 +351,45 @@ namespace evAPI
     return false;
   }
 
+  bool greatUI::addAlliance(int id, allianceType alliance)
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
 
+    buttonList[id]->buttonAlliance = alliance;
+    return 0;
+  }
+
+  bool greatUI::changeButtonColor(int id, int r, int g, int b)
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
+
+    lv_style_set_bg_color(&buttonStyle[id], lv_color_make(r, g, b));
+    lv_obj_invalidate(pageTabs);
+
+    return 0;
+  }
+
+  bool greatUI::changeButtonColor(int id, color buttonColor)
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
+
+    lv_style_set_bg_color(&buttonStyle[id], lv_color_hex(buttonColor.rgb()));
+    lv_obj_invalidate(pageTabs);
+    
+    return 0;
+  }
 
   void greatUI::selectButton(int id, bool doNotShowSettings)
   {
     if(pageTabs == nullptr)
     { return; }
+
+    if(buttonList[id]->buttonCallback != nullptr)//Run button callback
+    { buttonList[id]->buttonCallback(id); }
+    
 
     progMode = id;
     buttonInfoBoxTime.operator=(0);

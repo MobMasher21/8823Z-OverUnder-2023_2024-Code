@@ -23,10 +23,15 @@ vex::brain       Brain;
 
 // define your global instances of motors and other devices here
 
+void testCallback(int id)
+{
+  printf("Button %d was pressed.\n\n", id);
+}
+
 int main() {
 
   //Auto Page
-  UI.setTitleName(0, "Auto");
+  UI.setTabName(0, "Auto");
   UI.addButton(BLUE_SCORING_AUTO, blue);
   UI.addTitle(BLUE_SCORING_AUTO, "Scoring");
   UI.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
@@ -39,7 +44,7 @@ int main() {
   UI.addIcon(BLUE_LOADING_AUTO, RIGHT_ARROW);
   UI.setIconColor(BLUE_LOADING_AUTO, black);
 
-  UI.setTitleName(RED_SCORING_AUTO, "Auto");
+  UI.setTabName(RED_SCORING_AUTO, "Auto");
   UI.addButton(RED_SCORING_AUTO, red);
   UI.addTitle(RED_SCORING_AUTO, "Scoring");
   UI.addDescription(RED_SCORING_AUTO, "Auto for a red alliance robot on the scoring side.");
@@ -53,7 +58,7 @@ int main() {
   UI.setIconColor(RED_LOADING_AUTO, black);
     
   //Skills Page
-  UI.setTitleName(1, "Skills");
+  UI.setTabName(1, "Skills");
   UI.addButton(SKILLS_AUTO_BASIC, 0xff, 0x10, 0xa0);
   UI.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
   UI.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
@@ -61,9 +66,10 @@ int main() {
   UI.setIconColor(SKILLS_AUTO_BASIC, black);
 
   //Other Page
-  UI.setTitleName(2, "Other");
+  UI.setTabName(2, "Other");
   UI.addButton(20, noAlliance);
   UI.addTitle(20, "Testing");
+  UI.addCallbackFunc(20, testCallback);
 
   UI.setDisplayTime(1500);
 
