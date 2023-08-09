@@ -47,19 +47,19 @@ ji(ur, {
   deactivate: () => mr,
 });
 module.exports = Ri(ur);
-var vi = L(require("vscode"));
-var st = L(require("vscode"));
-var Jt = L(require("vscode"));
-var rt = L(require("fs")),
-  Mt = L(require("child_process")),
-  nt = L(require("path")),
-  is = L(require("os")),
+var vscode = L(require("vscode"));
+var vscode = L(require("vscode"));
+var vscode = L(require("vscode"));
+var fs = L(require("fs")),
+  child_process = L(require("child_process")),
+  path = L(require("path")),
+  os = L(require("os")),
   ki = "1.0.5",
   x = class {
     constructor(t, e, o) {
-      (this._exeName = nt.basename(t)),
+      (this._exeName = path.basename(t)),
         (this._exePath = t),
-        (this._exeParentPath = nt.dirname(t)),
+        (this._exeParentPath = path.dirname(t)),
         (this._devPath = e || ""),
         (this._queOptions = o || {
           active: !0,
@@ -211,12 +211,12 @@ var rt = L(require("fs")),
     checkFile(t, e, o) {
       let s = {
         cmdID: o,
-        cmdStr: `${nt.basename(this._exeParentPath)} ${e}`,
+        cmdStr: `${path.basename(this._exeParentPath)} ${e}`,
         stderr: "",
         stdout: "",
         exitCode: x.ExitCode.vexSucess,
       };
-      if (!rt.existsSync(t))
+      if (!fs.existsSync(t))
         return (s.exitCode = x.ExitCode.vexAPIErrorFilePath), s;
       let a = [];
       switch (o) {
@@ -237,60 +237,60 @@ var rt = L(require("fs")),
           a = [];
           break;
       }
-      let r = nt.basename(t).split("."),
+      let r = path.basename(t).split("."),
         c = r[r.length - 1];
       return (
         a.includes(c) || (s.exitCode = x.ExitCode.vexAPIErrorFileExtension), s
       );
     }
     _checkFilePermissions() {
-      if (is.type() === "Linux") {
-        let t = rt.statSync(this._exePath);
+      if (os.type() === "Linux") {
+        let t = fs.statSync(this._exePath);
         (t.mode & 4095) !== 493 &&
           (console.log(
             "CHMOD",
             new TextDecoder().decode(
-              Mt.spawnSync(`chmod 755 ${this._exePath}`, {
+              child_process.spawnSync(`chmod 755 ${this._exePath}`, {
                 shell: !0,
               }).stderr
             )
           ),
-          (t = rt.statSync(this._exePath)),
+          (t = fs.statSync(this._exePath)),
           console.log("New File Permission", (t.mode & 4095).toString(8)));
-      } else if (is.type() === "Darwin") {
-        let t = nt.dirname(this._exePath),
-          e = rt.readdirSync(t),
+      } else if (os.type() === "Darwin") {
+        let t = path.dirname(this._exePath),
+          e = fs.readdirSync(t),
           o = [];
         o.push(this._exePath),
           o.forEach((s) => {
-            let n = rt.statSync(s);
+            let n = fs.statSync(s);
             (n.mode & 4095) !== 493 &&
               (console.log(
                 "CHMOD",
                 new TextDecoder().decode(
-                  Mt.spawnSync(`chmod 755 ${this._exePath}`, {
+                  child_process.spawnSync(`chmod 755 ${this._exePath}`, {
                     shell: !0,
                   }).stderr
                 )
               ),
-              (n = rt.statSync(this._exePath)),
+              (n = fs.statSync(this._exePath)),
               console.log(
-                `${nt.basename(s)}: Updated File Permission`,
+                `${path.basename(s)}: Updated File Permission`,
                 (n.mode & 4095).toString(8)
               ));
           });
       } else {
-        let t = rt.statSync(this._exePath);
+        let t = fs.statSync(this._exePath);
         (t.mode & 4095) !== 438 &&
           (console.log(
             "CHMOD",
             new TextDecoder().decode(
-              Mt.spawnSync(`chmod +x ${this._exePath}`, {
+              child_process.spawnSync(`chmod +x ${this._exePath}`, {
                 shell: !0,
               }).stderr
             )
           ),
-          (t = rt.statSync(this._exePath)),
+          (t = fs.statSync(this._exePath)),
           console.log("New File Permission", (t.mode & 4095).toString(8)));
       }
     }
@@ -306,7 +306,7 @@ var rt = L(require("fs")),
     _runVexcomCMD(t, e = x.CommandID.unknown, o = !1, s = void 0) {
       let n = this,
         a = this._exeParentPath;
-      if (!rt.existsSync(this._exeParentPath)) {
+      if (!fs.existsSync(this._exeParentPath)) {
         this._onErrorRecieved(
           e,
           Number(
@@ -335,19 +335,19 @@ var rt = L(require("fs")),
           E = !1,
           T = {};
         (T.cwd = this._exeParentPath),
-          (T.PATH = this._exeParentPath + nt.delimiter + process.env.PATH);
+          (T.PATH = this._exeParentPath + path.delimiter + process.env.PATH);
         let O = {
           cwd: this._exeParentPath,
           shell: !0,
           env: T,
         };
         o
-          ? (n._vexcomCP = Mt.spawn(
+          ? (n._vexcomCP = child_process.spawn(
               "echo",
               this._splitArgString(`"${s}" | sudo -S ${this._exeName} ${t}`),
               O
             ))
-          : (n._vexcomCP = Mt.spawn(this._exeName, this._splitArgString(t), O)),
+          : (n._vexcomCP = child_process.spawn(this._exeName, this._splitArgString(t), O)),
           n._vexcomCP.stdout.on("data", function (f) {
             (C += f), n._onDataRecieved(d, f, n);
           }),
@@ -392,7 +392,7 @@ var rt = L(require("fs")),
       let o = this;
       o._vexcomUserCP = void 0;
       let s = this._exePath;
-      if (!rt.existsSync(this._exePath)) {
+      if (!fs.existsSync(this._exePath)) {
         this._onErrorRecieved(
           e,
           Number(
@@ -418,18 +418,18 @@ var rt = L(require("fs")),
       let n = (r, c, l) => {
           let d = {};
           (d.cwd = this._exeParentPath),
-            (d.PATH = this._exeParentPath + nt.delimiter + process.env.PATH);
+            (d.PATH = this._exeParentPath + path.delimiter + process.env.PATH);
           let m = {
               cwd: this._exeParentPath,
               shell: !0,
               env: d,
             },
-            w = Mt.spawn(this._exeName, this._splitArgString(t), m);
+            w = child_process.spawn(this._exeName, this._splitArgString(t), m);
           r(w);
         },
         a = async (r, c, l, d) => {
           let m = e,
-            w = `${nt.basename(l._exePath)} ${t}`,
+            w = `${path.basename(l._exePath)} ${t}`,
             b = "";
           (l._vexcomUserCP = await d),
             l._vexcomUserCP.stdout.on("data", function (C) {
@@ -674,8 +674,8 @@ var Es = new Map([
     reject: void 0,
     resolve: void 0,
   });
-var oe = L(require("vscode")),
-  at = L(require("os")),
+var vscode = L(require("vscode")),
+  os = L(require("os")),
   ko = L(require("path")),
   ct = L(require("fs")),
   js = L(require("unzipper"));
@@ -1442,15 +1442,15 @@ var Rs = L(require("crypto")),
       (S.author = "vexrobotics"),
       (S.id = `${S.author}.${S.name}`);
     function w() {
-      return oe.extensions.all.filter((V) => V.id.includes(S.name))[0]
+      return vscode.extensions.all.filter((V) => V.id.includes(S.name))[0]
         .packageJSON.version;
     }
     (S.version = w), (S.vexcomVersion = "");
     function C(W) {
       let V;
       return (
-        at.type() === "Windows_NT" &&
-          (V = oe.Uri.joinPath(
+        os.type() === "Windows_NT" &&
+          (V = vscode.Uri.joinPath(
             W.extensionUri,
             "resources",
             "tools",
@@ -1458,8 +1458,8 @@ var Rs = L(require("crypto")),
             "win32",
             "vexcom.exe"
           )),
-        at.type() === "Darwin" &&
-          (V = oe.Uri.joinPath(
+        os.type() === "Darwin" &&
+          (V = vscode.Uri.joinPath(
             W.extensionUri,
             "resources",
             "tools",
@@ -1467,9 +1467,9 @@ var Rs = L(require("crypto")),
             "osx",
             "vexcom"
           )),
-        at.type() === "Linux" &&
-          at.arch() === "x64" &&
-          (V = oe.Uri.joinPath(
+        os.type() === "Linux" &&
+          os.arch() === "x64" &&
+          (V = vscode.Uri.joinPath(
             W.extensionUri,
             "resources",
             "tools",
@@ -1477,9 +1477,9 @@ var Rs = L(require("crypto")),
             "linux-x64",
             "vexcom"
           )),
-        at.type() === "Linux" &&
-          at.arch() === "arm64" &&
-          (V = oe.Uri.joinPath(
+        os.type() === "Linux" &&
+          os.arch() === "arm64" &&
+          (V = vscode.Uri.joinPath(
             W.extensionUri,
             "resources",
             "tools",
@@ -1487,9 +1487,9 @@ var Rs = L(require("crypto")),
             "linux-arm64",
             "vexcom"
           )),
-        at.type() === "Linux" &&
-          at.arch() === "arm" &&
-          (V = oe.Uri.joinPath(
+        os.type() === "Linux" &&
+          os.arch() === "arm" &&
+          (V = vscode.Uri.joinPath(
             W.extensionUri,
             "resources",
             "tools",
@@ -1531,7 +1531,7 @@ var Rs = L(require("crypto")),
             foreground: "#00a000",
           },
         ],
-        V = oe.workspace
+        V = vscode.workspace
           .getConfiguration()
           .get("editor.tokenColorCustomizations.textMateRules"),
         X = [];
@@ -1548,12 +1548,12 @@ var Rs = L(require("crypto")),
           });
       }),
         X.forEach((se) => V.push(se)),
-        await oe.workspace.getConfiguration().update(
+        await vscode.workspace.getConfiguration().update(
           "editor.tokenColorCustomizations",
           {
             textMateRules: V,
           },
-          oe.ConfigurationTarget.Global,
+          vscode.ConfigurationTarget.Global,
           !0
         ),
         console.log("done");
@@ -1566,7 +1566,7 @@ var Rs = L(require("crypto")),
         (re.debugEnabled = `${S.id}.debugEnabled`),
         (re.isDevEnabled = !1);
       async function se(fe) {
-        return oe.commands.executeCommand(
+        return vscode.commands.executeCommand(
           "setContext",
           re.isValidProjectID,
           fe
@@ -1576,7 +1576,7 @@ var Rs = L(require("crypto")),
       async function G(fe) {
         return (
           (re.isDevEnabled = fe),
-          oe.commands.executeCommand("setContext", re.debugEnabled, fe)
+          vscode.commands.executeCommand("setContext", re.debugEnabled, fe)
         );
       }
       re.setDebug = G;
@@ -1624,63 +1624,63 @@ var Rs = L(require("crypto")),
         (Q.webSocketSettings = `${S.id}.websocket.settings`),
         (Q.downloadAI = `${S.id}.ai.downloadfile`);
       async function ws() {
-        return oe.commands.executeCommand(Q.buildID);
+        return vscode.commands.executeCommand(Q.buildID);
       }
       Q.build = ws;
       async function Cs() {
-        return oe.commands.executeCommand(Q.cleanID);
+        return vscode.commands.executeCommand(Q.cleanID);
       }
       Q.clean = Cs;
       async function fi() {
-        return oe.commands.executeCommand(Q.rebuildID);
+        return vscode.commands.executeCommand(Q.rebuildID);
       }
       Q.rebuild = fi;
       async function Zo() {
-        return oe.commands.executeCommand(Q.newProjectID);
+        return vscode.commands.executeCommand(Q.newProjectID);
       }
       Q.newProject = Zo;
       async function mo() {
-        return oe.commands.executeCommand(Q.importID);
+        return vscode.commands.executeCommand(Q.importID);
       }
       Q.importProject = mo;
       async function Eo() {
-        return oe.commands.executeCommand(Q.systemInfoID);
+        return vscode.commands.executeCommand(Q.systemInfoID);
       }
       Q.systemInfo = Eo;
       async function $t() {
-        return oe.commands.executeCommand(Q.screenGrabID);
+        return vscode.commands.executeCommand(Q.screenGrabID);
       }
       Q.screenGrab = $t;
       async function es() {
-        return oe.commands.executeCommand(Q.brainNameID);
+        return vscode.commands.executeCommand(Q.brainNameID);
       }
       Q.setBrainName = es;
       async function hi() {
-        return oe.commands.executeCommand(Q.teamNumberID);
+        return vscode.commands.executeCommand(Q.teamNumberID);
       }
       Q.setTeamNumber = hi;
       async function xi() {
-        return oe.commands.executeCommand(Q.batteryMedicID);
+        return vscode.commands.executeCommand(Q.batteryMedicID);
       }
       Q.batteryMedic = xi;
       async function Is() {
-        return oe.commands.executeCommand(Q.systemUpdateVEXosID);
+        return vscode.commands.executeCommand(Q.systemUpdateVEXosID);
       }
       Q.systemUpdateVEXos = Is;
       async function ts(os) {
-        return oe.commands.executeCommand(Q.systemUpdatePythonVmID, os);
+        return vscode.commands.executeCommand(Q.systemUpdatePythonVmID, os);
       }
       Q.systemUpdatePythonVM = ts;
       async function Ps() {
-        return oe.commands.executeCommand(Q.downloadID);
+        return vscode.commands.executeCommand(Q.downloadID);
       }
       Q.downloadUserProgram = Ps;
       async function _s() {
-        return oe.commands.executeCommand(Q.vexCommandHelpID);
+        return vscode.commands.executeCommand(Q.vexCommandHelpID);
       }
       Q.vexCommandHelp = _s;
       async function Ds() {
-        return oe.commands.executeCommand(Q.vexCommandHelpShowAllID);
+        return vscode.commands.executeCommand(Q.vexCommandHelpShowAllID);
       }
       Q.vexCommandHelpShowAll = Ds;
     })((f = S.Command || (S.Command = {})));
@@ -1764,59 +1764,59 @@ var Rs = L(require("crypto")),
       async function Uo(De, Le, Wt) {
         return (
           console.log("Send Command SDK Version", Wt),
-          oe.commands.executeCommand(he.getSDKVersionID, De, Le, Wt)
+          vscode.commands.executeCommand(he.getSDKVersionID, De, Le, Wt)
         );
       }
       he.getSDKVersion = Uo;
       async function yo(De, Le, Wt, So) {
-        return oe.commands.executeCommand(he.downloadSDKID, De, Le, Wt, So);
+        return vscode.commands.executeCommand(he.downloadSDKID, De, Le, Wt, So);
       }
       he.downloadSDK = yo;
       async function po(De) {
-        return oe.commands.executeCommand(he.downloadToolchainID, De);
+        return vscode.commands.executeCommand(he.downloadToolchainID, De);
       }
       he.downloadToolchain = po;
       async function K(De, Le) {
-        return oe.commands.executeCommand(he.getVexosVersionID, De, Le);
+        return vscode.commands.executeCommand(he.getVexosVersionID, De, Le);
       }
       he.getVEXosVersions = K;
       async function ke(De, Le) {
-        return oe.commands.executeCommand(he.downloadVexosID, De, Le);
+        return vscode.commands.executeCommand(he.downloadVexosID, De, Le);
       }
       he.downloadLatestVEXos = ke;
       async function Te(De) {
-        return oe.commands.executeCommand(
+        return vscode.commands.executeCommand(
           r.Extension.ResourceManager.downloadVexaiAppID,
           De
         );
       }
       he.downloadVEXaiApp = Te;
       async function Wo(De, Le) {
-        return oe.commands.executeCommand(he.getVexosManifestID, De, Le);
+        return vscode.commands.executeCommand(he.getVexosManifestID, De, Le);
       }
       he.getLatestVEXosManifest = Wo;
       async function Go(De) {
-        return oe.commands.executeCommand(he.getVexaiAppListManifestID, De);
+        return vscode.commands.executeCommand(he.getVexaiAppListManifestID, De);
       }
       he.getVEXaiAppListVersions = Go;
       async function Jo(De, Le) {
-        return oe.commands.executeCommand(he.getVexaiAppManifestID, De, Le);
+        return vscode.commands.executeCommand(he.getVexaiAppManifestID, De, Le);
       }
       he.getVEXaiAppVersions = Jo;
       async function qo(De, Le) {
-        return oe.commands.executeCommand(he.downloadVexaiID, De, Le);
+        return vscode.commands.executeCommand(he.downloadVexaiID, De, Le);
       }
       he.downloadLatestVEXaiImage = qo;
       async function Ko(De) {
-        return oe.commands.executeCommand(he.getVexaiImageManifestID, De);
+        return vscode.commands.executeCommand(he.getVexaiImageManifestID, De);
       }
       he.getLatestVEXaiManifest = Ko;
       async function Qo(De, Le) {
-        return oe.commands.executeCommand(he.verifyVexaiImageID, De, Le);
+        return vscode.commands.executeCommand(he.verifyVexaiImageID, De, Le);
       }
       he.verifyVEXaiImage = Qo;
       async function Yo(De, Le) {
-        return oe.commands.executeCommand(he.downloadDriverInstallerID, De, Le);
+        return vscode.commands.executeCommand(he.downloadDriverInstallerID, De, Le);
       }
       he.downloadDriverInstaller = Yo;
     })((z = S.ResourceManager || (S.ResourceManager = {})));
@@ -1859,19 +1859,19 @@ var Rs = L(require("crypto")),
     ((b) => {
       function d() {
         let C = [],
-          E = oe.extensions.getExtension(r.Extension.id).extensionUri,
-          T = oe.Uri.joinPath(E, "resources", "extensions");
+          E = vscode.extensions.getExtension(r.Extension.id).extensionUri,
+          T = vscode.Uri.joinPath(E, "resources", "extensions");
         return (
           ct.readdirSync(T.fsPath).forEach((f) => {
-            let k = oe.Uri.joinPath(T, f),
+            let k = vscode.Uri.joinPath(T, f),
               z = JSON.parse(
                 new TextDecoder().decode(
-                  ct.readFileSync(oe.Uri.joinPath(k, "package.json").fsPath)
+                  ct.readFileSync(vscode.Uri.joinPath(k, "package.json").fsPath)
                 )
               ),
               Z = {
                 id: `${z.publisher}.${z.name}`,
-                extensionKind: oe.ExtensionKind.UI,
+                extensionKind: vscode.ExtensionKind.UI,
                 isActive: !1,
                 packageJSON: z,
                 extensionUri: k,
@@ -1918,9 +1918,9 @@ var Rs = L(require("crypto")),
       let f = new TextDecoder(),
         k;
       return (
-        at.type() === "Windows_NT"
+        os.type() === "Windows_NT"
           ? (k = f.decode(new Uint8Array([13, 10]).buffer))
-          : at.type() === "Darwin"
+          : os.type() === "Darwin"
           ? (k = f.decode(new Uint8Array([13]).buffer))
           : (k = f.decode(new Uint8Array([13]).buffer)),
         k
@@ -2442,7 +2442,7 @@ var No = L(require("os")),
     }
     async downloadPythonVM(e) {
       let o = {
-          location: Jt.ProgressLocation.Notification,
+          location: vscode.ProgressLocation.Notification,
           title: "Python VM Update: ",
           cancellable: !1,
         },
@@ -2512,7 +2512,7 @@ var No = L(require("os")),
           maxCmds: 0,
         }),
         a = {
-          location: Jt.ProgressLocation.Notification,
+          location: vscode.ProgressLocation.Notification,
           title: "Controller Usb Update: ",
           cancellable: !1,
         },
@@ -2539,7 +2539,7 @@ var No = L(require("os")),
     }
     async uploadEventLog(e = 1e3) {
       let o = {
-          location: Jt.ProgressLocation.Notification,
+          location: vscode.ProgressLocation.Notification,
           title: "Upload Event Log: ",
           cancellable: !1,
         },
@@ -2555,7 +2555,7 @@ var No = L(require("os")),
     }
     async systemUpdate(e, o = !1) {
       let s = {
-          location: Jt.ProgressLocation.Notification,
+          location: vscode.ProgressLocation.Notification,
           title: "Vexos Update: ",
           cancellable: !1,
         },
@@ -2711,7 +2711,7 @@ var No = L(require("os")),
           await e()
         );
       {
-        let a = Jt.window.withProgress(o, async (r, c) => {
+        let a = vscode.window.withProgress(o, async (r, c) => {
           this._progress
             ? ((s = n(r, c)), await s)
             : ((this._lastProgress = 0),
@@ -9828,17 +9828,17 @@ Build Args`),
     ]));
   let e = !0;
 })(Ke || (Ke = {}));
-var M = L(require("vscode")),
-  Zt = L(require("https")),
-  be = L(require("fs")),
-  ot = L(require("os"));
-var ni = L(require("tar")),
-  Oo = L(require("unzipper")),
-  ai = L(require("etl")),
-  Se = L(require("path")),
-  dt = require("util"),
-  Lo = require("child_process"),
-  ci = L(require("tls")),
+var vscode = L(require("vscode")),
+  https = L(require("https")),
+  fs = L(require("fs")),
+  os = L(require("os"));
+var tar = L(require("tar")),
+  unzipper = L(require("unzipper")),
+  etl = L(require("etl")),
+  path = L(require("path")),
+  util = require("util"),
+  child_process = require("child_process"),
+  tls = L(require("tls")),
   request_responses = new Map([
     [100, "Continue"],
     [201, "Switching Protocols"],
@@ -9943,25 +9943,25 @@ var ni = L(require("tar")),
     async downloadToolChain(t) {
       N._logHandler("Download Toolchain");
       let e,
-        o = t || M.Uri.joinPath(this._context.globalStorageUri, "tools", "cpp"),
-        s = platform_toolchains.get(`${ot.type()}_${ot.arch()}`)
-          ? platform_toolchains.get(`${ot.type()}_${ot.arch()}`)
-          : [ot.type(), `toolchain_${ot.type()}${ot.arch()}.zip`],
+        o = t || vscode.Uri.joinPath(this._context.globalStorageUri, "tools", "cpp"),
+        s = platform_toolchains.get(`${os.type()}_${os.arch()}`)
+          ? platform_toolchains.get(`${os.type()}_${os.arch()}`)
+          : [os.type(), `toolchain_${os.type()}${os.arch()}.zip`],
         n = tr(N.ContentFolders.vscode, s[0], s[1]),
-        a = M.Uri.joinPath(o, s[1]),
-        r = M.Uri.joinPath(o, Se.basename(a.fsPath, ".zip"));
-      N._logHandler(`Info:${ot.type()}_${ot.arch()}, ${s}`);
+        a = vscode.Uri.joinPath(o, s[1]),
+        r = vscode.Uri.joinPath(o, path.basename(a.fsPath, ".zip"));
+      N._logHandler(`Info:${os.type()}_${os.arch()}, ${s}`);
       let c = async (l, d) => {
         let m = await this._downloadHttpsFile(o, n, l, d);
         if ((console.log(`${m}: ${request_responses.get(m)}`), m !== 200))
           return (
             N._logHandler(`Download Error: ${m}`),
-            M.window.showErrorMessage(`Download Error: ${m}`),
+            vscode.window.showErrorMessage(`Download Error: ${m}`),
             m
           );
-        if (be.existsSync(r.fsPath)) {
+        if (fs.existsSync(r.fsPath)) {
           N._logHandler(`Deleting old toolchain @ ${r.fsPath}`);
-          let b = await M.workspace.fs.delete(r, {
+          let b = await vscode.workspace.fs.delete(r, {
             recursive: !0,
             useTrash: !1,
           });
@@ -9969,19 +9969,19 @@ var ni = L(require("tar")),
         }
         let w = await N._unzipFile(a, void 0, l, d);
         return (
-          await M.workspace.fs.delete(a, {
+          await vscode.workspace.fs.delete(a, {
             recursive: !0,
             useTrash: !1,
           }),
           w
-            ? (M.window.showErrorMessage(`Unzip Error: ${m}`), m)
+            ? (vscode.window.showErrorMessage(`Unzip Error: ${m}`), m)
             : (this.installToolchain(r), 0)
         );
       };
       if (this._showUiInfo) {
-        let l = M.window.withProgress(
+        let l = vscode.window.withProgress(
           {
-            location: M.ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: "",
             cancellable: !0,
           },
@@ -10001,24 +10001,24 @@ var ni = L(require("tar")),
       };
       if (
         (s("Installing Toolchain"),
-        ot.type() === "Darwin" || ot.type() === "Linux")
+        os.type() === "Darwin" || os.type() === "Linux")
       ) {
         console.log("toolchain URi", t);
-        let n = M.Uri.joinPath(t, "clang", "bin"),
-          a = M.Uri.joinPath(t, "gcc", "bin"),
-          r = M.Uri.joinPath(t, "tools", "bin");
+        let n = vscode.Uri.joinPath(t, "clang", "bin"),
+          a = vscode.Uri.joinPath(t, "gcc", "bin"),
+          r = vscode.Uri.joinPath(t, "tools", "bin");
         console.log(
           "Path EXIST",
-          be.existsSync(n.fsPath),
-          be.existsSync(a.fsPath),
-          be.existsSync(r.fsPath)
+          fs.existsSync(n.fsPath),
+          fs.existsSync(a.fsPath),
+          fs.existsSync(r.fsPath)
         ),
-          (await M.workspace.fs.readDirectory(n)).forEach((c) => {
+          (await vscode.workspace.fs.readDirectory(n)).forEach((c) => {
             N._logHandler(`File: ${c[0]}`),
               console.log(`File: ${c[0]}`),
               console.log(
-                new dt.TextDecoder().decode(
-                  (0, Lo.spawnSync)(`chmod +x ${c[0]}`, {
+                new util.TextDecoder().decode(
+                  (0, child_process.spawnSync)(`chmod +x ${c[0]}`, {
                     env: process.env,
                     cwd: n.fsPath,
                     shell: !0,
@@ -10026,12 +10026,12 @@ var ni = L(require("tar")),
                 )
               );
           }),
-          (await M.workspace.fs.readDirectory(r)).forEach((c) => {
+          (await vscode.workspace.fs.readDirectory(r)).forEach((c) => {
             N._logHandler(`File: ${c[0]}`),
               console.log(`File: ${c[0]}`),
               console.log(
-                new dt.TextDecoder().decode(
-                  (0, Lo.spawnSync)(`chmod +x ${c[0]}`, {
+                new util.TextDecoder().decode(
+                  (0, child_process.spawnSync)(`chmod +x ${c[0]}`, {
                     env: process.env,
                     cwd: r.fsPath,
                     shell: !0,
@@ -10039,12 +10039,12 @@ var ni = L(require("tar")),
                 )
               );
           }),
-          (await M.workspace.fs.readDirectory(a)).forEach((c) => {
+          (await vscode.workspace.fs.readDirectory(a)).forEach((c) => {
             N._logHandler(`File: ${c[0]}`),
               console.log(`File: ${c[0]}`),
               console.log(
-                new dt.TextDecoder().decode(
-                  (0, Lo.spawnSync)(`chmod +x ${c[0]}`, {
+                new util.TextDecoder().decode(
+                  (0, child_process.spawnSync)(`chmod +x ${c[0]}`, {
                     env: process.env,
                     cwd: a.fsPath,
                     shell: !0,
@@ -10052,7 +10052,7 @@ var ni = L(require("tar")),
                 )
               );
           });
-      } else ot.type();
+      } else os.type();
       s("Installing Finished");
     }
     async downloadVEXaiImage(t, e) {
@@ -10060,20 +10060,20 @@ var ni = L(require("tar")),
       N._logHandler(`Download VEX Image ${o}`);
       let s = require("os").homedir();
       console.log(s);
-      let n = M.Uri.joinPath(
-          M.Uri.file(s),
+      let n = vscode.Uri.joinPath(
+          vscode.Uri.file(s),
           `.${i.Extension.id}`,
           "vexai",
           o,
           "images"
         ),
-        a = t ? M.Uri.joinPath(t, "vexai", o) : n,
+        a = t ? vscode.Uri.joinPath(t, "vexai", o) : n,
         r,
         c = async (m, w) => {
           N._logHandler(`Platform: ${o}`), N._logHandler(`Location: ${t}`);
           let b = await this._getVEXaiImageVersionOnline(o);
           if (!b) return;
-          let C = M.Uri.joinPath(a, `${b.latest}.tar.gz`);
+          let C = vscode.Uri.joinPath(a, `${b.latest}.tar.gz`);
           console.time("StreamRead");
           let E = await this._downloadHttpsFile(
             a,
@@ -10090,29 +10090,29 @@ var ni = L(require("tar")),
             E !== 200)
           )
             return (
-              M.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
-              await M.workspace.fs.delete(C, {
+              vscode.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
+              await vscode.workspace.fs.delete(C, {
                 recursive: !0,
                 useTrash: !1,
               }),
               E
             );
-          let T = M.Uri.joinPath(a, `${b.latest}.tar.gz`),
-            O = M.Uri.joinPath(a, `${b.latest}`);
-          be.existsSync(O.fsPath) ||
-            (be.rmSync(O.fsPath, {
+          let T = vscode.Uri.joinPath(a, `${b.latest}.tar.gz`),
+            O = vscode.Uri.joinPath(a, `${b.latest}`);
+          fs.existsSync(O.fsPath) ||
+            (fs.rmSync(O.fsPath, {
               force: !0,
               recursive: !0,
             }),
-            be.mkdirSync(O.fsPath)),
+            fs.mkdirSync(O.fsPath)),
             m.report({
               increment: -100,
               message: "",
             });
-          let f = be.statSync(T.fsPath),
-            k = be.createReadStream(T.fsPath);
+          let f = fs.statSync(T.fsPath),
+            k = fs.createReadStream(T.fsPath);
           k.pipe(
-            ni.x({
+            tar.x({
               cwd: O.fsPath,
             })
           ),
@@ -10127,7 +10127,7 @@ var ni = L(require("tar")),
             (z = Z),
               m.report({
                 increment: S / f.size,
-                message: `Extracting:${Se.basename(T.fsPath)} ${(
+                message: `Extracting:${path.basename(T.fsPath)} ${(
                   (k.bytesRead / f.size) *
                   100
                 ).toFixed(1)}%`,
@@ -10192,22 +10192,22 @@ var ni = L(require("tar")),
       );
     }
     async verifyVEXaiImage(t, e) {
-      let o = M.Uri.joinPath(t, "manifest.json"),
-        s = M.Uri.file(t.fsPath + ".tar.gz"),
+      let o = vscode.Uri.joinPath(t, "manifest.json"),
+        s = vscode.Uri.file(t.fsPath + ".tar.gz"),
         n = 0,
         a = 0,
         r,
         c = async (m, w) => {
-          if (!be.existsSync(o.fsPath))
+          if (!fs.existsSync(o.fsPath))
             return (
-              await M.workspace.fs.delete(t),
+              await vscode.workspace.fs.delete(t),
               {
                 checksum: "",
                 errorCode: -3,
               }
             );
-          let b = await M.workspace.fs.readFile(o),
-            C = new dt.TextDecoder().decode(b),
+          let b = await vscode.workspace.fs.readFile(o),
+            C = new util.TextDecoder().decode(b),
             E = JSON.parse(C);
           m.report({
             increment: -100,
@@ -10228,7 +10228,7 @@ var ni = L(require("tar")),
                       message: "Verifying Local Image:",
                     });
               },
-              z = M.Uri.file(Se.resolve(t.fsPath, f.path)),
+              z = vscode.Uri.file(path.resolve(t.fsPath, f.path)),
               Z = await i.Utils.getMd5FromFile(z, "hex", {
                 cb: k,
                 updateTimeMs: 100,
@@ -10241,12 +10241,12 @@ var ni = L(require("tar")),
               Z.checksum !== f.checksum)
             )
               return (
-                be.existsSync(s.fsPath) &&
-                  (await M.workspace.fs.delete(s, {
+                fs.existsSync(s.fsPath) &&
+                  (await vscode.workspace.fs.delete(s, {
                     recursive: !0,
                     useTrash: !1,
                   })),
-                await M.workspace.fs.delete(t, {
+                await vscode.workspace.fs.delete(t, {
                   recursive: !0,
                   useTrash: !1,
                 }),
@@ -10255,8 +10255,8 @@ var ni = L(require("tar")),
             T--;
           }
           return (
-            be.existsSync(s.fsPath) &&
-              (await M.workspace.fs.delete(s, {
+            fs.existsSync(s.fsPath) &&
+              (await vscode.workspace.fs.delete(s, {
                 recursive: !0,
                 useTrash: !1,
               })),
@@ -10328,8 +10328,8 @@ var ni = L(require("tar")),
       let o = N.ContentFolders.ai3d;
       N._logHandler("Download VEX AI App");
       let s = require("os").homedir(),
-        n = M.Uri.joinPath(
-          M.Uri.file(s),
+        n = vscode.Uri.joinPath(
+          vscode.Uri.file(s),
           `.${i.Extension.id}`,
           "vexai",
           o,
@@ -10343,9 +10343,9 @@ var ni = L(require("tar")),
           if ((console.log(`${w}: ${request_responses.get(w)}`), w !== 200)) return w;
         };
       if (this._showUiInfo) {
-        let d = M.window.withProgress(
+        let d = vscode.window.withProgress(
           {
-            location: M.ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: "Downloading VEXOS",
             cancellable: !0,
           },
@@ -10358,7 +10358,7 @@ var ni = L(require("tar")),
     }
     async downloadVEXosFile(t, e) {
       N._logHandler("Download VEXOS");
-      let o = e || M.Uri.joinPath(this._context.globalStorageUri, "vexos", t),
+      let o = e || vscode.Uri.joinPath(this._context.globalStorageUri, "vexos", t),
         s = platform_url(t),
         n,
         a = async (r, c) => {
@@ -10368,15 +10368,15 @@ var ni = L(require("tar")),
             l.httpsCode !== 200)
           )
             return l.httpsCode;
-          let d = new dt.TextDecoder("UTF-8").decode(l.buf);
+          let d = new util.TextDecoder("UTF-8").decode(l.buf);
           d += ".vexos";
           let m = await this._downloadHttpsFile(o, `${s}/${d}`, r, c);
           if ((console.log(`${m}: ${request_responses.get(m)}`), m !== 200)) return m;
         };
       if (this._showUiInfo) {
-        let r = M.window.withProgress(
+        let r = vscode.window.withProgress(
           {
-            location: M.ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: "Downloading VEXOS",
             cancellable: !0,
           },
@@ -10496,8 +10496,8 @@ var ni = L(require("tar")),
         // path = vscode-userdata:/home/chez/.config/VSCodium/User/globalStorage/vexrobotics.vexcode/sdk/cpp
 
       let save_path = path
-          ? M.Uri.joinPath(path, platform)
-          : M.Uri.joinPath(this._context.globalStorageUri, "sdk", language),
+          ? vscode.Uri.joinPath(path, platform)
+          : vscode.Uri.joinPath(this._context.globalStorageUri, "sdk", language),
         a = sdk_url(platform, language),
         r,
         c = async (l, d) => {
@@ -10510,25 +10510,25 @@ var ni = L(require("tar")),
             b = w.length
               ? w[0]
               : (await this._getManifestVersionOnline(platform, language)).latest,
-            C = M.Uri.joinPath(save_path, `${b}.zip`),
+            C = vscode.Uri.joinPath(save_path, `${b}.zip`),
             E = await this._downloadHttpsFile(save_path, `${a}/${b}.zip`, l, d);
           return (
             console.log(`${E}: ${request_responses.get(E)}`),
             E !== 200
-              ? (M.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
-                await M.workspace.fs.delete(C, {
+              ? (vscode.window.showErrorMessage(`${E}: ${request_responses.get(E)}`),
+                await vscode.workspace.fs.delete(C, {
                   recursive: !0,
                   useTrash: !1,
                 }),
                 E)
               : (await N._unzipFile(C, void 0, l, d))
-              ? (M.window.showErrorMessage(`Unzip Error: ${E}`), E)
-              : (await M.workspace.fs.delete(C, {
+              ? (vscode.window.showErrorMessage(`Unzip Error: ${E}`), E)
+              : (await vscode.workspace.fs.delete(C, {
                   recursive: !0,
                   useTrash: !1,
                 }),
-                be.existsSync(M.Uri.joinPath(save_path, "__MACOSX").fsPath) &&
-                  (await M.workspace.fs.delete(M.Uri.joinPath(save_path, "__MACOSX"), {
+                fs.existsSync(vscode.Uri.joinPath(save_path, "__MACOSX").fsPath) &&
+                  (await vscode.workspace.fs.delete(vscode.Uri.joinPath(save_path, "__MACOSX"), {
                     recursive: !0,
                     useTrash: !1,
                   })),
@@ -10536,9 +10536,9 @@ var ni = L(require("tar")),
           );
         };
       if (this._showUiInfo) {
-        let l = M.window.withProgress(
+        let l = vscode.window.withProgress(
           {
-            location: M.ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: "",
             cancellable: !0,
           },
@@ -10586,20 +10586,20 @@ var ni = L(require("tar")),
     async downloadDriverInstaller(t, e) {
       N._logHandler("Download Driver Installer");
       let o = e
-          ? M.Uri.joinPath(e)
-          : M.Uri.joinPath(this._context.globalStorageUri, "drivers"),
+          ? vscode.Uri.joinPath(e)
+          : vscode.Uri.joinPath(this._context.globalStorageUri, "drivers"),
         s = t || " ",
         n = sr(s, "VEX Devices Driver Installer.exe"),
         a,
         r = async (c, l) => {
           N._logHandler(`Location: ${o.fsPath}`);
-          let d = M.Uri.joinPath(o, s),
+          let d = vscode.Uri.joinPath(o, s),
             m = await this._downloadHttpsFile(o, `${n}`, c, l);
           return (
             console.log(`${m}: ${request_responses.get(m)}`),
             m !== 200 &&
-              (M.window.showErrorMessage(`${m}: ${request_responses.get(m)}`),
-              await M.workspace.fs.delete(d, {
+              (vscode.window.showErrorMessage(`${m}: ${request_responses.get(m)}`),
+              await vscode.workspace.fs.delete(d, {
                 recursive: !0,
                 useTrash: !1,
               })),
@@ -10607,9 +10607,9 @@ var ni = L(require("tar")),
           );
         };
       if (this._showUiInfo) {
-        let c = M.window.withProgress(
+        let c = vscode.window.withProgress(
           {
-            location: M.ProgressLocation.Notification,
+            location: vscode.ProgressLocation.Notification,
             title: "",
             cancellable: !0,
           },
@@ -10625,21 +10625,21 @@ var ni = L(require("tar")),
         N._logHandler(`Platform: ${t}`),
         N._logHandler(`Search Location: ${o.fsPath}`),
         console.log("Local Uri", o);
-      let s = M.Uri.joinPath(
+      let s = vscode.Uri.joinPath(
           this._context.extensionUri,
           "resources",
           "build",
           e,
           t
         ),
-        n = o ? M.Uri.joinPath(o, t) : s,
+        n = o ? vscode.Uri.joinPath(o, t) : s,
         a = [];
-      be.existsSync(n.fsPath) && (a = await M.workspace.fs.readDirectory(n));
+      fs.existsSync(n.fsPath) && (a = await vscode.workspace.fs.readDirectory(n));
       let r = {
           latest: "",
           catalog: [],
         },
-        c = a.filter((l) => l[0].includes(t) && l[1] === M.FileType.Directory);
+        c = a.filter((l) => l[0].includes(t) && l[1] === vscode.FileType.Directory);
       return (
         console.log("Local Filtered", a, c, t),
         c.forEach((l) => {
@@ -10653,7 +10653,7 @@ var ni = L(require("tar")),
     async _getManifestVersionOnline(platform, language) {
       N._logHandler(`Get ${language} SDK Version Online`),
         N._logHandler(`Platform: ${platform}`);
-      let o = M.Uri.joinPath(
+      let o = vscode.Uri.joinPath(
           this._context.extensionUri,
           "resources",
           "build",
@@ -10661,7 +10661,7 @@ var ni = L(require("tar")),
           language,
           platform
         ),
-        s = M.Uri.joinPath(o, normal_manifest),
+        s = vscode.Uri.joinPath(o, normal_manifest),
         n = i.Extension.Context.isDevEnabled ? dev_manifest_url(platform, language) : normal_manifest_url(platform, language),
         a = {
           latest: "",
@@ -10677,7 +10677,7 @@ var ni = L(require("tar")),
           N._logHandler(`${r.httpsCode}: ${request_responses.get(r.httpsCode)}`),
           r.httpsCode !== 200 && !i.Extension.Context.isDevEnabled))
           ? a
-          : ((a = JSON.parse(new dt.TextDecoder("UTF-8").decode(r.buf))),
+          : ((a = JSON.parse(new util.TextDecoder("UTF-8").decode(r.buf))),
             console.log(a),
             a.catalog.sort(N._sortSDKListCB),
             a || { latest: "", catalog: [""] })
@@ -10686,19 +10686,19 @@ var ni = L(require("tar")),
     async _getVEXOSManaifestLocal(t, e, o) {
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${e.fsPath}`);
-      let s = M.Uri.joinPath(e, t, o + ".vexos"),
+      let s = vscode.Uri.joinPath(e, t, o + ".vexos"),
         n = async () => {
           let r,
             c = !1;
           for (
-            be
+            fs
               .createReadStream(s.fsPath)
               .on("error", (l) => {
                 console.log(l), (c = !0);
               })
-              .pipe(Oo.Parse())
+              .pipe(unzipper.Parse())
               .pipe(
-                ai.map(async (l) => {
+                etl.map(async (l) => {
                   l.path.includes("manifest.json")
                     ? l.buffer().then((d) => {
                         console.log(d), (r = d), (c = !0);
@@ -10712,20 +10712,20 @@ var ni = L(require("tar")),
             await new Promise((l) => setTimeout(l, 500));
           return r;
         };
-      return new dt.TextDecoder().decode(await n());
+      return new util.TextDecoder().decode(await n());
     }
     async _getVEXOSVersionsLocal(t, e) {
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${e.fsPath}`);
-      let o = M.Uri.joinPath(
+      let o = vscode.Uri.joinPath(
           this._context.extensionUri,
           "resources",
           "vexos",
           t
         ),
-        s = e ? M.Uri.joinPath(e, t) : o,
+        s = e ? vscode.Uri.joinPath(e, t) : o,
         n = [];
-      be.existsSync(s.fsPath) && (n = await M.workspace.fs.readDirectory(s));
+      fs.existsSync(s.fsPath) && (n = await vscode.workspace.fs.readDirectory(s));
       let a = { latest: "", catalog: [] };
       return (
         n
@@ -10733,10 +10733,10 @@ var ni = L(require("tar")),
             (c) =>
               c[0].includes(t) &&
               c[0].includes(".vexos") &&
-              c[1] === M.FileType.File
+              c[1] === vscode.FileType.File
           )
           .forEach((c) => {
-            a.catalog.push(Se.basename(c[0], ".vexos"));
+            a.catalog.push(path.basename(c[0], ".vexos"));
           }),
         a.catalog.sort(N._sortVEXOSListCB),
         (a.latest = a.catalog[0] ? a.catalog[0] : ""),
@@ -10744,17 +10744,17 @@ var ni = L(require("tar")),
       );
     }
     async _getVEXOSVersionOnline(t) {
-      let e = M.Uri.joinPath(
+      let e = vscode.Uri.joinPath(
           this._context.extensionUri,
           "resources",
           "vexos",
           t
         ),
-        o = M.Uri.joinPath(e, catalog),
+        o = vscode.Uri.joinPath(e, catalog),
         s = platform_url(t),
         n = await this._readHttpsFile(`${s}${catalog}`);
       if (n.httpsCode !== 200) return "";
-      let a = new dt.TextDecoder("UTF-8").decode(n.buf);
+      let a = new util.TextDecoder("UTF-8").decode(n.buf);
       return a || "";
     }
     async _getVEXaiImageVersionOnline(t) {
@@ -10762,7 +10762,7 @@ var ni = L(require("tar")),
         o = await this._readHttpsFile(`${e}`);
       if (o.httpsCode !== 200)
         return { latest: "", latest_priv: "", catalog: [""], catalog_priv: [] };
-      let s = new dt.TextDecoder("UTF-8").decode(o.buf),
+      let s = new util.TextDecoder("UTF-8").decode(o.buf),
         n = JSON.parse(s);
       return (
         console.log(n),
@@ -10774,23 +10774,23 @@ var ni = L(require("tar")),
       let e = or(t, normal_manifest),
         o = await this._readHttpsFile(`${e}`);
       if (o.httpsCode !== 200) return { apps: [] };
-      let s = new dt.TextDecoder("UTF-8").decode(o.buf),
+      let s = new util.TextDecoder("UTF-8").decode(o.buf),
         n = JSON.parse(s);
       return console.log(n), n || { apps: [] };
     }
     async _getVEXaiAppListLocal(t, e) {
       let o = require("os").homedir();
       console.log(o);
-      let s = M.Uri.joinPath(M.Uri.file(o), `.${i.Extension.id}`, t, "apps"),
-        n = e ? M.Uri.joinPath(e, t, "apps") : s,
+      let s = vscode.Uri.joinPath(vscode.Uri.file(o), `.${i.Extension.id}`, t, "apps"),
+        n = e ? vscode.Uri.joinPath(e, t, "apps") : s,
         a = [];
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${s?.fsPath}`),
-        be.existsSync(n.fsPath) && (a = await M.workspace.fs.readDirectory(n));
+        fs.existsSync(n.fsPath) && (a = await vscode.workspace.fs.readDirectory(n));
       let r = { apps: [] };
       return (
         a
-          .filter((l) => l[1] === M.FileType.File && l[0].includes(".deb"))
+          .filter((l) => l[1] === vscode.FileType.File && l[0].includes(".deb"))
           .forEach((l) => {
             r.apps.push(l[0]);
           }),
@@ -10800,23 +10800,23 @@ var ni = L(require("tar")),
     async _getVEXaiAppVersionLocal(t, e, o) {
       let s = require("os").homedir();
       console.log(s);
-      let n = M.Uri.joinPath(M.Uri.file(s), `.${i.Extension.id}`, t, "apps"),
-        a = o ? M.Uri.joinPath(o, t, "apps") : n,
+      let n = vscode.Uri.joinPath(vscode.Uri.file(s), `.${i.Extension.id}`, t, "apps"),
+        a = o ? vscode.Uri.joinPath(o, t, "apps") : n,
         r = [];
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${n?.fsPath}`),
-        be.existsSync(a.fsPath) && (r = await M.workspace.fs.readDirectory(a));
+        fs.existsSync(a.fsPath) && (r = await vscode.workspace.fs.readDirectory(a));
       let c = { catalog: [], latest: "" };
       return (
         r
           .filter(
             (d) =>
-              d[1] === M.FileType.File &&
+              d[1] === vscode.FileType.File &&
               d[0].includes(".deb") &&
               d[0].includes(e)
           )
           .forEach((d) => {
-            c.catalog.push(Se.basename(d[0], ".deb"));
+            c.catalog.push(path.basename(d[0], ".deb"));
           }),
         c.catalog.sort(N._sortSDKListCB),
         (c.latest = c.catalog[0] ? c.catalog[0] : ""),
@@ -10827,34 +10827,34 @@ var ni = L(require("tar")),
       let o = si(t, e, normal_manifest),
         s = await this._readHttpsFile(`${o}`);
       if (s.httpsCode !== 200) return { latest: "", catalog: [] };
-      let n = new dt.TextDecoder("UTF-8").decode(s.buf),
+      let n = new util.TextDecoder("UTF-8").decode(s.buf),
         a = JSON.parse(n);
       return console.log(a), a || { latest: "", catalog: [] };
     }
     async _getVEXaiAppManifestLocal(t, e, o) {
       let s = require("os").homedir();
       console.log(s);
-      let n = M.Uri.joinPath(
-          M.Uri.file(s),
+      let n = vscode.Uri.joinPath(
+          vscode.Uri.file(s),
           `.${i.Extension.id}`,
           "vexai",
           t,
           "apps"
         ),
-        a = o ? M.Uri.joinPath(o, "vexai", t) : n,
+        a = o ? vscode.Uri.joinPath(o, "vexai", t) : n,
         r = [];
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${n?.fsPath}`),
-        be.existsSync(a.fsPath) && (r = await M.workspace.fs.readDirectory(a));
+        fs.existsSync(a.fsPath) && (r = await vscode.workspace.fs.readDirectory(a));
       let c = { apps: [] },
-        l = r.filter((d) => d[1] === M.FileType.Directory);
+        l = r.filter((d) => d[1] === vscode.FileType.Directory);
       return (c.apps = l), c;
     }
     async _getVEXaiImageVersionsLocal(t, e) {
       let o = require("os").homedir();
       console.log(o);
-      let s = M.Uri.joinPath(
-          M.Uri.file(o),
+      let s = vscode.Uri.joinPath(
+          vscode.Uri.file(o),
           `.${i.Extension.id}`,
           "vexai",
           t,
@@ -10864,7 +10864,7 @@ var ni = L(require("tar")),
         a = [];
       N._logHandler(`VEXOS Platform: ${t}`),
         N._logHandler(`VEXOS Search Location: ${s?.fsPath}`),
-        be.existsSync(n.fsPath) && (a = await M.workspace.fs.readDirectory(n));
+        fs.existsSync(n.fsPath) && (a = await vscode.workspace.fs.readDirectory(n));
       let r = { latest: "", latest_priv: "", catalog: [], catalog_priv: [] },
         c = /ai3dimage_\d{8}_\d{1}.tar.gz/,
         l = /ai3dimage_\d{8}_\d{1}_priv.tar.gz/,
@@ -10872,20 +10872,20 @@ var ni = L(require("tar")),
         m = /^ai3dimage_\d{8}_\d{1}_priv$/,
         w = a.filter(
           (C) =>
-            (c.test(C[0]) && C[1] === M.FileType.File) ||
-            (d.test(C[0]) && C[1] === M.FileType.Directory)
+            (c.test(C[0]) && C[1] === vscode.FileType.File) ||
+            (d.test(C[0]) && C[1] === vscode.FileType.Directory)
         ),
         b = a.filter(
           (C) =>
-            (l.test(C[0]) && C[1] === M.FileType.File) ||
-            (m.test(C[0]) && C[1] === M.FileType.Directory)
+            (l.test(C[0]) && C[1] === vscode.FileType.File) ||
+            (m.test(C[0]) && C[1] === vscode.FileType.Directory)
         );
       return (
         w.forEach((C) => {
-          r.catalog.push(Se.basename(C[0], ".zip "));
+          r.catalog.push(path.basename(C[0], ".zip "));
         }),
         b.forEach((C) => {
-          r.catalog_priv.push(Se.basename(C[0], ".zip "));
+          r.catalog_priv.push(path.basename(C[0], ".zip "));
         }),
         r.catalog.sort(N._sortVEXOSListCB),
         r.catalog_priv.sort(N._sortVEXOSListCB),
@@ -10970,26 +10970,26 @@ var ni = L(require("tar")),
       return 0;
     }
     static async _unzipFile(t, e, o, s) {
-      let n = e ? e.fsPath : Se.dirname(t.fsPath),
-        a = M.Uri.joinPath(M.Uri.file(n), Se.basename(t.fsPath, ".zip ")),
-        r = Se.basename(t.fsPath),
+      let n = e ? e.fsPath : path.dirname(t.fsPath),
+        a = vscode.Uri.joinPath(vscode.Uri.file(n), path.basename(t.fsPath, ".zip ")),
+        r = path.basename(t.fsPath),
         c = !1,
         l = !1;
       console.log(`zip folder: ${a.fsPath}`),
-        console.log(`File Uri DIR: ${Se.dirname(t.fsPath)}`),
-        console.log(`PathToUnzip: ${Se.dirname(n)}`),
+        console.log(`File Uri DIR: ${path.dirname(t.fsPath)}`),
+        console.log(`PathToUnzip: ${path.dirname(n)}`),
         N._logHandler(`Zip folder: ${a.fsPath}`),
-        N._logHandler(`File Uri DIR: ${Se.dirname(t.fsPath)}`),
-        N._logHandler(`File Uri BASE: ${Se.basename(t.fsPath)}`),
-        N._logHandler(`PathToUnzip: ${Se.dirname(n)}`);
+        N._logHandler(`File Uri DIR: ${path.dirname(t.fsPath)}`),
+        N._logHandler(`File Uri BASE: ${path.basename(t.fsPath)}`),
+        N._logHandler(`PathToUnzip: ${path.dirname(n)}`);
       let d = (f) => {
         console.log(f),
           o && (o.report({ message: f }), N._logHandler(`Unzip: ${f}`));
       };
       d(`${r}: Starting Unzip`);
-      let m = be.statSync(t.fsPath),
-        w = be.createReadStream(`${t.fsPath}`),
-        b = Oo.Extract({ path: `${n}` });
+      let m = fs.statSync(t.fsPath),
+        w = fs.createReadStream(`${t.fsPath}`),
+        b = unzipper.Extract({ path: `${n}` });
       w.pipe(b).on("close", () => {
         console.log("Unzipper Close"), (c = !0);
       }),
@@ -11014,7 +11014,7 @@ var ni = L(require("tar")),
           (O += (k / m.size) * 100),
           o.report({
             increment: (k / m.size) * 100,
-            message: `Unziping ${Se.basename(t.fsPath)}: ${O.toFixed(2)}%`,
+            message: `Unziping ${path.basename(t.fsPath)}: ${O.toFixed(2)}%`,
           }),
           console.timeLog(
             "Unzip",
@@ -11030,13 +11030,13 @@ var ni = L(require("tar")),
     }
     async _downloadHttpsFile(t, e, o, s, n = 500) {
       N._logHandler("Https Download Start");
-      let a = M.Uri.joinPath(t, Se.basename(e));
+      let a = vscode.Uri.joinPath(t, path.basename(e));
       N._logHandler(`URL: ${e}`),
         N._logHandler(`Destination: ${a.fsPath}`),
-        be.existsSync(t.fsPath) ||
+        fs.existsSync(t.fsPath) ||
           (console.log("Creating Directory", t),
-          await M.workspace.fs.createDirectory(t));
-      let r = be.createWriteStream(a.fsPath),
+          await vscode.workspace.fs.createDirectory(t));
+      let r = fs.createWriteStream(a.fsPath),
         c = 0,
         l = !1,
         d,
@@ -11057,13 +11057,13 @@ var ni = L(require("tar")),
         headers: {
           "User - Agent": `VEX VSC Extension/${i.Extension.version()}`,
         },
-        agent: new Zt.Agent(C),
+        agent: new https.Agent(C),
       };
-      T.agent = new Zt.Agent(C);
+      T.agent = new https.Agent(C);
       let O = 0,
         f = "",
         k = 0,
-        z = Zt.request(T, function (S) {
+        z = https.request(T, function (S) {
           console.log(S),
             (k = N._bytesToMBytes(Number(S.headers["content - length"]))),
             S.on("data", (W) => {
@@ -11072,13 +11072,13 @@ var ni = L(require("tar")),
               c += V;
               let X = (c / k) * 100;
               (O = (V / W.length) * 100),
-                (f = `Downloading ${Se.basename(e)}:(${c.toFixed(
+                (f = `Downloading ${path.basename(e)}:(${c.toFixed(
                   1
                 )}MB/${k.toFixed(1)}MB) ${X.toFixed(1)}%`);
-              let ye = `Downloading ${Se.basename(e)}:(${c.toFixed(
+              let ye = `Downloading ${path.basename(e)}:(${c.toFixed(
                   2
                 )}MB/${k.toFixed(2)}MB) ${X.toFixed(2)}%`,
-                se = `Downloading ${Se.basename(e)}:(${c}MB/${k}MB) ${X.toFixed(
+                se = `Downloading ${path.basename(e)}:(${c}MB/${k}MB) ${X.toFixed(
                   2
                 )}%`;
               b.toFixed(0) !== X.toFixed(0) &&
@@ -11088,14 +11088,14 @@ var ni = L(require("tar")),
             S.on("error", (W) => {
               console.log(`Error ${W}`),
                 (l = !0),
-                M.window.showErrorMessage("Download Failed"),
+                vscode.window.showErrorMessage("Download Failed"),
                 N._logHandler(`Download Error: ${W}`);
             }),
             S.on("end", () => {
               console.log("Response Recieved"),
                 (l = !0),
                 this._showUiInfo &&
-                  (M.window.showInformationMessage("Download Complete"),
+                  (vscode.window.showInformationMessage("Download Complete"),
                   N._logHandler("Download Complete"));
             });
         });
@@ -11108,13 +11108,13 @@ var ni = L(require("tar")),
         z.end(),
         s !== void 0 &&
           s.onCancellationRequested(() => {
-            M.window.showErrorMessage("Download Canceled"),
+            vscode.window.showErrorMessage("Download Canceled"),
               console.log("User canceled the long running operation"),
               (l = !0),
-              M.window.showErrorMessage("Download Canceled"),
+              vscode.window.showErrorMessage("Download Canceled"),
               z.destroy(),
               r.destroy(),
-              be.rmSync(a.fsPath);
+              fs.rmSync(a.fsPath);
           });
       let Z = 0;
       for (; !l; )
@@ -11150,8 +11150,8 @@ var ni = L(require("tar")),
           "User-Agent": `VEX VSC Extension/${i.Extension.version()}`,
         },
       };
-      b.agent = new Zt.Agent(m);
-      let C = Zt.request(b, function (E) {
+      b.agent = new https.Agent(m);
+      let C = https.request(b, function (E) {
         console.log(E);
         let T = N._bytesToMBytes(Number(E.headers["content-length"]));
         E.on("data", (O) => {
@@ -11162,14 +11162,14 @@ var ni = L(require("tar")),
           e !== void 0 &&
             e.report({
               increment: (f / T) * 100,
-              message: `Downloading ${Se.basename(t)}:(${n.toFixed(
+              message: `Downloading ${path.basename(t)}:(${n.toFixed(
                 1
               )}MB/${T.toFixed(1)}MB) ${k.toFixed(1)}%`,
             });
-          let z = `Downloading ${Se.basename(t)}:(${n.toFixed(2)}MB/${T.toFixed(
+          let z = `Downloading ${path.basename(t)}:(${n.toFixed(2)}MB/${T.toFixed(
               2
             )}MB) ${k.toFixed(2)}%`,
-            Z = `Downloading ${Se.basename(t)}:(${n}MB/${T}MB) ${k.toFixed(
+            Z = `Downloading ${path.basename(t)}:(${n}MB/${T}MB) ${k.toFixed(
               2
             )}%`;
           d.toFixed(0) !== k.toFixed(0) && ((d = k), N._logHandler(`${Z}`)),
@@ -11178,14 +11178,14 @@ var ni = L(require("tar")),
           E.on("error", (O) => {
             console.log(`Error ${O}`),
               (a = !0),
-              M.window.showErrorMessage("Download Failed"),
+              vscode.window.showErrorMessage("Download Failed"),
               N._logHandler(`Download Error: ${O}`);
           }),
           E.on("end", () => {
             console.log("Response Recieved"),
               (a = !0),
               this._showUiInfo &&
-                (M.window.showInformationMessage("Download Complete"),
+                (vscode.window.showInformationMessage("Download Complete"),
                 N._logHandler("Download Complete"));
           });
       });
@@ -11199,10 +11199,10 @@ var ni = L(require("tar")),
           C.end(),
           o !== void 0 &&
             o.onCancellationRequested(() => {
-              M.window.showErrorMessage("Download Canceled"),
+              vscode.window.showErrorMessage("Download Canceled"),
                 console.log("User canceled the long running operation"),
                 (a = !0),
-                M.window.showErrorMessage("Download Canceled"),
+                vscode.window.showErrorMessage("Download Canceled"),
                 C.destroy();
             });
         !a;
@@ -11218,7 +11218,7 @@ var ni = L(require("tar")),
       );
     }
     _checkServer(t, e) {
-      let o = ci.checkServerIdentity(t, e);
+      let o = tls.checkServerIdentity(t, e);
       if (o) return o;
       let s = "d3CXX9n6T51t+sgda2XjSPrpP0K6iCkzxv29gL18TYE=";
       if ((console.log(sha256(e.pubkey)), sha256(e.pubkey) !== s)) {
@@ -11278,54 +11278,54 @@ Xt._classType = "Resource Manager: ";
     (t = e.ManifestType || (e.ManifestType = {}))
   );
 })(Xt || (Xt = {}));
-var Ee = L(require("vscode"));
-var li = L(require("path")),
+var vscode = L(require("vscode"));
+var path = L(require("path")),
   Tt = class {
     constructor(t) {
-      (this._deviceListButton = Ee.window.createStatusBarItem(
-        Ee.StatusBarAlignment.Left,
+      (this._deviceListButton = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left,
         6
       )),
         (this._deviceListButton.command = Tt.listDevicesCmdId),
         (this._deviceListButton.text = ""),
         (this._deviceListButton.tooltip = "List VEX Devices"),
-        (this._selectSlotButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._selectSlotButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           5
         )),
         (this._selectSlotButton.command = Tt.slotCmdId),
         (this._selectSlotButton.text = "$(vex-slot) Slot 1"),
         (this._selectSlotButton.tooltip = "Select Slot"),
-        (this._buildButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._buildButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           4
         )),
         (this._buildButton.command = Tt.buildCmdId),
         (this._buildButton.text = "$(vex-build)"),
         (this._buildButton.tooltip = "Build Project"),
-        (this._playButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._playButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           3
         )),
         (this._playButton.command = Tt.playCmdId),
         (this._playButton.text = "$(vex-play)"),
         (this._playButton.tooltip = "Play User Program"),
-        (this._stopButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._stopButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           2
         )),
         (this._stopButton.command = Tt.stopCmdId),
         (this._stopButton.text = "$(vex-stop)"),
         (this._stopButton.tooltip = "Stop User Program"),
-        (this._selectProjectButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._selectProjectButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           1
         )),
         (this._selectProjectButton.command = Tt.selectProjectCmdId),
         (this._selectProjectButton.text = "No Project Selected"),
         (this._selectProjectButton.tooltip = "Select Active Project"),
-        (this._pythonFileButton = Ee.window.createStatusBarItem(
-          Ee.StatusBarAlignment.Left,
+        (this._pythonFileButton = vscode.window.createStatusBarItem(
+          vscode.StatusBarAlignment.Left,
           0
         )),
         (this._pythonFileButton.command = Tt.selectPythonCmdId),
@@ -11344,7 +11344,7 @@ var li = L(require("path")),
           "$(vex-slot) Slot 7",
           "$(vex-slot) Slot 8",
         ],
-        o = await Ee.window.showQuickPick(e, {
+        o = await vscode.window.showQuickPick(e, {
           placeHolder: t,
           onDidSelectItem: () => {},
         }),
@@ -11379,8 +11379,8 @@ var li = L(require("path")),
           description: n.language,
           detail: n.projectUri.fsPath,
         }),
-        Ee.window.showInputBox();
-      let a = await Ee.window.showQuickPick(o, {
+        vscode.window.showInputBox();
+      let a = await vscode.window.showQuickPick(o, {
         placeHolder: e,
         onDidSelectItem: () => {},
         canPickMany: !1,
@@ -11393,16 +11393,16 @@ var li = L(require("path")),
         o = [],
         s = 1;
       t.selectedProject.updateProjectSettings();
-      let n = new Ee.RelativePattern(t.selectedProject.projectUri, "**/*.py"),
-        a = new Ee.RelativePattern(t.selectedProject.projectUri, "**/build/**");
-      (await Ee.workspace.findFiles(n, a)).forEach((c) => {
+      let n = new vscode.RelativePattern(t.selectedProject.projectUri, "**/*.py"),
+        a = new vscode.RelativePattern(t.selectedProject.projectUri, "**/build/**");
+      (await vscode.workspace.findFiles(n, a)).forEach((c) => {
         let l = {
-          description: Ee.workspace.asRelativePath(c, !1),
-          label: `$(python-qp)${li.basename(c.fsPath)}`,
+          description: vscode.workspace.asRelativePath(c, !1),
+          label: `$(python-qp)${path.basename(c.fsPath)}`,
         };
         o.push(l);
       });
-      let r = await Ee.window.showQuickPick(o, {
+      let r = await vscode.window.showQuickPick(o, {
         placeHolder: e,
         onDidSelectItem: () => {},
         canPickMany: !1,
@@ -11964,7 +11964,7 @@ var Fo;
       s = (a) => o.appendLine(`${a}`),
       n = new Xt(e, s);
     e.subscriptions.push(
-      st.commands.registerCommand(
+      vscode.commands.registerCommand(
         i.Extension.ResourceManager.downloadToolchainID,
         async (a) => {
           let r = {
@@ -11978,7 +11978,7 @@ var Fo;
       )
     ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.downloadSDKID,
           async (a, r, c, l) => {
             console.log(a, c);
@@ -11999,7 +11999,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getSDKVersionID,
           async (a, r, c) => {
             let l = {
@@ -12019,7 +12019,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.downloadVexosID,
           async (a, r) => {
             let c = await n.downloadVEXosFile(a, r);
@@ -12033,7 +12033,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getVexosVersionID,
           async (a, r) => {
             let c = {
@@ -12053,7 +12053,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getVexosManifestID,
           async (a, r) => {
             let c = {
@@ -12073,7 +12073,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getVexaiAppListManifestID,
           async (a) => {
             let r = {
@@ -12093,7 +12093,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getVexaiAppManifestID,
           async (a, r) => {
             let c = {
@@ -12113,7 +12113,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.downloadVexaiAppID,
           async (a, r) => {
             let c = await n.downloadVEXaiApp(a, r);
@@ -12127,7 +12127,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.getVexaiImageManifestID,
           async (a) => {
             let r = {
@@ -12147,7 +12147,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.downloadVexaiID,
           async (a, r) => {
             let c = {
@@ -12167,7 +12167,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.verifyVexaiImageID,
           async (a, r) => {
             let c = {
@@ -12197,7 +12197,7 @@ var Fo;
         )
       ),
       e.subscriptions.push(
-        st.commands.registerCommand(
+        vscode.commands.registerCommand(
           i.Extension.ResourceManager.downloadDriverInstallerID,
           async (a, r) => {
             let c = {
@@ -18506,7 +18506,7 @@ function pr(_) {
   t.appendLine(`VEX Extension Version: ${i.Extension.version()}`),
     Fo.setup(_),
     Do.setup(_, t).catch((e) => {
-      vi.window.showErrorMessage(`Fatal Error: ${e.message}`),
+      vscode.window.showErrorMessage(`Fatal Error: ${e.message}`),
         t.appendLine(`VEX Extension Fatal Error: 
 Name	:${e.name}
 Message:	${e.message}

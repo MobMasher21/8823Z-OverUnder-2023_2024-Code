@@ -25,3 +25,29 @@ IF A CHANGE IS MADE IT MUST GO IN THIS FILE
 * `ps` -> `catalog`
 * `tt` -> `request_responses`
 * `ri` -> `platform_toolchains`
+* `ot` -> `os`
+* `be` -> `fs`
+* `Zt` -> `https`
+* `M` -> `vscode`
+* `ni` -> `tar`
+* `Oo` -> `unzipper`
+* `ai` -> `etl`
+* `Se` -> `path`
+* `dt` -> `util`
+* `Lo` -> `child_process`
+* `ci` -> `tls`
+* `Ee` -> `vscode`
+* `li` -> `path`
+* `vi` -> `vscode`
+* `st` -> `vscode`
+* `Jt` -> `vscode`
+* `rt` -> `fs`
+* `Mt` -> `child_process`
+* `nt` -> `path`
+* `is` -> `os`
+* `oe` -> `vscode`
+* `at` -> `os`
+
+### Notes:
+
+* The multiple reimports of dependencies are an effect of multiple files being combined durning the obfoscation prosess
