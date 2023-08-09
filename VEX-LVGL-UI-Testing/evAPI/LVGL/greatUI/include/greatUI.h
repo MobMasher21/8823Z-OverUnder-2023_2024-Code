@@ -96,10 +96,10 @@ namespace evAPI
       /**
        * @brief Adds an icon to the button.
        * @param id The ID of the button.
-       * @param iconInput A 35 by 35 array, with each value being treated as the value of a pixel.
+       * @param iconInput An lv_img_dsc_t descriptor.
+       * @returns False if the icon is added successfully.
       */
-      /* bool addIcon(int id, bool iconInput[35][35]);
-      bool addIcon(int id, color iconInput[35][35]); */
+      bool addIcon(int id, lv_img_dsc_t iconInput);
 
       /**
        * @brief Adds a function to be called when the button is pressed.

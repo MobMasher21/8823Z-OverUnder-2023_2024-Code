@@ -34,6 +34,12 @@ namespace evAPI
   lv_obj_t * selectorButtons[MAX_BUTTON_COUNT];
   lv_obj_t * selectorButtonID[MAX_BUTTON_COUNT];
   lv_obj_t * selectorButtonTitle[MAX_BUTTON_COUNT];
+  lv_style_t buttonStyle[MAX_BUTTON_COUNT];
+
+  const void *buttonIcon[MAX_BUTTON_COUNT];
+  lv_obj_t * buttonIconObject[MAX_BUTTON_COUNT];
+  lv_color_t buttonIconColor[MAX_BUTTON_COUNT];
+  lv_opa_t buttonIconIntense[MAX_BUTTON_COUNT];
 
   lv_obj_t * buttonInfoBox;
   timer buttonInfoBoxTime = timer();
@@ -44,16 +50,26 @@ namespace evAPI
   static void autoButtonPressFunc(lv_event_t * event)
   {
     lv_event_code_t eventCode = lv_event_get_code(event);
-    lv_obj_t * target = lv_event_get_target(event);
+    lv_obj_t * triggeredButton = lv_event_get_target(event);
+    static lv_obj_t * prevTriggeredButton;
+    static int prevTriggeredButtonID = -1;
 
-    if(eventCode == LV_EVENT_CLICKED) 
+    if(eventCode == LV_EVENT_CLICKED)
     {
-      lv_obj_t * buttonIDLabel = lv_obj_get_child(target, 0); //Get ID from button text.
+      lv_obj_t * buttonIDLabel = lv_obj_get_child(triggeredButton, 0); //Get ID from button text.
       int buttonID = strtol(lv_label_get_text(buttonIDLabel), nullptr, 10);
       printf("ButtonID: %d\n", buttonID);
 
       UI.selectButton(buttonID, true);
       buttonInfoBoxTime.operator=(0);
+
+      if(buttonID != prevTriggeredButtonID) //Prevent button from loosing selection border if it is repeatedly pressed.
+      {
+        lv_style_set_outline_opa(&buttonStyle[buttonID], 255);
+
+        if(prevTriggeredButton != nullptr)
+        { lv_style_set_outline_opa(&buttonStyle[prevTriggeredButtonID], 0); }
+      }
 
       if(buttonList[buttonID]->descriptionLength > 0) //Print button info.
       {
@@ -61,6 +77,9 @@ namespace evAPI
         lv_obj_center(buttonInfoBox);
         buttonInfoBoxTime.event(closeInfoButtonBox, UI.getDisplayTime());
       }
+
+      prevTriggeredButtonID = buttonID;
+      prevTriggeredButton = triggeredButton;
     }
   }
 
@@ -103,34 +122,69 @@ namespace evAPI
     int horizontalOffsetMultiplier = 1;
     int buttonTab = 0;
 
-    for (uint i = 0; i < (UI.getFinalButtonID() + 1); i++)
+    for (uint currentButton = 0; currentButton < (UI.getFinalButtonID() + 1); currentButton++)
     {
-      printf("Check Button ID: %d\n", i);
-      if(buttonList[i] != nullptr) //Create the button
+      printf("Check Button ID: %d\n", currentButton);
+      if(buttonList[currentButton] != nullptr) //Create the button
       {
-        printf("Printing Button ID: %d\n", i);
-        selectorButtons[i] = lv_btn_create(autoTabs[buttonTab]);
-        lv_obj_set_width(selectorButtons[i], BUTTON_SIZE);
-        lv_obj_set_height(selectorButtons[i], BUTTON_SIZE);
+        selectorButtons[currentButton] = lv_btn_create(autoTabs[buttonTab]);
+        lv_obj_set_width(selectorButtons[currentButton], BUTTON_SIZE);
+        lv_obj_set_height(selectorButtons[currentButton], BUTTON_SIZE);
 
-        printf("Button X Offset: %d\n", horizontalOffsetMultiplier);
-        printf("Button Y Offset: %d\n", verticalOffsetMultiplier);
-
-        lv_obj_set_x(selectorButtons[i], ((BUTTON_SIZE + BUTTON_X_SPACING_DISTANCE) * (horizontalOffsetMultiplier - 1)));
-        lv_obj_set_y(selectorButtons[i], ((BUTTON_SIZE + BUTTON_Y_SPACING_DISTANCE) * (verticalOffsetMultiplier - 1)));
+        lv_obj_set_x(selectorButtons[currentButton], ((BUTTON_SIZE + BUTTON_X_SPACING_DISTANCE) * (horizontalOffsetMultiplier - 1)));
+        lv_obj_set_y(selectorButtons[currentButton], ((BUTTON_SIZE + BUTTON_Y_SPACING_DISTANCE) * (verticalOffsetMultiplier - 1)));
         
-        selectorButtonID[i] = lv_label_create(selectorButtons[i]); //Create label to store ID.
-        lv_label_set_text_fmt(selectorButtonID[i], "%d", i);
-        lv_obj_add_flag(selectorButtonID[i], LV_OBJ_FLAG_HIDDEN);
+        selectorButtonID[currentButton] = lv_label_create(selectorButtons[currentButton]); //Create label to store ID.
+        lv_label_set_text_fmt(selectorButtonID[currentButton], "%d", currentButton);
+        lv_obj_add_flag(selectorButtonID[currentButton], LV_OBJ_FLAG_HIDDEN);
 
-        lv_obj_add_event_cb(selectorButtons[i], autoButtonPressFunc, LV_EVENT_ALL, NULL);
+        lv_obj_add_event_cb(selectorButtons[currentButton], autoButtonPressFunc, LV_EVENT_ALL, NULL);
 
-        if(buttonList[i]->titleLength > 0)
+        lv_color_t buttonColorLVGL = lv_color_hex(buttonList[currentButton]->buttonColor.rgb());
+
+        lv_style_init(&buttonStyle[currentButton]);
+        lv_style_set_bg_opa(&buttonStyle[currentButton], LV_OPA_100);
+        lv_style_set_bg_color(&buttonStyle[currentButton], buttonColorLVGL);
+
+        lv_obj_add_style(selectorButtons[currentButton], &buttonStyle[currentButton], LV_PART_MAIN);
+        lv_style_set_outline_width(&buttonStyle[currentButton], 5);
+        lv_style_set_outline_opa(&buttonStyle[currentButton], 0);
+
+        #if REDEFINE_COLORS
+          lv_style_set_outline_color(&buttonStyle[currentButton], lv_color_hex(ClrLightGrey.rgb()));
+        #else
+          lv_style_set_outline_color(&buttonStyle[currentButton], lv_color_hex(vexClrLightGrey.rgb()));
+        #endif
+
+        if(buttonList[currentButton]->titleLength > 0)
         {
-          selectorButtonTitle[i] = lv_label_create(selectorButtons[i]); //Create label to store ID.
-          lv_label_set_text_fmt(selectorButtonTitle[i], "%s", buttonList[i]->Title);
-          lv_obj_add_flag(selectorButtonTitle[i], LV_OBJ_FLAG_OVERFLOW_VISIBLE);
-          lv_obj_align_to(selectorButtonTitle[i], selectorButtons[i],  LV_ALIGN_CENTER, 0, 0);
+          selectorButtonTitle[currentButton] = lv_label_create(selectorButtons[currentButton]); //Create label to store ID.
+          lv_label_set_text_fmt(selectorButtonTitle[currentButton], "%s", buttonList[currentButton]->Title);
+          lv_obj_add_flag(selectorButtons[currentButton], LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+          lv_obj_align_to(selectorButtonTitle[currentButton], selectorButtons[currentButton],  LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+        }
+
+        if(buttonIcon[currentButton] != nullptr)
+        {
+          printf("Setting Icon paramater\n");
+          buttonIconObject[currentButton] = lv_img_create(selectorButtons[currentButton]);
+          buttonIconColor[currentButton] = lv_color_make(0, 0, 0);
+          buttonIconIntense[currentButton] = 255;
+
+          this_thread::sleep_for(200);
+
+          printf("Create Image\n");
+          lv_img_set_src(buttonIconObject[currentButton], buttonIcon[currentButton]);
+          this_thread::sleep_for(200);
+
+          printf("Align to button\n");
+          lv_obj_align_to(buttonIconObject[currentButton], selectorButtons[currentButton], LV_ALIGN_CENTER, 0, 0);
+          this_thread::sleep_for(200);
+
+          printf("Apply color parameters\n");
+          lv_obj_set_style_img_recolor_opa(buttonIconObject[currentButton], buttonIconIntense[currentButton], 0);
+          lv_obj_set_style_img_recolor(buttonIconObject[currentButton], buttonIconColor[currentButton], 0);
+          this_thread::sleep_for(200);
         }
 
         printf("\n");
@@ -238,6 +292,16 @@ namespace evAPI
 
     return buttonCount;
   }
+
+  bool greatUI::addIcon(int id, lv_img_dsc_t iconInput)
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
+
+    buttonIcon[id] = &iconInput;
+
+    return 0;
+  } 
 
 
 
