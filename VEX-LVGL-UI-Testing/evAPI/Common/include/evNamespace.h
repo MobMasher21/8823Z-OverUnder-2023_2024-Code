@@ -16,6 +16,7 @@ namespace evAPI
 
   enum allianceType
   {
+    noChange = -1,
     noAlliance = 0,
     redAlliance = 1,
     blueAlliance = 2
@@ -94,9 +95,6 @@ namespace evAPI
   const gearSetting redGearBox = ratio36_1;
   const gearSetting greenGearBox = ratio18_1;
   const gearSetting blueGearBox = ratio6_1;
-
 }
-
-extern evAPI::allianceType robotAlliance;
 
 #endif // __EVNAMESPACE_H__

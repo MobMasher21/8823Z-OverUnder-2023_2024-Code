@@ -2,7 +2,7 @@
 #define EVAPIFILES_H
 
 //Format Year/Month/Day
-#define EVAPI_VERSION 20230806
+#define EVAPI_VERSION 20230809
 
 #include "../evAPI/Common/include/generalFunctions.h"
 #include "../evAPI/Common/include/evNamespace.h"

@@ -9,6 +9,7 @@ SRC_C += $(wildcard evAPI/LVGL/greatUI/src/*.cpp)
 SRC_C += $(wildcard evAPI/LVGL/greatUI/src/*.c)
 SRC_C += $(wildcard evAPI/LVGL/greatUI/src/*/*.cpp)
 SRC_C += $(wildcard evAPI/LVGL/greatUI/src/*/*.c)
+SRC_C += $(wildcard evAPI/LVGL/greatUI/Icons/*.c)
 
 #SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*.cpp)
 #SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*.c)
@@ -38,5 +39,4 @@ SRC_H += $(wildcard evAPI/robotControl/Drivetrain/include/*.h)
 SRC_H += $(wildcard evAPI/robotControl/Flywheel/include/*.h)
 SRC_H += $(wildcard evAPI/robotControl/Intake/include/*.h)
 SRC_H += $(wildcard evAPI/LVGL/greatUI/include/*.h)
-
 #SRC_H += $(wildcard evAPI/vexUI/include/*.h)

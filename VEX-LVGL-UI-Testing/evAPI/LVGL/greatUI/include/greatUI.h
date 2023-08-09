@@ -15,6 +15,11 @@
 #include "..\..\..\Common\include\colors.h"
 #include "..\..\..\Common\include\evNamespace.h"
 
+//! Define icon IDs here!
+#define SKILLS_ICON 0
+#define LEFT_ARROW 1
+#define RIGHT_ARROW 2
+
 #define MAX_TAB_COUNT 5
 
 #define MAX_BUTTON_COUNT (MAX_TAB_COUNT * 8)
@@ -96,10 +101,28 @@ namespace evAPI
       /**
        * @brief Adds an icon to the button.
        * @param id The ID of the button.
-       * @param iconInput An lv_img_dsc_t descriptor.
+       * @param iconInput An ID of the icon.
        * @returns False if the icon is added successfully.
       */
-      bool addIcon(int id, lv_img_dsc_t iconInput);
+      bool addIcon(int id, int iconID);
+
+      /**
+       * @brief Changes the color of an icon on a button.
+       * @param id The ID of the button.
+       * @param r The red value for the color of the icon.
+       * @param g The green value for the color of the icon.
+       * @param b The blue value for the color of the icon.
+       * @returns False if the icon is added successfully.
+      */
+      bool setIconColor(int id, int r, int g, int b);
+
+      /**
+       * @brief Changes the color of an icon on a button.
+       * @param id The ID of the button.
+       * @param iconColor A color object containing the color of the icon.
+       * @returns False if the icon is added successfully.
+      */
+      bool setIconColor(int id, color iconColor);
 
       /**
        * @brief Adds a function to be called when the button is pressed.

@@ -16,7 +16,6 @@
 #include "..\..\..\Common\include\evNamespace.h"
 #include "..\..\..\Common\include\colors.h"
 
-
 #define MAX_TITLE_LENGTH 16
 #define MAX_DESCRIPTION_LENGTH 240
 
@@ -34,7 +33,10 @@ namespace evAPI
 
     color buttonColor;
 
-    allianceType buttonAlliance = noAlliance;
+    int iconID = -1;
+    color iconColor = black;
+
+    allianceType buttonAlliance = noChange;
 
     char Title[MAX_TITLE_LENGTH];
     char Description[MAX_DESCRIPTION_LENGTH];
