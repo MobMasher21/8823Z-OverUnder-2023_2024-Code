@@ -106,7 +106,6 @@ namespace evAPI
     int horizontalOffsetMultiplier = 1;
     int buttonTab = 0;
 
-
     for (uint currentButton = 0; currentButton < (UI.getFinalButtonID() + 1); currentButton++)
     {
       printf("Check Button ID: %d\n", currentButton);
@@ -390,7 +389,6 @@ namespace evAPI
     if(buttonList[id]->buttonCallback != nullptr)//Run button callback
     { buttonList[id]->buttonCallback(id); }
     
-
     progMode = id;
     buttonInfoBoxTime.operator=(0);
 

@@ -49,7 +49,7 @@ namespace evAPI
       void addButtonCore(int id);
       
     public:
-      greatUI(/* args */);
+      greatUI();
       ~greatUI();
 
       /**
@@ -129,7 +129,7 @@ namespace evAPI
        * @brief Adds a description to be displayed when the button is pressed.
        * The length it is displayed for is controlled by setDisplayTime.
        * @param id The ID of the button.
-       * @param Title An array of characters that contains the description.
+       * @param Description An array of characters that contains the description.
        * @returns False if it successfully adds the data.
       */
       bool addDescription(int id, const char Description[MAX_DESCRIPTION_LENGTH]);
