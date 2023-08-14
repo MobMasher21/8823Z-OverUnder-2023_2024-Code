@@ -27,29 +27,22 @@ int main() {
     Serial serial(stdin, stdout);
 
     serial.write("Hello, I am the test data\n");
-    // Brain.Screen.print("1");
+
     json::Json_encoder test_message;
-    // Brain.Screen.print("2");
 
     test_message.add_key(json::string, "str");
     test_message.add_key(json::integer, "int");
     test_message.add_key(json::decimal, "dec");
     test_message.add_key(json::boolean, "bool");
-    // Brain.Screen.print("3");
 
     test_message.finalize_keys();
-    // Brain.Screen.print("4");
 
     std::string message1 = test_message.encode("hello", 12345, 3.1415, json::from_bool(true));
     std::string message2 = test_message.encode("hi", 54321, 1.2345, json::from_bool(false));
-    // Brain.Screen.print("5");
 
     serial.write(message2);
-    // Brain.Screen.print("6");
 
     while (1) {
-        // Brain.Screen.print("7");
-
         std::string data = serial.read_string();
         Brain.Screen.print(data.c_str());
 
