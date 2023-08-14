@@ -1,12 +1,10 @@
 #include "json.h"
 
-#include <stdio.h>
-
 #include <string>
 
 using namespace json;
 
-const char* json::form_bool(bool value) { return value ? "true" : "false"; }
+const char* json::from_bool(bool value) { return value ? "true" : "false"; }
 
 std::string Json_encoder::get_fstring() {
     return this->fstring;
@@ -26,8 +24,13 @@ void Json_encoder::add_key(types type, std::string name) {
             this->fstring.append("\"" + name + "\": %i, ");
             break;
 
-        case Boolean:
+        case boolean:
             this->fstring.append("\"" + name + "\": %s, ");  // same as string but without quotes
+            break;
+        
+        case json:
+            this->fstring.append("\"" + name + "\": \"%s\", "); // nested json is just another string
+            break;
     }
 }
 
