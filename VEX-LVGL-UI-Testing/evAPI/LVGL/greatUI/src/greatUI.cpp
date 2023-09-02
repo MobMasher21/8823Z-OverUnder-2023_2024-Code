@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       greatUI.cpp                                               */
+/*    Module:       lvglUI.cpp                                                */
 /*    Author:       Jayden Liffick                                            */
 /*    Created:      Sun Aug 6, 2023                                           */
 /*    Description:  Backend code for the UI.                                  */
@@ -8,43 +8,40 @@
 /*----------------------------------------------------------------------------*/
 
 #include "../include/greatUI.h"
+#include "../include/button.h"
 #include "../../../Common/include/evNamespace.h"
-#include "../../../Common/include/Controllers.h"
-#include "evAPISettings.h"
+#include "../../../Common/include/constantObjects.h"
+#include "../../../Common/include/evPatch.h"
+#include "../../../Common/include/vexPrivateRebuild.h"
 
 LV_IMG_DECLARE(Skills_Icon)
 LV_IMG_DECLARE(Left_Arrow)
 LV_IMG_DECLARE(Right_Arrow)
-
-#define BUTTON_SIZE 70
-#define BUTTON_X_OFFSET 0
-#define BUTTON_Y_OFFSET -7
-#define BUTTON_X_SPACING_DISTANCE 56
-#define BUTTON_Y_SPACING_DISTANCE 30
+LV_IMG_DECLARE(Exclamation_Points)
 
 namespace evAPI
 {
-  greatUI UI = greatUI();
+  lvglUI UI = lvglUI();
 
-  extern allianceType robotAlliance;
+  //!AUTO SELECTOR
 
-  button * buttonList[MAX_BUTTON_COUNT];
+  button * buttonList[MAX_AUTO_BUTTON_COUNT];
 
   int selectedButtonID = 0;
 
-  lv_obj_t * pageTabs;
-  lv_obj_t * autoTabs[MAX_TAB_COUNT];
-  char autoTabNames[MAX_TAB_NAME_LENGTH][MAX_TAB_COUNT];
-  uint autoTabNameLength[MAX_TAB_COUNT];
+  lv_obj_t * autoPageTabs;
+  lv_style_t autoTabStyle;
+  lv_obj_t * autoTabObjects[MAX_AUTO_TAB_COUNT];
+  char autoTabNames[MAX_AUTO_TAB_NAME_LENGTH][MAX_AUTO_TAB_COUNT];
+  uint autoTabNameLength[MAX_AUTO_TAB_COUNT];
 
-  lv_obj_t * selectorButtons[MAX_BUTTON_COUNT];
-  lv_obj_t * selectorButtonID[MAX_BUTTON_COUNT];
-  lv_obj_t * selectorButtonTitle[MAX_BUTTON_COUNT];
-  lv_style_t buttonStyle[MAX_BUTTON_COUNT];
+  lv_obj_t * selectorButtons[MAX_AUTO_BUTTON_COUNT];
+  lv_obj_t * selectorButtonIDLabel[MAX_AUTO_BUTTON_COUNT];
+  lv_obj_t * selectorButtonTitle[MAX_AUTO_BUTTON_COUNT];
+  lv_style_t buttonStyle[MAX_AUTO_BUTTON_COUNT];
 
-  lv_obj_t * buttonIconObject[MAX_BUTTON_COUNT];
-  lv_color_t buttonIconColor[MAX_BUTTON_COUNT];
-  //lv_opa_t buttonIconOpacity[MAX_BUTTON_COUNT];
+  lv_obj_t * buttonIconObject[MAX_AUTO_BUTTON_COUNT];
+  lv_color_t buttonIconColor[MAX_AUTO_BUTTON_COUNT];
 
   int prevTriggeredButtonID = -1;
 
@@ -63,65 +60,71 @@ namespace evAPI
     {
       lv_obj_t * buttonIDLabel = lv_obj_get_child(triggeredButton, 0); //Get ID from button text.
       int buttonID = strtol(lv_label_get_text(buttonIDLabel), nullptr, 10);
-      printf("ButtonID: %d\n", buttonID);
 
       UI.selectButton(buttonID, false);
     }
   }
 
-  void autoSelectorSetup()
+  void lvglUI::autoSelectorSetup()
   {
-    v5_lv_init();
-    
     uint8_t tabCount = floor(UI.getFinalButtonID() / 8);
 
-    printf("Final ID: %d\n", UI.getFinalButtonID());
-    printf("Tab Count: %d\n\n", tabCount);
+    //this_thread::sleep_for(50);
 
-    this_thread::sleep_for(50);
+    autoPageTabs = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 35);
 
-    pageTabs = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 35);
+    lv_style_init(&autoTabStyle); //Set color of display.
 
-    for (uint8_t i = 0; i < (tabCount + 1); i++)
+    if(vexDisplayThemeIdGet())
+    { lv_style_set_bg_color(&autoTabStyle, lv_color_white()); }
+
+    else
+    { lv_style_set_bg_color(&autoTabStyle, lv_color_black()); }
+    
+    lv_obj_add_style(autoPageTabs, &autoTabStyle, LV_PART_MAIN);
+
+    for(uint8_t i = 0; i < (tabCount + 1); i++)
     {
       if(autoTabNameLength[i] == 0) //If no name is set
       {
         char * name;
         asprintf(&name, "Tab %d", (i+1));
-        autoTabs[i] = lv_tabview_add_tab(pageTabs, name);
+        autoTabObjects[i] = lv_tabview_add_tab(autoPageTabs, name);
       }
 
       else
       {
-        char singleTabName[MAX_TAB_NAME_LENGTH];
+        char singleTabName[MAX_AUTO_TAB_NAME_LENGTH];
 
-        for (uint ii = 0; ii < autoTabNameLength[i]+1; ii++)
+        for(uint ii = 0; ii < autoTabNameLength[i]+1; ii++)
         { singleTabName[ii] = autoTabNames[ii][i]; }
 
-        autoTabs[i] = lv_tabview_add_tab(pageTabs, singleTabName);
+        autoTabObjects[i] = lv_tabview_add_tab(autoPageTabs, singleTabName);
       }
     }
+
+    lv_obj_t * tabButtons = lv_tabview_get_tab_btns(autoPageTabs);
+    
+    lv_obj_add_style(tabButtons, &autoTabStyle, LV_PART_MAIN);
     
     int verticalOffsetMultiplier = 1;
     int horizontalOffsetMultiplier = 1;
     int buttonTab = 0;
 
-    for (uint currentButton = 0; currentButton < (UI.getFinalButtonID() + 1); currentButton++)
+    for(uint currentButton = 0; currentButton < (UI.getFinalButtonID() + 1); currentButton++)
     {
-      printf("Check Button ID: %d\n", currentButton);
       if(buttonList[currentButton] != nullptr) //Create the button
       {
-        printf("Printing Button ID: %d\n", currentButton);
-        selectorButtons[currentButton] = lv_btn_create(autoTabs[buttonTab]);
-        lv_obj_set_width(selectorButtons[currentButton], BUTTON_SIZE);
-        lv_obj_set_height(selectorButtons[currentButton], BUTTON_SIZE);
+        selectorButtons[currentButton] = lv_btn_create(autoTabObjects[buttonTab]);
+        lv_obj_set_width(selectorButtons[currentButton], AUTO_BUTTON_SIZE);
+        lv_obj_set_height(selectorButtons[currentButton], AUTO_BUTTON_SIZE);
 
-        lv_obj_set_x(selectorButtons[currentButton], ((BUTTON_SIZE + BUTTON_X_SPACING_DISTANCE) * (horizontalOffsetMultiplier - 1)) + BUTTON_X_OFFSET);
-        lv_obj_set_y(selectorButtons[currentButton], ((BUTTON_SIZE + BUTTON_Y_SPACING_DISTANCE) * (verticalOffsetMultiplier - 1)) + BUTTON_Y_OFFSET);
+        lv_obj_set_x(selectorButtons[currentButton], ((AUTO_BUTTON_SIZE + AUTO_BUTTON_X_SPACING_DISTANCE) * (horizontalOffsetMultiplier - 1)) + AUTO_BUTTON_X_OFFSET);
+        lv_obj_set_y(selectorButtons[currentButton], ((AUTO_BUTTON_SIZE + AUTO_BUTTON_Y_SPACING_DISTANCE) * (verticalOffsetMultiplier - 1)) + AUTO_BUTTON_Y_OFFSET);
         
-        selectorButtonID[currentButton] = lv_label_create(selectorButtons[currentButton]); //Create label to store ID.
-        lv_label_set_text_fmt(selectorButtonID[currentButton], "%d", currentButton);
-        lv_obj_add_flag(selectorButtonID[currentButton], LV_OBJ_FLAG_HIDDEN);
+        selectorButtonIDLabel[currentButton] = lv_label_create(selectorButtons[currentButton]); //Create label to store ID.
+        lv_label_set_text_fmt(selectorButtonIDLabel[currentButton], "%d", currentButton);
+        lv_obj_add_flag(selectorButtonIDLabel[currentButton], LV_OBJ_FLAG_HIDDEN);
 
         lv_obj_add_event_cb(selectorButtons[currentButton], autoButtonPressFunc, LV_EVENT_ALL, NULL);
 
@@ -149,7 +152,22 @@ namespace evAPI
           lv_obj_align_to(selectorButtonTitle[currentButton], selectorButtons[currentButton],  LV_ALIGN_OUT_BOTTOM_MID, 0, 3);
         }
 
-        if(buttonList[currentButton]->iconID != -1) //Add icon to button
+        //-2 is custom icon. -1 is no icon. 0 or greater is builtin icons.
+        if(buttonList[currentButton]->iconID == -2) //Add custom icon to button.
+        {
+          buttonIconObject[currentButton] = lv_img_create(selectorButtons[currentButton]);
+          buttonIconColor[currentButton] = lv_color_hex(buttonList[currentButton]->iconColor.rgb());
+          //buttonIconOpacity[currentButton] = 255;
+
+          lv_img_set_src(buttonIconObject[currentButton], &buttonList[currentButton]->buttonIconCustom);
+
+          lv_obj_align_to(buttonIconObject[currentButton], selectorButtons[currentButton], LV_ALIGN_CENTER, 0, 0);
+
+          lv_obj_set_style_img_recolor_opa(buttonIconObject[currentButton], LV_OPA_100, 0);
+          lv_obj_set_style_img_recolor(buttonIconObject[currentButton], buttonIconColor[currentButton], 0);
+        }
+
+        else if(buttonList[currentButton]->iconID > -1) //Add builtin icon
         {
           buttonIconObject[currentButton] = lv_img_create(selectorButtons[currentButton]);
           buttonIconColor[currentButton] = lv_color_hex(buttonList[currentButton]->iconColor.rgb());
@@ -168,6 +186,10 @@ namespace evAPI
             case RIGHT_ARROW:
               lv_img_set_src(buttonIconObject[currentButton], &Right_Arrow);
               break;
+
+            case EXCLAMATION_POINTS:
+              lv_img_set_src(buttonIconObject[currentButton], &Exclamation_Points);
+              break;
           }
 
           lv_obj_align_to(buttonIconObject[currentButton], selectorButtons[currentButton], LV_ALIGN_CENTER, 0, 0);
@@ -175,8 +197,6 @@ namespace evAPI
           lv_obj_set_style_img_recolor_opa(buttonIconObject[currentButton], LV_OPA_100, 0);
           lv_obj_set_style_img_recolor(buttonIconObject[currentButton], buttonIconColor[currentButton], 0);
         }
-
-        printf("\n");
       }
 
       if(horizontalOffsetMultiplier >= 4) //Create next button position
@@ -196,25 +216,20 @@ namespace evAPI
       }
     }
 
-    lv_obj_invalidate(pageTabs); //Force a redraw of the auto selection UI to make sure all assets show up.
+    lv_obj_invalidate(autoPageTabs); //Force a redraw of the auto selection UI to make sure all assets show up.
     this_thread::sleep_for(50);
   }
 
-  greatUI::greatUI()
+  lvglUI::lvglUI()
   {
-    for(uint i = 0; i < MAX_TAB_COUNT; i++)
+    for(uint i = 0; i < MAX_AUTO_TAB_COUNT; i++)
     { autoTabNameLength[i] = 0; }
   }
   
-  greatUI::~greatUI()
+  lvglUI::~lvglUI()
   {}
 
-  void greatUI::startUIThreads()
-  {
-    autoSelectorSetup();
-  }
-
-  void greatUI::addButtonCore(int id)
+  void lvglUI::addButtonCore(int id)
   {
     if(buttonList[id] != nullptr)
     { return; }
@@ -225,26 +240,23 @@ namespace evAPI
 
     if(id > finalButtonID)
     { finalButtonID = id; }
-
-    printf("Button Count: %d\n", buttonCount);
-    printf("Final ID: %d\n\n", finalButtonID);
   }
 
-  int greatUI::addButton(int id, int r, int g, int b)
+  int lvglUI::addButton(int id, int r, int g, int b)
   {
     addButtonCore(id);
     buttonList[id]->buttonColor.rgb(r, g, b);
     return buttonCount;
   }
   
-  int greatUI::addButton(int id, color buttonColor)
+  int lvglUI::addButton(int id, color buttonColor)
   {
     addButtonCore(id);
     buttonList[id]->buttonColor = buttonColor;
     return buttonCount;
   }
 
-  int greatUI::addButton(int id, allianceType alliance)
+  int lvglUI::addButton(int id, allianceType alliance)
   {
     addButtonCore(id);
     buttonList[id]->buttonAlliance = alliance;
@@ -273,7 +285,7 @@ namespace evAPI
     return buttonCount;
   }
 
-  bool greatUI::addIcon(int id, int iconID)
+  bool lvglUI::addIcon(int id, int iconID)
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -283,7 +295,18 @@ namespace evAPI
     return 0;
   }
 
-  bool greatUI::setIconColor(int id, int r, int g, int b)
+  bool lvglUI::addIcon(int id, const lv_img_dsc_t icon)
+  {
+    if(buttonList[id] == nullptr)
+    { return true;}
+
+    buttonList[id]->buttonIconCustom = icon;
+    buttonList[id]->iconID = -2;
+
+    return 0;
+  }
+
+  bool lvglUI::changeIconColor(int id, int r, int g, int b)
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -293,7 +316,7 @@ namespace evAPI
     return 0;
   }
 
-  bool greatUI::setIconColor(int id, color iconColor)
+  bool lvglUI::changeIconColor(int id, color iconColor)
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -303,7 +326,7 @@ namespace evAPI
     return 0;
   }
 
-  bool greatUI::addCallbackFunc(int id, void (*callback)(int))
+  bool lvglUI::addCallbackFunc(int id, void (*callback)(int))
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -312,7 +335,7 @@ namespace evAPI
     return false;
   }
 
-  bool greatUI::addTitle(int id, const char Title[MAX_TITLE_LENGTH])
+  bool lvglUI::addTitle(int id, const char Title[MAX_AUTO_TITLE_LENGTH])
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -325,7 +348,7 @@ namespace evAPI
     return false;
   }
 
-  bool greatUI::addDescription(int id, const char Description[MAX_DESCRIPTION_LENGTH])
+  bool lvglUI::addDescription(int id, const char Description[MAX_AUTO_DESCRIPTION_LENGTH])
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -338,7 +361,7 @@ namespace evAPI
     return false;
   }
 
-  bool greatUI::setTabName(int id, const char Name[MAX_TAB_NAME_LENGTH])
+  bool lvglUI::setAutoTabName(int id, const char Name[MAX_AUTO_TAB_NAME_LENGTH])
   {
     int nameLength = strlen(Name);
 
@@ -350,7 +373,7 @@ namespace evAPI
     return false;
   }
 
-  bool greatUI::addAlliance(int id, allianceType alliance)
+  bool lvglUI::addAlliance(int id, allianceType alliance)
   {
     if(buttonList[id] == nullptr)
     { return true;}
@@ -359,40 +382,40 @@ namespace evAPI
     return 0;
   }
 
-  bool greatUI::changeButtonColor(int id, int r, int g, int b)
+  bool lvglUI::changeButtonColor(int id, int r, int g, int b)
   {
     if(buttonList[id] == nullptr)
     { return true;}
 
     lv_style_set_bg_color(&buttonStyle[id], lv_color_make(r, g, b));
-    lv_obj_invalidate(pageTabs);
+    lv_obj_invalidate(autoPageTabs);
 
     return 0;
   }
 
-  bool greatUI::changeButtonColor(int id, color buttonColor)
+  bool lvglUI::changeButtonColor(int id, color buttonColor)
   {
     if(buttonList[id] == nullptr)
     { return true;}
 
     lv_style_set_bg_color(&buttonStyle[id], lv_color_hex(buttonColor.rgb()));
-    lv_obj_invalidate(pageTabs);
+    lv_obj_invalidate(autoPageTabs);
     
     return 0;
   }
 
-  void greatUI::selectButton(int id, bool doNotShowSettings)
+  void lvglUI::selectButton(int id, bool doNotShowSettings)
   {
-    if(pageTabs == nullptr)
+    if(autoPageTabs == nullptr)
     { return; }
 
-    if(buttonList[id]->buttonCallback != nullptr)//Run button callback
+    if(buttonList[id]->buttonCallback != nullptr) //Run button callback
     { buttonList[id]->buttonCallback(id); }
     
     progMode = id;
     buttonInfoBoxTime.operator=(0);
 
-      if(id != prevTriggeredButtonID) //Prevent button from loosing selection border if it is repeatedly pressed.
+      if(id != prevTriggeredButtonID) //Enable selection border
       {
         lv_style_set_outline_opa(&buttonStyle[id], 255);
 
@@ -407,26 +430,471 @@ namespace evAPI
         buttonInfoBoxTime.event(closeInfoButtonBox, UI.getDisplayTime());
       }
 
-      if(buttonList[id]->buttonAlliance != noChange)
+      if(buttonList[id]->buttonAlliance != noChange) //Set robot alliance
       { robotAlliance = buttonList[id]->buttonAlliance; }
 
-      lv_obj_invalidate(pageTabs);
+      lv_obj_invalidate(autoPageTabs);
 
       prevTriggeredButtonID = id;
   }
 
-  void greatUI::setDisplayTime(int time)
+  void lvglUI::selectTab(int id)
+  { lv_tabview_set_act(autoPageTabs, id, LV_ANIM_ON); }
+
+  void lvglUI::setDisplayTime(int time)
   { buttonInfoDisplayTime = time; }
 
-  int greatUI::getDisplayTime()
+  int lvglUI::getDisplayTime()
   { return buttonInfoDisplayTime; }
 
-  int greatUI::getProgNumber()
+  int lvglUI::getProgNumber()
   { return selectedButtonID; }
 
-  uint greatUI::getButtonCount()
+  uint lvglUI::getButtonCount()
   { return buttonCount; }
 
-  uint greatUI::getFinalButtonID()
+  uint lvglUI::getFinalButtonID()
   { return finalButtonID; }
+
+  //!Brain Display Setup
+
+  #define MATCH_BUTTON_X_SIZE 210
+  #define MATCH_BUTTON_Y_SIZE 35
+  #define MATCH_BUTTON_X_OFFSET 0
+  #define MATCH_BUTTON_Y_OFFSET -7
+  #define MATCH_BUTTON_X_SPACING_DISTANCE 26
+  #define MATCH_BUTTON_Y_SPACING_DISTANCE 12
+
+  brainReadOut * matchDisplayData[MAX_MATCH_DATA_COUNT];
+
+  lv_obj_t * matchPageTabs;
+  lv_obj_t * matchTabObjects[MAX_MATCH_TAB_COUNT];
+  char matchTabNames[MAX_MATCH_TAB_NAME_LENGTH][MAX_MATCH_TAB_COUNT];
+  uint matchTabNameLength[MAX_MATCH_TAB_COUNT];
+
+  lv_obj_t * matchDisplays[MAX_MATCH_DATA_COUNT];
+  lv_obj_t * matchDisplayIDLabel[MAX_MATCH_DATA_COUNT];
+  lv_obj_t * matchDisplayTitle[MAX_MATCH_DATA_COUNT];
+  lv_style_t matchDisplayStyle[MAX_MATCH_DATA_COUNT];
+
+  uint8_t matchDisplayUpdateList[MAX_MATCH_DATA_COUNT];
+  uint8_t matchDisplaysWithData = 0;
+
+  void lvglUI::matchUISetup()
+  {
+    uint8_t tabCount = floor(finalMatchDisplayID / 8);
+
+    matchPageTabs = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 35);
+
+    for(uint8_t i = 0; i < (tabCount + 1); i++)
+    {
+      if(matchTabNameLength[i] == 0) //If no name is set
+      {
+        char * name;
+        asprintf(&name, "Tab %d", (i+1));
+        matchTabObjects[i] = lv_tabview_add_tab(matchPageTabs, name);
+      }
+
+      else
+      {
+        char singleTabName[MAX_MATCH_TAB_NAME_LENGTH];
+
+        for(uint ii = 0; ii < matchTabNameLength[i]+1; ii++)
+        { singleTabName[ii] = matchTabNames[ii][i]; }
+
+        matchTabObjects[i] = lv_tabview_add_tab(matchPageTabs, singleTabName);
+      }
+    }
+
+    int verticalOffsetMultiplier = 1;
+    int horizontalOffsetMultiplier = 1;
+    int buttonTab = 0;
+    uint matchDisplayUpdateID = 0;
+
+    for(uint currentDisplay = 0; currentDisplay < (finalMatchDisplayID + 1); currentDisplay++)
+    {
+      if(matchDisplayData[currentDisplay] != nullptr)
+      {
+        matchDisplays[currentDisplay] = lv_btn_create(matchTabObjects[buttonTab]);
+        lv_obj_clear_flag(matchDisplays[currentDisplay], LV_OBJ_FLAG_CLICKABLE);
+
+        lv_obj_set_width(matchDisplays[currentDisplay], MATCH_BUTTON_X_SIZE);
+        lv_obj_set_height(matchDisplays[currentDisplay], MATCH_BUTTON_Y_SIZE);
+
+        lv_obj_set_x(matchDisplays[currentDisplay], ((MATCH_BUTTON_X_SIZE + MATCH_BUTTON_X_SPACING_DISTANCE) * (horizontalOffsetMultiplier - 1)) + MATCH_BUTTON_X_OFFSET);
+        lv_obj_set_y(matchDisplays[currentDisplay], ((MATCH_BUTTON_Y_SIZE + MATCH_BUTTON_Y_SPACING_DISTANCE) * (verticalOffsetMultiplier - 1)) + MATCH_BUTTON_Y_OFFSET);
+        
+        matchDisplayIDLabel[currentDisplay] = lv_label_create(matchDisplays[currentDisplay]); //Create label to store ID.
+        lv_label_set_text_fmt(matchDisplayIDLabel[currentDisplay], "%d", currentDisplay);
+        lv_obj_add_flag(matchDisplayIDLabel[currentDisplay], LV_OBJ_FLAG_HIDDEN);
+
+        lv_color_t matchDisplayLVGL = lv_color_hex(matchDisplayData[currentDisplay]->graphColor.rgb());
+
+        lv_style_init(&matchDisplayStyle[currentDisplay]);
+        lv_style_set_bg_opa(&matchDisplayStyle[currentDisplay], LV_OPA_100);
+        lv_style_set_bg_color(&matchDisplayStyle[currentDisplay], matchDisplayLVGL);
+
+        lv_obj_add_style(matchDisplays[currentDisplay], &matchDisplayStyle[currentDisplay], LV_PART_MAIN);
+
+        matchDisplayTitle[currentDisplay] = lv_label_create(matchDisplays[currentDisplay]); //Create label to store ID.
+        lv_obj_add_flag(matchDisplays[currentDisplay], LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
+        lv_obj_align_to(matchDisplayTitle[currentDisplay], matchDisplays[currentDisplay],  LV_ALIGN_LEFT_MID, -7, 0);
+
+        std::string dataString;
+        
+        switch(matchDisplayData[currentDisplay]->dataType) //Add title to display
+        {
+          default:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s",
+              matchDisplayData[currentDisplay]->Name
+            );
+            break;
+
+          case brainDataType::INT:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%i",
+              matchDisplayData[currentDisplay]->Name,
+              *(int*)matchDisplayData[currentDisplay]->displayData
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+            
+          case brainDataType::UINT:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%i",
+              matchDisplayData[currentDisplay]->Name,
+              *(uint*)matchDisplayData[currentDisplay]->displayData
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+            
+          case brainDataType::LONG:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%lu",
+              matchDisplayData[currentDisplay]->Name,
+              *(long*)matchDisplayData[currentDisplay]->displayData
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+
+          case brainDataType::ULONG:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%lu",
+              matchDisplayData[currentDisplay]->Name,
+              *(ulong*)matchDisplayData[currentDisplay]->displayData
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+            
+          case brainDataType::FLOAT:
+            dataString = evPatch::to_string(*(float*)matchDisplayData[currentDisplay]->displayData);
+
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%s",
+              matchDisplayData[currentDisplay]->Name,
+              dataString.c_str()
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+
+          case brainDataType::DOUBLE:
+            dataString = evPatch::to_string(*(double*)matchDisplayData[currentDisplay]->displayData);
+
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%s",
+              matchDisplayData[currentDisplay]->Name,
+              dataString.c_str()
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+
+          case brainDataType::FUNC_INT:
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%i",
+              matchDisplayData[currentDisplay]->Name,
+              (*matchDisplayData[currentDisplay]->funcInt)()
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+
+          case brainDataType::FUNC_DOUBLE:
+            dataString = evPatch::to_string((*matchDisplayData[currentDisplay]->funcDouble)());
+
+            lv_label_set_text_fmt(
+              matchDisplayTitle[currentDisplay],
+              "%s%s",
+              matchDisplayData[currentDisplay]->Name,
+              dataString.c_str()
+            );
+            matchDisplayUpdateList[matchDisplayUpdateID] = currentDisplay;
+            break;
+        }
+
+        matchDisplayUpdateID++;
+      }
+
+      if(horizontalOffsetMultiplier >= 2) //Create next display position
+      {
+        horizontalOffsetMultiplier = 1;
+        verticalOffsetMultiplier++;
+      }
+
+      else
+      { horizontalOffsetMultiplier++; }
+
+      if(verticalOffsetMultiplier > 4)
+      {
+        horizontalOffsetMultiplier = 1;
+        verticalOffsetMultiplier = 1;
+        buttonTab++;
+      }
+    }
+    
+    matchDisplaysWithData = matchDisplayUpdateID;
+  }
+
+  bool lvglUI::createBrainDisplay(int id, const char name[MAX_MATCH_DATA_NAME_LENGTH])
+  {
+    if(matchDisplayData[id] != nullptr)
+    { return 1; }
+
+    matchDisplayData[id] = new brainReadOut;
+    matchDisplayData[id]->nameLength = strlen(name);
+
+    for(uint8_t i = 0; i < matchDisplayData[id]->nameLength; i++)
+    { matchDisplayData[id]->Name[i] = name[i]; }
+
+    matchDisplayCount++;
+
+    if(id > finalMatchDisplayID)
+    { finalMatchDisplayID = id; }
+
+    return 0;
+  }
+
+  bool lvglUI::setBrainDisplayColor(int id, int r, int g, int b)
+  {
+    if(matchDisplayData[id] == nullptr)
+    { return 1; }
+
+    matchDisplayData[id]->graphColor.rgb(r, g, b);
+
+    return 0;
+  }
+
+  bool lvglUI::setBrainDisplayColor(int id, color Color)
+  {
+    if(matchDisplayData[id] == nullptr)
+    { return 1; }
+
+    matchDisplayData[id]->graphColor = Color;
+
+    return 0;
+  }
+
+  bool lvglUI::setBrainDisplayData(int id, void *data, brainDataType inputDataType)
+  {
+    if(matchDisplayData[id] == nullptr)
+    { return 1; }
+
+    matchDisplayData[id]->displayData = data;
+    matchDisplayData[id]->dataType = inputDataType;
+
+    return 0;
+  }
+
+  bool lvglUI::setBrainDisplayData(int id, int (*callback)())
+  {
+    if(matchDisplayData[id] == nullptr)
+    { return 1; }
+
+    matchDisplayData[id]->funcInt = callback;
+    matchDisplayData[id]->dataType = brainDataType::FUNC_INT;
+
+    return 0;
+  }
+
+  bool lvglUI::setBrainDisplayData(int id, double (*callback)())
+  {
+    if(matchDisplayData[id] == nullptr)
+    { return 1; }
+
+    matchDisplayData[id]->funcDouble = callback;
+    matchDisplayData[id]->dataType = brainDataType::FUNC_DOUBLE;
+
+    return 0;
+  }
+
+  bool lvglUI::setMatchTabName(int id, const char Name[MAX_MATCH_TAB_NAME_LENGTH])
+  {
+    int nameLength = strlen(Name);
+
+    matchTabNameLength[id] = nameLength;
+
+    for(uint i = 0; i < nameLength; i++)
+    { matchTabNames[i][id] = Name[i]; }
+    
+    return false;
+  }
+
+  uint lvglUI::getMatchDisplayCount()
+  { return matchDisplayCount; }
+
+  uint lvglUI::getFinalMatchDisplayID()
+  { return finalMatchDisplayID; }
+
+  int UIThreadFunc()
+  {
+    uint8_t compMode = 0;
+    uint8_t prevCompMode = 4;
+
+    std::string dataString;
+
+    while(true)
+    {
+      if(!Competition.isEnabled()) //Get state of competition.
+      { compMode = disabled; }
+
+      else if(Competition.isDriverControl())
+      { compMode = driverControl; }
+
+      else
+      { compMode = autonomousControl; }
+
+      /* if(compMode != prevCompMode) //Change UI state if competition has changed.
+      {
+        if(compMode == disabled)
+        {
+          lv_obj_add_flag(matchPageTabs, LV_OBJ_FLAG_HIDDEN);
+          lv_obj_clear_flag(autoPageTabs, LV_OBJ_FLAG_HIDDEN);
+        }
+
+        else
+        {
+          lv_obj_add_flag(autoPageTabs, LV_OBJ_FLAG_HIDDEN);
+          lv_obj_clear_flag(matchPageTabs, LV_OBJ_FLAG_HIDDEN);
+        }
+      } */
+
+      /* if(compMode == driverControl) //Match UI update
+      { */
+        uint currentDisplay;
+        for(uint8_t i = 0; i < matchDisplaysWithData-1; i++)
+        {
+          currentDisplay = matchDisplayUpdateList[i];
+          switch(matchDisplayData[currentDisplay]->dataType) //Add title to display
+          {
+            default:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s",
+                matchDisplayData[currentDisplay]->Name
+              );
+              break;
+
+            case brainDataType::INT:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%i",
+                matchDisplayData[currentDisplay]->Name,
+                *(int*)matchDisplayData[currentDisplay]->displayData
+              );
+              break;
+            
+            case brainDataType::UINT:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%i",
+                matchDisplayData[currentDisplay]->Name,
+                *(uint*)matchDisplayData[currentDisplay]->displayData
+              );
+              break;
+            
+            case brainDataType::LONG:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%lu",
+                matchDisplayData[currentDisplay]->Name,
+                *(long*)matchDisplayData[currentDisplay]->displayData
+              );
+              break;
+
+            case brainDataType::ULONG:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%lu",
+                matchDisplayData[currentDisplay]->Name,
+                *(ulong*)matchDisplayData[currentDisplay]->displayData
+              );
+              break;
+            
+            case brainDataType::FLOAT:
+              dataString = evPatch::to_string(*(float*)matchDisplayData[currentDisplay]->displayData);
+
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%s",
+                matchDisplayData[currentDisplay]->Name,
+                dataString.c_str()
+              );
+              break;
+
+            case brainDataType::DOUBLE:
+              dataString = evPatch::to_string(*(double*)matchDisplayData[currentDisplay]->displayData);
+
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%s",
+                matchDisplayData[currentDisplay]->Name,
+                dataString.c_str()
+              );
+              break;
+
+            case brainDataType::FUNC_INT:
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%i",
+                matchDisplayData[currentDisplay]->Name,
+                (*matchDisplayData[currentDisplay]->funcInt)()
+              );
+              break;
+
+            case brainDataType::FUNC_DOUBLE:
+              dataString = evPatch::to_string((*matchDisplayData[currentDisplay]->funcDouble)());
+
+              lv_label_set_text_fmt(
+                matchDisplayTitle[currentDisplay],
+                "%s%s",
+                matchDisplayData[currentDisplay]->Name,
+                dataString.c_str()
+              );
+              break;
+          }
+        //}
+      }
+
+      prevCompMode = compMode;
+      
+      this_thread::sleep_for(20);
+    }
+
+    return 0;
+  }
+
+  void lvglUI::startUIThreads()
+  {
+    v5_lv_init();
+    autoSelectorSetup();
+    //matchUISetup();
+    UIThread = new thread(UIThreadFunc);
+  }
 } // namespace evAPI

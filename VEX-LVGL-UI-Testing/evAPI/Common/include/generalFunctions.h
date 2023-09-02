@@ -9,22 +9,6 @@ namespace evAPI
   #define RAD_TO_DEG 57.295779513082320876798154814105
 
   /**
-   * @brief An arduino function that returns the lowest input provided.
-   * @param a Input #1
-   * @param b Input #2
-   * @returns The lowest of the two inputs.
-  */
-  #define min(a,b) ((a)<(b)?(a):(b))
-
-  /**
-   * @brief An arduino function that returns the largest input provided.
-   * @param a Input #1
-   * @param b Input #2
-   * @returns The larger of the two inputs.
-  */
-  #define max(a,b) ((a)>(b)?(a):(b))
-
-  /**
    * @brief Constrains a number between two other numbers.
    * @param amt The number that is being constrained.
    * @param low The lowest value the input can be.

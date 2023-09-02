@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       greatUI.h                                                 */
+/*    Module:       lvglUI.h                                                  */
 /*    Author:       Jayden Liffick                                            */
 /*    Created:      Sat Aug 5 2023                                            */
 /*    Description:  Header file for the UI system using LVGL.                 */
@@ -11,34 +11,20 @@
 #define GREATUI_H
 
 #include "vex.h"
-#include "..\include\button.h"
-#include "..\..\..\Common\include\colors.h"
-#include "..\..\..\Common\include\evNamespace.h"
-
-//! Define icon IDs here!
-#define SKILLS_ICON 0
-#define LEFT_ARROW 1
-#define RIGHT_ARROW 2
-
-#define MAX_TAB_COUNT 5
-
-#define MAX_BUTTON_COUNT (MAX_TAB_COUNT * 8)
-#define MAX_BRAIN_GRAPH_COUNT 32 
-#define MAX_BRAIN_NAME_LENGTH 22
-#define MAX_CONTROLLER_GRAPH_COUNT 6
-#define MAX_CONTROLLER_NAME_LENGTH 20
-
-#define MAX_TITLE_LENGTH 16
-#define MAX_TAB_NAME_LENGTH 6
-#define MAX_DESCRIPTION_LENGTH 240
+#include "v5lvgl.h"
+#include "evAPISettings.h"
+#include "../include/matchUICore.h"
+#include "../../../Common/include/colors.h"
+#include "../../../Common/include/evNamespace.h"
 
 namespace evAPI
 {
-  class greatUI
+  class lvglUI
   {
     private:
-      thread * matchUIThread;
-      thread * controllerUIThread;
+      thread * UIThread;
+
+      //!AUTO SELECTOR
 
       uint finalButtonID = 0;
       uint buttonCount = 0;
@@ -47,15 +33,19 @@ namespace evAPI
       int progMode = 0;
 
       void addButtonCore(int id);
+
+      void autoSelectorSetup();
+
+      //!MATCH UI
+
+      uint finalMatchDisplayID = 0;
+      uint matchDisplayCount = 0;
+
+      void matchUISetup();
       
     public:
-      greatUI();
-      ~greatUI();
-
-      /**
-       * @brief Starts the UI thread handling screen updates and touch detection.
-      */
-      void startUIThreads();
+      lvglUI();
+      ~lvglUI();
 
       /**
        * @brief Creates a new button with an ID and a color.
@@ -93,6 +83,14 @@ namespace evAPI
       bool addIcon(int id, int iconID);
 
       /**
+       * @brief Adds a custom icon to the button.
+       * @param id The ID of the button.
+       * @param icon A custom icon from LVGL. 
+       * @returns False if the icon is added successfully.
+      */
+      bool addIcon(int id, const lv_img_dsc_t icon);
+
+      /**
        * @brief Changes the color of an icon on a button.
        * @param id The ID of the button.
        * @param r The red value for the color of the icon.
@@ -100,7 +98,7 @@ namespace evAPI
        * @param b The blue value for the color of the icon.
        * @returns False if the icon is added successfully.
       */
-      bool setIconColor(int id, int r, int g, int b);
+      bool changeIconColor(int id, int r, int g, int b);
 
       /**
        * @brief Changes the color of an icon on a button.
@@ -108,7 +106,7 @@ namespace evAPI
        * @param iconColor A color object containing the color of the icon.
        * @returns False if the icon is added successfully.
       */
-      bool setIconColor(int id, color iconColor);
+      bool changeIconColor(int id, color iconColor);
 
       /**
        * @brief Adds a function to be called when the button is pressed.
@@ -123,7 +121,7 @@ namespace evAPI
        * @param id The ID of the button.
        * @param Title An array of characters that contains the title.
       */
-      bool addTitle(int id, const char Title[MAX_TITLE_LENGTH]);
+      bool addTitle(int id, const char Title[MAX_AUTO_TITLE_LENGTH]);
 
       /**
        * @brief Adds a description to be displayed when the button is pressed.
@@ -132,15 +130,15 @@ namespace evAPI
        * @param Description An array of characters that contains the description.
        * @returns False if it successfully adds the data.
       */
-      bool addDescription(int id, const char Description[MAX_DESCRIPTION_LENGTH]);
+      bool addDescription(int id, const char Description[MAX_AUTO_DESCRIPTION_LENGTH]);
 
       /**
-       * @brief Changes the name of a tab.
+       * @brief Changes the name of a tab in the auto selector.
        * @param id The ID of the tab.
        * @param Title An array of characters that contains the name.
        * @returns False if it successfully adds the data.
       */
-      bool setTabName(int id, const char Name[MAX_TAB_NAME_LENGTH]);
+      bool setAutoTabName(int id, const char Name[MAX_AUTO_TAB_NAME_LENGTH]);
 
       /**
        * @brief Maps a button to a specific alliance. This will not change the color of the button.
@@ -173,6 +171,12 @@ namespace evAPI
       void selectButton(int id, bool doNotShowSettings = false);
 
       /**
+       * @brief Changes the selected tab. THIS FUNCTION CAN ONLY BE RUN AFTER THE UI HAS BEEN STARTED!
+       * @param id The tab that will be selected.
+      */
+      void selectTab(int id);
+
+      /**
        * @brief Sets the time the button info box will be displayed on the Brain.
        * @param time The time in ms.
       */
@@ -197,9 +201,103 @@ namespace evAPI
        * @returns The ID of the final button created.
       */
       uint getFinalButtonID();
+
+      //!Brain Display Setup
+
+      /**
+       * @brief Creates the field display. NOTE: USING THIS WILL REMOVE 4 SLOTS FOR GRAPHS ON THE
+       *  BRAIN SCREEN.
+       * @param side Which side of the brain's screen the field will be displayed on.
+      */
+      //void createFieldDisplay(turnType side);
+
+      /**
+       * @param Sets a tile's color on the field display.
+       * @param tileID The numerical ID of the tile. Ranges from 0-35, with 0 being the top left,
+       * and 35 being the bottom right. The value goes up by one for each tile to he right.
+       * @param tileColor The color the tile will be set too.
+      */
+      void setTileColor(uint8_t tileID, color tileColor);
+
+      /**
+       * @param Sets a tile's color on the field display.
+       * @param tileID The numerical ID of the tile. Ranges from 0-35, with 0 being the top left,
+       * and 35 being the bottom right. The value goes up by one for each tile to he right.
+       * @param tileColor The color the tile will be set too.
+      */
+      void setTileColor(uint8_t tileID, int tileColor);
+
+      /**
+       * @brief Creates text to display on the Brain.
+       * @param name An array of characters containing the name of the data.
+      */
+      bool createBrainDisplay(int id, const char name[MAX_MATCH_DATA_NAME_LENGTH]);
+
+      /**
+       * @brief Sets the color of a brain display with the specified id.
+       * @param id The ID of the brian display.
+       * @param r The red value for the color of the brian display.
+       * @param g The green value for the color of the brian display.
+       * @param b The blue value for the color of the brian display.
+       * @return False if the operation completed successfully.
+      */
+      bool setBrainDisplayColor(int id, int r, int g, int b);
+      
+      /**
+       * @brief Sets the color of a brain display with the specified id.
+       * @param id The ID of the brian display.
+       * @param Color The color of the brain display.
+       * @return False if the operation completed successfully.
+      */
+      bool setBrainDisplayColor(int id, color Color);
+
+      /**
+       * @brief Sets the value to be displayed on the brain display.
+       * @param id The ID of the brian display.
+       * @param *data The address of a variable that contains the data to be displayed.
+       * @param inputDataType The type of the variable being displayed.
+      */
+      bool setBrainDisplayData(int id, void *data, brainDataType inputDataType);
+
+      /**
+       * @brief Sets the value to be displayed on the brain display.
+       * @param id The ID of the brian display.
+       * @param callback The a function that returns the data to be displayed.
+      */
+      bool setBrainDisplayData(int id, int (*callback)());
+
+      /**
+       * @brief Sets the value to be displayed on the brain display.
+       * @param id The ID of the brian display.
+       * @param callback The a function that returns the data to be displayed.
+      */
+      bool setBrainDisplayData(int id, double (*callback)());
+
+      /**
+       * @brief Changes the name of a tab in the auto selector.
+       * @param id The ID of the tab.
+       * @param Title An array of characters that contains the name.
+       * @returns False if it successfully adds the data.
+      */
+      bool setMatchTabName(int id, const char Name[MAX_MATCH_TAB_NAME_LENGTH]);
+
+      /**
+       * @returns The total amount of match display outputs.
+      */
+      uint getMatchDisplayCount();
+
+      /**
+       * @returns The ID of the final match display created.
+      */
+      uint getFinalMatchDisplayID();
+
+      /**
+       * @brief Starts the UI thread handling screen updates and touch detection.
+      */
+      void startUIThreads();
   };
 
-  extern greatUI UI;
+  extern lvglUI UI;
   
 } // namespace evAPI
 

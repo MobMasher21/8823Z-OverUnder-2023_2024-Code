@@ -13,11 +13,9 @@
 
 #include "vex.h"
 #include "v5lvgl.h"
+#include "evAPISettings.h"
 #include "..\..\..\Common\include\evNamespace.h"
 #include "..\..\..\Common\include\colors.h"
-
-#define MAX_TITLE_LENGTH 16
-#define MAX_DESCRIPTION_LENGTH 240
 
 namespace evAPI
 {
@@ -34,12 +32,13 @@ namespace evAPI
     color buttonColor;
 
     int iconID = -1;
+    lv_img_dsc_t buttonIconCustom;
     color iconColor = black;
 
     allianceType buttonAlliance = noChange;
 
-    char Title[MAX_TITLE_LENGTH];
-    char Description[MAX_DESCRIPTION_LENGTH];
+    char Title[MAX_AUTO_TITLE_LENGTH];
+    char Description[MAX_AUTO_DESCRIPTION_LENGTH];
     int titleLength = 0;
     int descriptionLength = 0;
   };

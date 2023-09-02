@@ -1,21 +1,23 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       Controllers.h                                             */
+/*    Module:       constantObjects.h                                         */
 /*    Authors:      Jayden Liffick                                            */
-/*    Created:      ?? Feb 2023                                               */
-/*    Description:  Creates the controller objects used in the evAPI.         */
+/*    Created:      15 Aug 2023                                               */
+/*    Description:  Constant objects used by the evAPI.                       */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#ifndef __CONTROLLERS_H__
-#define __CONTROLLERS_H__
+#ifndef __CONSTANTOBJECTS_H__
+#define __CONSTANTOBJECTS_H__
 
-#include "vex.h"
+#include "evNamespace.h"
 
 namespace evAPI
 {
   extern vex::controller primaryController;
   extern vex::controller secondaryController;
+  extern vex::competition Competition;
+  extern evAPI::allianceType robotAlliance;
 }
 
-#endif // __CONTROLLERS_H__
+#endif // __CONSTANTOBJECTS_H__
