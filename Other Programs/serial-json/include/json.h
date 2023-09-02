@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <stdio.h>
 #include "variant.hpp"
 namespace json {
 
@@ -7,12 +8,13 @@ enum types {
     string,
     decimal,
     integer,
-    Boolean,
+    boolean,
+    json,
 };
 
 /// @brief Needed because a bool gets converted to an int-like when formated
 /// @return a string of either "true" or "false"
-const char* form_bool(bool value);
+const char* from_bool(bool value);
 
 class Json_encoder {
    private:
