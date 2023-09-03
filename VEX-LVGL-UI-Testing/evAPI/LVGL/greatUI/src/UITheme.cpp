@@ -25,8 +25,8 @@ namespace evAPI
   {
   }
 
-  lv_style_t UITheme::getBackgroundData()
-  { return backgroundStyle; }
+  lv_style_t *UITheme::getBackgroundData()
+  { return &backgroundStyle; }
 
   lv_style_t UITheme::getTextData()
   { return textStyle; }

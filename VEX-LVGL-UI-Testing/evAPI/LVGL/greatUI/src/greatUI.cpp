@@ -30,7 +30,7 @@ namespace evAPI
   int selectedButtonID = 0;
 
   lv_obj_t * autoPageTabs;
-  lv_style_t autoTabStyle;
+  //lv_style_t autoTabStyle;
   lv_obj_t * autoTabObjects[MAX_AUTO_TAB_COUNT];
   char autoTabNames[MAX_AUTO_TAB_NAME_LENGTH][MAX_AUTO_TAB_COUNT];
   uint autoTabNameLength[MAX_AUTO_TAB_COUNT];
@@ -73,14 +73,17 @@ namespace evAPI
 
     autoPageTabs = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 35);
 
-    lv_style_init(&autoTabStyle); //Set color of display.
+    lv_style_t autoTabStyle;
 
     if(vexDisplayThemeIdGet())
-    { lv_style_set_bg_color(&autoTabStyle, lv_color_white()); }
+    {
+      auto getStyle = lightModeStyle.getBackgroundData();
+    }
 
     else
     { lv_style_set_bg_color(&autoTabStyle, lv_color_black()); }
     
+    lv_style_init(&autoTabStyle); //Set color of display.
     lv_obj_add_style(autoPageTabs, &autoTabStyle, LV_PART_MAIN);
 
     for(uint8_t i = 0; i < (tabCount + 1); i++)

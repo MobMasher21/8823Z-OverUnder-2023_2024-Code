@@ -25,7 +25,7 @@ namespace evAPI
       UITheme(color backgroundColor, color textColor);
       ~UITheme();
 
-      lv_style_t getBackgroundData();
+      lv_style_t *getBackgroundData();
       lv_style_t getTextData();
   };
   
