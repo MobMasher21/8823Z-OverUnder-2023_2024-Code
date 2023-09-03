@@ -1,6 +1,6 @@
 #include <ctype.h>
-#include "..\include\UserInterface.h"
-#include "..\include\pageArrowsIcons.h"
+#include "../include/UserInterface.h"
+#include "../include/pageArrowsIcons.h"
 #include "../../Common/include/evNamespace.h"
 #include "../../Common/include/Controllers.h"
 

@@ -2,7 +2,7 @@
 #define __BUTTON_H__
 
 #include "vex.h"
-#include "..\include\icon.h"
+#include "../include/icon.h"
 
 #define MAX_TITLE_LENGTH 16
 #define MAX_DESCRIPTION_LENGTH 240

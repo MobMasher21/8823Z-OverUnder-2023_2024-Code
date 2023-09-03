@@ -2,9 +2,9 @@
 #define __USERINTERFACE_H__
 
 #include "vex.h"
-#include "..\include\button.h"
-#include "..\include\iconArrays.h"
-#include "..\..\Common\include\colors.h"
+#include "../include/button.h"
+#include "../include/iconArrays.h"
+#include "../../Common/include/colors.h"
 
 #define maxButtonCount 64  //Setup for the max amount of buttons used
 #define MAX_BRAIN_GRAPH_COUNT 32 

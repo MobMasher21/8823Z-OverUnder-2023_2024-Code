@@ -1,4 +1,4 @@
-#include "..\include\icon.h"
+#include "../include/icon.h"
 
 namespace evAPI
 {

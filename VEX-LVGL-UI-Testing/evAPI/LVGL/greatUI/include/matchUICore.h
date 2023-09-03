@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       matchUICore.h                                             */
+/*    Author:       Jayden Liffick                                            */
+/*    Created:      Sat Aug 23 2023                                           */
+/*    Description:  Structure for storing data for the match UI.              */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+
 #ifndef MATCHUICORE_H
 #define MATCHUICORE_H
 
