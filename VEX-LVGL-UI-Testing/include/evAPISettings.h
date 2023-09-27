@@ -7,14 +7,24 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
+//!Colors
 /**
- * This enables the redefining if the colors in "v5_color.h" so they use the color class.
+ * This enables the redefining if the colors in "v5_color.h" so they use the vex color class.
  * Set this to zero to disable the redefining.
  * If disabled, the color objects will have their name changed to have "vex" at the start.
  * Example: vexClrAliceBlue
 */
 #define REDEFINE_COLORS 1
 
+/**
+ * This enables use of LVGL color objects with with evColor class.
+ * 0 - Force disable use of LVGL color with evColor
+ * 1 - Default. Enable LVGL color use if "lvgl.h" is present.
+ * 2 - Force enabling of LVGL color usage.
+*/
+#define ENABLE_LVGL_COLOR 1
+
+//!UI
 /**
  * This controls what UI system evAPI will use. They are mostly compatable with each other, aside from icons.
  * 0: This is the default option. evAPI will check if LVGL is present and use it if possible.

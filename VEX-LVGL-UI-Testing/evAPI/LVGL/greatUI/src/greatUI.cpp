@@ -30,7 +30,7 @@ namespace evAPI
   int selectedButtonID = 0;
 
   lv_obj_t * autoPageTabs;
-  //lv_style_t autoTabStyle;
+  lv_style_t autoTabStyle;
   lv_obj_t * autoTabObjects[MAX_AUTO_TAB_COUNT];
   char autoTabNames[MAX_AUTO_TAB_NAME_LENGTH][MAX_AUTO_TAB_COUNT];
   uint autoTabNameLength[MAX_AUTO_TAB_COUNT];
@@ -47,6 +47,8 @@ namespace evAPI
 
   lv_obj_t * buttonInfoBox;
   timer buttonInfoBoxTime = timer();
+
+  UITheme * basicTheme = nullptr;
 
   void closeInfoButtonBox()
   { lv_msgbox_close(buttonInfoBox); }
@@ -69,22 +71,15 @@ namespace evAPI
   {
     uint8_t tabCount = floor(UI.getFinalButtonID() / 8);
 
-    //this_thread::sleep_for(50);
-
     autoPageTabs = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 35);
 
-    lv_style_t autoTabStyle;
-
-    if(vexDisplayThemeIdGet())
-    {
-      auto getStyle = lightModeStyle.getBackgroundData();
-    }
+    if(vexDisplayThemeIdGet()) //Select style for UI
+    { autoTabStyle = lightModeStyle.getThemeData(themeData::BackgroundTheme); }
 
     else
-    { lv_style_set_bg_color(&autoTabStyle, lv_color_black()); }
+    { autoTabStyle = darkModeStyle.getThemeData(themeData::BackgroundTheme); }
     
-    lv_style_init(&autoTabStyle); //Set color of display.
-    lv_obj_add_style(autoPageTabs, &autoTabStyle, LV_PART_MAIN);
+    //lv_obj_add_style(autoPageTabs, &autoTabStyle, LV_PART_MAIN);
 
     for(uint8_t i = 0; i < (tabCount + 1); i++)
     {
@@ -107,8 +102,7 @@ namespace evAPI
     }
 
     lv_obj_t * tabButtons = lv_tabview_get_tab_btns(autoPageTabs);
-    
-    lv_obj_add_style(tabButtons, &autoTabStyle, LV_PART_MAIN);
+    //lv_obj_add_style(tabButtons, &autoTabStyle, LV_PART_MAIN);
     
     int verticalOffsetMultiplier = 1;
     int horizontalOffsetMultiplier = 1;
@@ -893,11 +887,21 @@ namespace evAPI
     return 0;
   }
 
+  //extern lv_disp_t * lvglDisplay;
+
   void lvglUI::startUIThreads()
   {
-    v5_lv_init();
+    vex_lvgl_init();
+
+    /* lv_color_t lvglDeepSkyBlue = lv_color_hex(ClrDeepSkyBlue.rgb());
+    lv_color_t lvglDarkSlateBlue = lv_color_hex(ClrDarkSlateBlue.rgb());
+
+    lv_theme_t * UITheme_LVGL = lv_theme_default_init(NULL, lvglDeepSkyBlue, lvglDarkSlateBlue, false, LV_FONT_DEFAULT);
+    lv_disp_set_theme(NULL, UITheme_LVGL);
+     */
     autoSelectorSetup();
     //matchUISetup();
+
     UIThread = new thread(UIThreadFunc);
   }
 } // namespace evAPI

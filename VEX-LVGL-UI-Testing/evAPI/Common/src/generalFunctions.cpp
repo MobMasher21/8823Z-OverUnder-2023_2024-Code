@@ -12,9 +12,6 @@
 
 namespace evAPI
 {
-  long map(long value, long fromLow, long fromHigh, long toLow, long toHigh)
-  { return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow; }
-
   float reduce_0_to_360(float angle) {
     while(!(angle >= 0 && angle < 360)) {
       if( angle < 0 ) { angle += 360; }

@@ -125,16 +125,34 @@ int main() {
   UI.startUIThreads();
   UI.selectButton(BLUE_LOADING_AUTO, true);
 
-  /* v5_lv_init();
+  /* vex_lvgl_init();
 
   const char * codeData = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
-  lv_obj_t * qrCode = lv_qrcode_create(lv_scr_act(), 150, lv_color_white(), lv_color_black());
+  lv_color_hsv_t hsvColor;
+  hsvColor.h = 121;
+  hsvColor.s = 76;
+  hsvColor.v = 34;
+
+  evColor qrCodeColor = hsvColor;
+  evColor defaultBackgroundColor = vexDisplayBackgroundDark;
+
+  lv_obj_t * qrCode = lv_qrcode_create(lv_scr_act(), 150, qrCodeColor, defaultBackgroundColor);
   lv_qrcode_update(qrCode, codeData, strlen(codeData));
 
-  lv_obj_center(qrCode); */
+  lv_obj_center(qrCode);
 
-  printf("Display Theme ID: %d\n", vexDisplayThemeIdGet());
+  evColorData qrCodeColorInfoRGB = qrCodeColor.rgbData();
+  evColorData qrCodeColorInfoHSV = qrCodeColor.hsvData();
+
+  printf("QR Code Color Red: %d\n", qrCodeColorInfoRGB.red);
+  printf("QR Code Color Green: %d\n", qrCodeColorInfoRGB.green);
+  printf("QR Code Color Blue: %d\n", qrCodeColorInfoRGB.blue);
+  printf("\n");
+  printf("QR Code Color Hue: %d\n", qrCodeColorInfoHSV.hue);
+  printf("QR Code Color Saturation: %d\n", qrCodeColorInfoHSV.saturation);
+  printf("QR Code Color Value: %d\n", qrCodeColorInfoHSV.value);
+  printf("\n"); */
 
   while(1)
   {

@@ -16,21 +16,35 @@ namespace evAPI
    * @returns "amt" if it is between the two constraining values. "low" if it is less than "low".
    * "high" if it is greater than "high".
   */
-  #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+  template <typename T> T constrain(T amt, T low, T high)
+  {
+    if(amt < low)
+    { return low; }
+
+    else if(amt > high)
+    { return high; }
+
+    return amt;
+  }
+  //#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
   /**
    * @brief Converts an input from degrees to radians.
    * @param deg The angle in degrees.
    * @returns The angle in radians.
   */
-  #define radians(deg) ((deg)*DEG_TO_RAD)
+  template <typename T> inline T radians(T deg)
+  { return deg * DEG_TO_RAD; }
+  //#define radians(deg) ((deg)*DEG_TO_RAD)
 
   /**
    * @brief Converts an input from radians to degrees.
    * @param rad The angle in radians.
    * @returns The angle in degrees.
   */
-  #define degrees(rad) ((rad)*RAD_TO_DEG)
+  template <typename T> inline T degrees(T rad)
+  { return rad * RAD_TO_DEG; }
+  //#define degrees(rad) ((rad)*RAD_TO_DEG)
 
   /**
    * @brief Calculates the square of a number: the number multiplied by itself.
@@ -39,7 +53,9 @@ namespace evAPI
    * @author Arduino
    * @link https://reference.arduino.cc/reference/en/language/functions/math/sq/
   */
-  #define sq(x) ((x)*(x))
+  template <typename T> inline T sq(T x)
+  { return x * x; }
+  //#define sq(x) ((x)*(x))
 
   /**
    * @brief Re-maps a number from one range to another. That is, a value of fromLow would get mapped to toLow,
@@ -52,7 +68,8 @@ namespace evAPI
    * @author Arduino
    * @link https://reference.arduino.cc/reference/en/language/functions/math/map/
   */
-  long map(long value, long fromLow, long fromHigh, long toLow, long toHigh);
+  template <typename T> inline T map(T value, T fromLow, T fromHigh, T toLow, T toHigh)
+  { return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow; }
 
   /**
    * @brief Reduces and angle to be between 0 and 360 degrees.

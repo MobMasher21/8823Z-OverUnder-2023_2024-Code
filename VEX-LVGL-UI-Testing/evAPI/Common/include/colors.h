@@ -15,8 +15,8 @@
 #include "evAPISettings.h"
 
 //Custom colors
-const color fieldGrey = color(60, 60, 60);           //0x003C3C3C
-const color darkBackgroundColor = color(25, 25, 25); //0x191919
+const color fieldGrey = color(60, 60, 60);                //0x003C3C3C
+const color vexDisplayBackgroundDark = color(21, 23, 26); //0x15171a
 
 #if REDEFINE_COLORS
   #undef ClrAliceBlue            

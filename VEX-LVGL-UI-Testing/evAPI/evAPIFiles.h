@@ -6,20 +6,21 @@
 
 #include "evAPISettings.h"
 
+#include "../evAPI/Common/include/colors.h"
 #include "../evAPI/Common/include/generalFunctions.h"
 #include "../evAPI/Common/include/evNamespace.h"
 #include "../evAPI/Common/include/PID.h"
-#include "../evAPI/Common/include/colors.h"
+#include "../evAPI/Common/include/evColor.h"
 #include "../evAPI/Common/include/constantObjects.h"
 #include "../evAPI/Common/include/evPatch.h"
 #include "../evAPI/Common/include/dualPneumatics.h"
 #include "../evAPI/Common/include/vexPrivateRebuild.h"
 
-
 #ifdef __has_include
   #if FORCE_UI_VERSION == 0
-    #if __has_include("v5lvgl.h")
+    #if __has_include("lvgl.h")
       #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
     #else
       #include "../evAPI/vexUI/include/UserInterface.h"
     #endif
@@ -30,15 +31,17 @@
       #error Standard evAPI UI can't be found! Please make sure all of the evAPI is installed!
     #endif
   #else
-    #if __has_include("v5lvgl.h")
+    #if __has_include("lvgl.h")
       #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
     #else
-      #error V5 LVGL is not present in project!
+      #error LVGL is not present in project!
     #endif
   #endif
 #else
   #if FORCE_UI_VERSION == 0
     #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+    #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
   #else
     #include "../evAPI/vexUI/include/UserInterface.h"
   #endif

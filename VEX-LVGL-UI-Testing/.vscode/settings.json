@@ -41,7 +41,11 @@
 		"sstream": "cpp",
 		"cinttypes": "cpp",
 		"utility": "cpp",
-		"deque": "cpp"
+		"deque": "cpp",
+		"algorithm": "cpp",
+		"cstddef": "cpp",
+		"cstring": "cpp",
+		"random": "cpp"
 	},
 	"better-comments.highlightPlainText": true,
 	"better-comments.tags": [
@@ -118,6 +122,7 @@
 		"DUALPNEUMATICS",
 		"EVAPI",
 		"EVAPIFILES",
+		"EVCOLOR",
 		"EVNAMESPACE",
 		"EVPATCH",
 		"FATFS",
@@ -143,6 +148,7 @@
 		"kconfig",
 		"libv",
 		"Liffick",
+		"loadfile",
 		"LONGRANGE",
 		"LVGL",
 		"LVGL's",
@@ -193,10 +199,12 @@
 		"Triball",
 		"triballs",
 		"triport",
+		"UITHEME",
 		"UNSCII",
 		"usercontrol",
 		"USERINTERFACE",
 		"VEXCODE",
+		"VEXLVGL",
 		"VEXPRIVATEAPIREBUILD",
 		"VEXPRIVATEREBUILD",
 		"vglite",
@@ -212,6 +220,6 @@
 	],
 	"C_Cpp.errorSquiggles": "enabledIfIncludesResolve",
 	"C_Cpp.default.systemIncludePath": [
-		"${config:vexrobotics.vexcode.Cpp.Sdk.Home}/V5/V5_20220726_10_00_00/vexv5/gcc/include/sys"
+		"${config:vexrobotics.vexcode.Cpp.Sdk.Home}\\V5\\V5_20220726_10_00_00\\vexv5\\gcc\\include\\sys"
 	]
 }

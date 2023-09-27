@@ -15,6 +15,7 @@
 #include "evAPISettings.h"
 #include "../include/matchUICore.h"
 #include "../include/UITheme.h"
+#include "../../LVGLInit/include/vexLVGL.h"
 #include "../../../Common/include/colors.h"
 #include "../../../Common/include/evNamespace.h"
 
