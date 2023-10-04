@@ -46,6 +46,8 @@ digital_out intakePistons = digital_out(Brain.ThreeWirePort.B);
 #define CATA_FIRE_BUTTON ButtonR2
 #define CATA_SET_BUTTON ButtonA
 #define CATA_STOP_BUTTON ButtonX
+#define CATA_SPEED_INC ButtonUp
+#define CATA_SPEED_DEC ButtonDown
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
 #define INTK_PST_BUTTON ButtonR1
@@ -165,6 +167,15 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+    int cataSpeed_old = cataSpeed;
+
+    printf("Speed: %i\n", cataSpeed);
+
+    Controller1.Screen.clearScreen();
+    Controller1.Screen.setCursor(1, 1);
+    Controller1.Screen.print(cataSpeed);
+
+
     leftMotor1.setStopping(brake);
     leftMotor2.setStopping(brake);
     leftMotor3.setStopping(brake);
@@ -186,6 +197,32 @@ void usercontrol(void) {
         rightMotor3.spin(fwd, rightSpeed, pct);
 
         // --------------------- control cata -------------------------
+        if (Controller1.CATA_SPEED_INC.pressing()) {
+            if (cataSpeed >= 100) {
+                cataSpeed = 100;
+            } else {
+                cataSpeed++;
+            }
+        }
+
+        if (Controller1.CATA_SPEED_DEC.pressing()) {
+            if (cataSpeed <= 0) {
+                cataSpeed = 0;
+            } else {
+                cataSpeed--;
+            }
+        }
+
+        if (cataSpeed != cataSpeed_old) {
+            printf("Speed: %i\n", cataSpeed);
+
+            Controller1.Screen.clearScreen();
+            Controller1.Screen.setCursor(1, 1);
+            Controller1.Screen.print(cataSpeed);
+            
+            cataSpeed_old = cataSpeed;
+        }
+        
         if (!Controller1.CATA_STOP_BUTTON.pressing()) {
             if (Controller1.CATA_FIRE_BUTTON.pressing() || CRNT_CATA_ANGL < cataAngle) {
                 cataMotor.spin(fwd, cataSpeed, pct);
