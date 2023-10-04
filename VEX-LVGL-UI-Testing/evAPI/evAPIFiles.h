@@ -19,7 +19,7 @@
 #ifdef __has_include
   #if FORCE_UI_VERSION == 0
     #if __has_include("lvgl.h")
-      #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+      #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
       #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
     #else
       #include "../evAPI/vexUI/include/UserInterface.h"
@@ -32,7 +32,7 @@
     #endif
   #else
     #if __has_include("lvgl.h")
-      #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+      #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
       #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
     #else
       #error LVGL is not present in project!
@@ -40,7 +40,7 @@
   #endif
 #else
   #if FORCE_UI_VERSION == 0
-    #include "../evAPI/LVGL/greatUI/include/greatUI.h"
+    #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
     #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
   #else
     #include "../evAPI/vexUI/include/UserInterface.h"

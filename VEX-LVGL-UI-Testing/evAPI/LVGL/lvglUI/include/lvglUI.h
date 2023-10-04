@@ -7,17 +7,16 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#ifndef GREATUI_H
-#define GREATUI_H
+#ifndef LVGLUI_H
+#define LVGLUI_H
 
 #include "vex.h"
-#include "v5lvgl.h"
+#include "lvgl.h"
 #include "evAPISettings.h"
 #include "../include/matchUICore.h"
-#include "../include/UITheme.h"
-#include "../../LVGLInit/include/vexLVGL.h"
-#include "../../../Common/include/colors.h"
-#include "../../../Common/include/evNamespace.h"
+#include "..\..\LVGLInit\include\vexLVGL.h"
+#include "..\..\..\Common\include\colors.h"
+#include "..\..\..\Common\include\evNamespace.h"
 
 namespace evAPI
 {
@@ -303,4 +302,4 @@ namespace evAPI
   
 } // namespace evAPI
 
-#endif // GREATUI_H
+#endif // LVGLUI_H

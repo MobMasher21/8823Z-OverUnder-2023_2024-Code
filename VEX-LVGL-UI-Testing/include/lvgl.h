@@ -5,4 +5,4 @@
 
 #include "../lvgl/lvgl.h"
 
-#endif // LVGL_H
+#endif // LVGL_FIX_H

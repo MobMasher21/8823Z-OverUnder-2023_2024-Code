@@ -12,10 +12,10 @@
 #define BUTTON_H
 
 #include "vex.h"
-#include "v5lvgl.h"
+#include "lvgl.h"
 #include "evAPISettings.h"
-#include "../../../Common/include/evNamespace.h"
-#include "../../../Common/include/colors.h"
+#include "..\..\..\Common\include\evNamespace.h"
+#include "..\..\..\Common\include\colors.h"
 
 namespace evAPI
 {

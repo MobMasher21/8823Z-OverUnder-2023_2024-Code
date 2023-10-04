@@ -7,7 +7,7 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 #include "vex.h"
-#include "v5lvgl.h"
+#include "lvgl.h"
 #include "evAPI.h"
 
 using namespace evAPI;

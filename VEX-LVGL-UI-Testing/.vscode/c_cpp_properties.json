@@ -22,9 +22,7 @@
 			"compilerPath": "${vex_compilerPath}",
 			"cStandard": "gnu99",
 			"cppStandard": "gnu++11",
-			"intelliSenseMode": "windows-clang-x86",
-			"compileCommands": "${workspaceFolder}/compile_commands.json",
-			"configurationProvider": "ms-vscode.makefile-tools"
+			"intelliSenseMode": "windows-clang-x86"
 		},
 		{
 			"name": "Mac",
