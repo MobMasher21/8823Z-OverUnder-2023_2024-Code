@@ -8,7 +8,8 @@
 /*----------------------------------------------------------------------------*/
 
 #include <math.h>
-#include "../../Common/include/generalFunctions.h"
+#include "../include/constantObjects.h"
+#include "../include/generalFunctions.h"
 
 namespace evAPI
 {
@@ -38,5 +39,25 @@ namespace evAPI
 
   float to_volt(float percent){
     return(percent*12.0/100.0);
+  }
+
+  robotMode getCompetitionStatus()
+  {
+    if(!Competition.isEnabled())
+    {
+      return robotMode::disabled;
+    }
+
+    else if(Competition.isDriverControl())
+    {
+      return robotMode::driverControl;
+    }
+
+    return robotMode::autonomousControl;
+  }
+
+  bool isConnectToField()
+  {
+    return Competition.isCompetitionSwitch() || Competition.isFieldControl();
   }
 }

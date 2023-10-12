@@ -33,23 +33,18 @@
 */
 #define FORCE_UI_VERSION 0
 
-/**
- * This enables the evPatch namespace, which contains patches to reimplement C++ functions that are missing
- * in VEX's distribution of C++ 11.
-*/
-#define ENABLE_EVPATCH 1
+//*General UI
+#define SELECTOR_TAB_COUNT 5
+#define SELECTOR_TAB_NAME_LENGTH 5
 
-//! Define icon IDs here!
+//*Define icon IDs here!
 #define SKILLS_ICON 0
 #define LEFT_ARROW 1
 #define RIGHT_ARROW 2
 #define EXCLAMATION_POINTS 3
 
-//!Auto Selector UI
-#define MAX_AUTO_TAB_COUNT 5
-#define MAX_AUTO_TAB_NAME_LENGTH 6
-
-#define MAX_AUTO_BUTTON_COUNT (MAX_AUTO_TAB_COUNT * 8)
+//*Auto Selector UI
+#define MAX_AUTO_BUTTON_COUNT (SELECTOR_TAB_COUNT * 8)
 
 #define MAX_AUTO_TITLE_LENGTH 10
 #define MAX_AUTO_DESCRIPTION_LENGTH 200
@@ -60,11 +55,8 @@
 #define AUTO_BUTTON_X_SPACING_DISTANCE 56
 #define AUTO_BUTTON_Y_SPACING_DISTANCE 30
 
-//!Match UI
-#define MAX_MATCH_TAB_COUNT 5
-#define MAX_MATCH_TAB_NAME_LENGTH 6
-
-#define MAX_MATCH_DATA_COUNT (MAX_MATCH_TAB_COUNT * 8)
+//*Match UI
+#define MAX_MATCH_DATA_COUNT (SELECTOR_TAB_COUNT * 8)
 #define MAX_MATCH_DATA_NAME_LENGTH 15
 
 #define MATCH_BUTTON_X_SIZE 210
@@ -74,6 +66,6 @@
 #define MATCH_BUTTON_X_SPACING_DISTANCE 26
 #define MATCH_BUTTON_Y_SPACING_DISTANCE 12
 
-//!Controller UI
+//*Controller UI
 #define MAX_CONTROLLER_DATA_COUNT 6
 #define MAX_CONTROLLER_NAME_LENGTH 20

@@ -50,7 +50,7 @@ double testFunc()
 
 int main() {
   //Auto Page
-  UI.setAutoTabName(0, "Auto");
+  UI.addAutoTab("Auto");
   UI.addButton(BLUE_SCORING_AUTO, blue);
   UI.addTitle(BLUE_SCORING_AUTO, "Scoring");
   UI.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
@@ -76,7 +76,7 @@ int main() {
   UI.changeIconColor(RED_LOADING_AUTO, black);
     
   //Skills Page
-  UI.setAutoTabName(1, "Skills");
+  UI.addAutoTab("Skills");
   UI.addButton(SKILLS_AUTO_BASIC, 0xff, 0x10, 0xa0);
   UI.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
   UI.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
@@ -84,48 +84,50 @@ int main() {
   UI.changeIconColor(SKILLS_AUTO_BASIC, black);
 
   //Other Page
-  UI.setAutoTabName(2, "Other");
+  UI.addAutoTab("Other");
   UI.addButton(16, noAlliance);
   UI.addTitle(16, "Built In");
   UI.addCallbackFunc(16, testCallback);
   UI.addIcon(16, EXCLAMATION_POINTS);
 
   UI.addButton(20, noAlliance);
-  UI.addTitle(20, "Custom");
+  UI.addTitle(20, "Dance");
   UI.addCallbackFunc(20, testCallback);
   UI.addIcon(20, Exclamation_Points);
+  UI.changeIconColor(20, black);
 
   UI.setDisplayTime(1500);
 
-  UI.setMatchTabName(0, "Brain");
-
+  UI.addMatchTab("Brain");
   UI.createBrainDisplay(0, "Capacity: ");
   UI.setBrainDisplayColor(0, ClrSteelBlue);
-  UI.setBrainDisplayData(0, &batteryCapacity, brainDataType::UINT);
+  UI.setBrainDisplayData(0, &batteryCapacity, matchDisplayDataType::UINT);
 
   UI.createBrainDisplay(2, "Current: ");
   UI.setBrainDisplayColor(2, ClrSteelBlue);
-  UI.setBrainDisplayData(2, &batteryCurrent, brainDataType::DOUBLE);
+  UI.setBrainDisplayData(2, &batteryCurrent, matchDisplayDataType::DOUBLE);
 
   UI.createBrainDisplay(4, "Voltage: ");
   UI.setBrainDisplayColor(4, ClrSteelBlue);
-  UI.setBrainDisplayData(4, &batteryVoltage, brainDataType::DOUBLE);
+  UI.setBrainDisplayData(4, &batteryVoltage, matchDisplayDataType::DOUBLE);
 
   UI.createBrainDisplay(6, "Temp: ");
   UI.setBrainDisplayColor(6, red);
-  UI.setBrainDisplayData(6, &batteryTemperature, brainDataType::DOUBLE);
+  UI.setBrainDisplayData(6, &batteryTemperature, matchDisplayDataType::DOUBLE);
 
   UI.createBrainDisplay(1, "Func: ");
   UI.setBrainDisplayColor(1, ClrForestGreen);
   UI.setBrainDisplayData(1, testFunc);
 
-  UI.setMatchTabName(1, "Other");
+  UI.addMatchTab("Other");
   UI.createBrainDisplay(8, "Test 1:");
 
   UI.startUIThreads();
   UI.selectButton(BLUE_LOADING_AUTO, true);
 
-  /* vex_lvgl_init();
+  UI.enableManualUIControl(true);
+
+  /* startLVGL();
 
   const char * codeData = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
@@ -154,12 +156,31 @@ int main() {
   printf("QR Code Color Value: %d\n", qrCodeColorInfoHSV.value);
   printf("\n"); */
 
+  //wait(20, msec);
+  timer toggleTimer;
+  UI.setUIMode(UIStates::Match_UI);
+
   while(1)
   {
     batteryCapacity = Brain.Battery.capacity();
     batteryTemperature = Brain.Battery.temperature(celsius);
     batteryCurrent = Brain.Battery.current();
     batteryVoltage = Brain.Battery.voltage();
+
+    /* if(toggleTimer.time() >= 1000)
+    {
+      toggleTimer = 0;
+
+      if(UI.getUIMode() == UIStates::Match_UI)
+      {
+        UI.setUIMode(UIStates::Preauto_UI);
+      }
+
+      else
+      {
+        UI.setUIMode(UIStates::Match_UI);
+      }
+    } */
 
     // Allow other tasks to run
     this_thread::sleep_for(40);

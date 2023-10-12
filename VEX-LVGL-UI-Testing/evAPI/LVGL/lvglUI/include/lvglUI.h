@@ -13,36 +13,60 @@
 #include "vex.h"
 #include "lvgl.h"
 #include "evAPISettings.h"
-#include "../include/matchUICore.h"
-#include "..\..\LVGLInit\include\vexLVGL.h"
-#include "..\..\..\Common\include\colors.h"
-#include "..\..\..\Common\include\evNamespace.h"
+#include "../include/matchDisplay.h"
+#include "../../LVGLInit/include/vexLVGL.h"
+#include "../../../Common/include/colors.h"
+#include "../../../Common/include/evNamespace.h"
 
 namespace evAPI
 {
+  enum class UIStates
+  {
+    UI_Disabled = 0,
+    Match_UI,
+    Preauto_UI
+  };
+
   class lvglUI
   {
     private:
+      /**
+       * The main UI thread that updates the brain displays and switches the UI mode when the
+       * competition state changes.
+      */ 
       thread * UIThread;
 
       //!AUTO SELECTOR
-
+      //The ID of the final button
       uint finalButtonID = 0;
+
+      //The amount of buttons created
       uint buttonCount = 0;
+
+      //The amount of time in ms the button info display will be up for
       uint buttonInfoDisplayTime = 2000;
 
-      int progMode = 0;
+      //The ID of the currently selected button
+      int selectedButtonID = 0;
 
       void addButtonCore(int id);
 
       void autoSelectorSetup();
 
       //!MATCH UI
-
+      //The ID of the last match display that has displays data.
       uint finalMatchDisplayID = 0;
+
+      //The total amount of match displays
       uint matchDisplayCount = 0;
 
       void matchUISetup();
+
+      //The mode the UI is in
+      UIStates UIMode = UIStates::UI_Disabled;
+
+      //If true, the UI is in manual control mode. It won't switch when that competition state changes
+      bool manualUIControlEnabled = false;
       
     public:
       lvglUI();
@@ -134,12 +158,11 @@ namespace evAPI
       bool addDescription(int id, const char Description[MAX_AUTO_DESCRIPTION_LENGTH]);
 
       /**
-       * @brief Changes the name of a tab in the auto selector.
-       * @param id The ID of the tab.
+       * @brief Creates a tab in the auto selector.
        * @param Title An array of characters that contains the name.
        * @returns False if it successfully adds the data.
       */
-      bool setAutoTabName(int id, const char Name[MAX_AUTO_TAB_NAME_LENGTH]);
+      bool addAutoTab(const char Name[SELECTOR_TAB_NAME_LENGTH]);
 
       /**
        * @brief Maps a button to a specific alliance. This will not change the color of the button.
@@ -258,7 +281,7 @@ namespace evAPI
        * @param *data The address of a variable that contains the data to be displayed.
        * @param inputDataType The type of the variable being displayed.
       */
-      bool setBrainDisplayData(int id, void *data, brainDataType inputDataType);
+      bool setBrainDisplayData(int id, void *data, matchDisplayDataType inputDataType);
 
       /**
        * @brief Sets the value to be displayed on the brain display.
@@ -275,12 +298,11 @@ namespace evAPI
       bool setBrainDisplayData(int id, double (*callback)());
 
       /**
-       * @brief Changes the name of a tab in the auto selector.
-       * @param id The ID of the tab.
+       * @brief Adds a tab to the match UI.
        * @param Title An array of characters that contains the name.
        * @returns False if it successfully adds the data.
       */
-      bool setMatchTabName(int id, const char Name[MAX_MATCH_TAB_NAME_LENGTH]);
+      bool addMatchTab(const char Name[SELECTOR_TAB_NAME_LENGTH]);
 
       /**
        * @returns The total amount of match display outputs.
@@ -292,10 +314,35 @@ namespace evAPI
       */
       uint getFinalMatchDisplayID();
 
+      //!General
+
       /**
-       * @brief Starts the UI thread handling screen updates and touch detection.
+       * @brief Starts the UI thread.
       */
       void startUIThreads();
+
+      /**
+       * @returns The mode the UI is currently in.
+      */
+      UIStates getUIMode();
+
+      /**
+       * @brief Sets the current state of the UI.
+       * THIS FUCTION CAN ONLY BE RUN AFTER THE UI HAS STARTED!
+       * @param mode The mode the UI will be set to.
+      */
+      void setUIMode(UIStates mode);
+
+      /**
+       * @brief Determins if the UI will be in manual control or automatic control.
+       * @param value Set to true for manual control. False, for automatic control.
+      */
+      void enableManualUIControl(bool value);
+
+      /**
+       * @returns True if the UI is in manual control mode.
+      */
+      bool isManualControl();
   };
 
   extern lvglUI UI;

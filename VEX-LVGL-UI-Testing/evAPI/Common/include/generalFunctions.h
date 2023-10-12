@@ -1,6 +1,8 @@
 #ifndef __GENERALFUNCTIONS_H__
 #define __GENERALFUNCTIONS_H__
 
+#include "evNamespace.h"
+
 //https://www.arduino.cc/reference/en/
 
 namespace evAPI
@@ -98,6 +100,17 @@ namespace evAPI
    * @returns The corresponding value in voltage.
   */
   float to_volt(float percent);
+
+  /**
+   * @brief Gets the current status of the competition.
+   * @returns The status of the competition as evAPI::robotMode.
+  */
+  robotMode getCompetitionStatus();
+
+  /**
+   * @returns True if te robot is connected to competition controller.
+  */
+  bool isConnectToField();
 }
 
 #endif // __GENERALFUNCTIONS_H__

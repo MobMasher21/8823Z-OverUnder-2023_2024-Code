@@ -11,20 +11,17 @@
 #ifndef EVPATCH_H
 #define EVPATCH_H
 
-#include "evAPISettings.h"
+#include <string>
+#include <sstream>
 
-#if ENABLE_EVPATCH == 1
-  #include <string>
-  #include <sstream>
-
-  namespace evPatch
+namespace evPatch
+{
+  template <typename T> std::string to_string(const T& n)
   {
-    template <typename T> std::string to_string(const T& n)
-    {
-      std::ostringstream stm;
-      stm << n;
-      return stm.str();
-    }
+    std::ostringstream stm;
+    stm << n;
+    return stm.str();
   }
-#endif
+}
+
 #endif // EVPATCH_H

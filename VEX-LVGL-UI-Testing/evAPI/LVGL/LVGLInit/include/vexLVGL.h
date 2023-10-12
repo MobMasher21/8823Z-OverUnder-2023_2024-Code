@@ -14,7 +14,7 @@
 
 namespace evAPI
 {
-  void vex_lvgl_init();
+  void startLVGL();
 } // namespace evAPI
 
 #endif // VEXLVGL_H

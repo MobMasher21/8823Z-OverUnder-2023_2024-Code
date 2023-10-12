@@ -25,33 +25,35 @@ lv_color_t colorBuffer2[BRAIN_HORIZONTAL_RESOLUTION * BRAIN_VERTICAL_RESOLUTION]
 lv_indev_drv_t touchDriver;
 
 lv_disp_drv_t lvglDisplayDriver;
-lv_disp_t * lvglDisplay;
+lv_disp_t *lvglDisplay;
 
-lv_obj_t * startingScreen;
+lv_obj_t *startingScreen;
 
-thread * LVGLThread;
+thread *LVGLThread;
+
+bool lvglStarted = false;
 
 namespace evAPI
 {
- static void flushDisplay(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
+ static void flushDisplay(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
   {
     vexDisplayCopyRect(area->x1, area->y1, area->x2, area->y2, (uint32_t*)color_p, area->x2 - area->x1 + 1);
     lv_disp_flush_ready(disp_drv);
   } 
 
-  static void getTouchData(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
+  static void getTouchData(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
   {
-    V5_TouchStatus status;
-    vexTouchDataGet(&status);
+    V5_TouchStatus touchState;
+    vexTouchDataGet(&touchState);
 
-    if(status.lastEvent == kTouchEventPress)
+    if(touchState.lastEvent == kTouchEventPress)
     { data->state = LV_INDEV_STATE_PR; }
 
-    else if( status.lastEvent == kTouchEventRelease )
+    else if( touchState.lastEvent == kTouchEventRelease )
     { data->state = LV_INDEV_STATE_REL; }
 
-    data->point.x = status.lastXpos;
-    data->point.y = status.lastYpos;
+    data->point.x = touchState.lastXpos;
+    data->point.y = touchState.lastYpos;
   }
 
   int lvglThreadFunc()
@@ -66,15 +68,26 @@ namespace evAPI
     return(0);
   }
 
-  void vex_lvgl_init()
+  void startLVGL()
   {
+    //Return if LVGL has already started
+    if(!lvglStarted)
+    {
+      lvglStarted = true;
+    }
+
+    else
+    {
+      return;
+    }
+
     lv_init();
 
     //Create display driver and set parameters
     lv_disp_draw_buf_init(&displayBuffer,
       colorBuffer1,
       colorBuffer2,
-      BRAIN_HORIZONTAL_RESOLUTION * BRAIN_VERTICAL_RESOLUTION
+      (BRAIN_HORIZONTAL_RESOLUTION * BRAIN_VERTICAL_RESOLUTION)
     );
 
     lv_disp_drv_init(&lvglDisplayDriver);
