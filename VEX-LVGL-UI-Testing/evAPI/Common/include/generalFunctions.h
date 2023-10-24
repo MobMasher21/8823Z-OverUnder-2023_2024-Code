@@ -74,34 +74,6 @@ namespace evAPI
   { return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow; }
 
   /**
-   * @brief Reduces and angle to be between 0 and 360 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
-  */
-  float reduce_0_to_360(float angle);
-  
-  /**
-   * @brief Reduces and angle to be between -180 and 180 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
-  */
-  float reduce_negative_180_to_180(float angle);
-  
-  /**
-   * @brief Reduces and angle to be between -90 and 90 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
-  */
-  float reduce_negative_90_to_90(float angle);
-  
-  /**
-   * @brief Converts a motor power value in percentage to one in volts.
-   * @param percent The percentage getting converted to voltage.
-   * @returns The corresponding value in voltage.
-  */
-  float to_volt(float percent);
-
-  /**
    * @brief Gets the current status of the competition.
    * @returns The status of the competition as evAPI::robotMode.
   */

@@ -45,7 +45,8 @@
 		"algorithm": "cpp",
 		"cstddef": "cpp",
 		"cstring": "cpp",
-		"random": "cpp"
+		"random": "cpp",
+		"*.tpp": "cpp"
 	},
 	"better-comments.highlightPlainText": true,
 	"better-comments.tags": [
@@ -101,6 +102,7 @@
 		"ARDUINODEF",
 		"auton",
 		"AUTONPATHS",
+		"btnm",
 		"BTNMATRIX",
 		"btns",
 		"Chrom",
@@ -123,6 +125,7 @@
 		"EVAPI",
 		"EVAPIFILES",
 		"EVCOLOR",
+		"EVERRORTYPES",
 		"EVNAMESPACE",
 		"EVPATCH",
 		"FATFS",
@@ -143,6 +146,7 @@
 		"IMGBTN",
 		"IMGFONT",
 		"INDEV",
+		"initalize",
 		"intaking",
 		"intdist",
 		"Jayden",
@@ -159,6 +163,7 @@
 		"MATCHDISPLAY",
 		"MATCHUI",
 		"MATCHUICORE",
+		"mbox",
 		"mecanum",
 		"Micropython",
 		"mkenv",
@@ -175,6 +180,7 @@
 		"PNEUMATICJ",
 		"Powerup",
 		"Preauto",
+		"PREAUTOUI",
 		"PRINTTIMESPACING",
 		"QRCODE",
 		"REFR",
@@ -202,6 +208,8 @@
 		"Triball",
 		"triballs",
 		"triport",
+		"txts",
+		"UIIMAGES",
 		"UITHEME",
 		"UNSCII",
 		"usercontrol",
@@ -222,8 +230,9 @@
 		"yprev",
 		"yrotated"
 	],
-	"C_Cpp.errorSquiggles": "enabledIfIncludesResolve",
+	"C_Cpp.errorSquiggles": "enabled",
 	"C_Cpp.default.systemIncludePath": [
 		"${config:vexrobotics.vexcode.Cpp.Sdk.Home}\\V5\\V5_20220726_10_00_00\\vexv5\\gcc\\include\\sys"
-	]
+	],
+	"C_Cpp.default.enableConfigurationSquiggles": true
 }

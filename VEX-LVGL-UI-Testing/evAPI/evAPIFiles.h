@@ -2,7 +2,7 @@
 #define EVAPIFILES_H
 
 //Format Year/Month/Day
-#define EVAPI_VERSION 20232512
+#define EVAPI_VERSION 20231014
 
 #include "evAPISettings.h"
 
@@ -15,12 +15,13 @@
 #include "../evAPI/Common/include/evPatch.h"
 #include "../evAPI/Common/include/dualPneumatics.h"
 #include "../evAPI/Common/include/vexPrivateRebuild.h"
+#include "../evAPI/Common/include/evErrorTypes.hpp"
 
 #ifdef __has_include
   #if FORCE_UI_VERSION == 0
     #if __has_include("lvgl.h")
-      #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
-      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
+      #include "../evAPI/LVGL/lvglUI/coreUI/include/coreUI.hpp"
+      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.hpp"
     #else
       #include "../evAPI/vexUI/include/UserInterface.h"
     #endif
@@ -32,16 +33,16 @@
     #endif
   #else
     #if __has_include("lvgl.h")
-      #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
-      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
+      #include "../evAPI/LVGL/lvglUI/coreUI/include/coreUI.hpp"
+      #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.hpp"
     #else
       #error LVGL is not present in project!
     #endif
   #endif
 #else
   #if FORCE_UI_VERSION == 0
-    #include "../evAPI/LVGL/lvglUI/include/lvglUI.h"
-    #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.h"
+    #include "../evAPI/LVGL/lvglUI/coreUI/include/coreUI.hpp"
+    #include "../evAPI/LVGL/LVGLInit/include/vexLVGL.hpp"
   #else
     #include "../evAPI/vexUI/include/UserInterface.h"
   #endif

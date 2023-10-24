@@ -7,9 +7,8 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#include "../include/tabGroup.h"
 #include <stdio.h>
-#include "vex_thread.h"
+#include "../include/tabGroup.hpp"
 
 namespace evAPI
 {

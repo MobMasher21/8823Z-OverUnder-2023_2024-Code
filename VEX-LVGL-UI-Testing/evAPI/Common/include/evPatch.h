@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       evPatch.cpp                                               */
+/*    Module:       evPatch.h                                                 */
 /*    Author:       Jayden Liffick                                            */
 /*    Created:      Sun Aug 25, 2023                                          */
-/*    Description:  Patches to reimplement c++ features missing from the c++  */
+/*    Description:  Patches to reimplement C++ features missing from the C++  */
 /*                  variant VEX ships.                                        */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/

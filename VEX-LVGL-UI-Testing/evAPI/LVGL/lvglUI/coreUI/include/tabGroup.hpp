@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       selectorTabData.h                                         */
+/*    Module:       tabGroup.hpp                                              */
 /*    Author:       Jayden Liffick                                            */
 /*    Created:      Oct 6, 2023                                               */
 /*    Description:  Class that holds data for the selector tabs.              */

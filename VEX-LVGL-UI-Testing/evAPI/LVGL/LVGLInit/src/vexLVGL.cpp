@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "../include/vexLVGL.h"
+#include "../include/vexLVGL.hpp"
 #include "../../../Common/include/vexPrivateRebuild.h"
 
 #define BRAIN_HORIZONTAL_RESOLUTION 480
@@ -47,10 +47,14 @@ namespace evAPI
     vexTouchDataGet(&touchState);
 
     if(touchState.lastEvent == kTouchEventPress)
-    { data->state = LV_INDEV_STATE_PR; }
+    {
+      data->state = LV_INDEV_STATE_PR;
+    }
 
-    else if( touchState.lastEvent == kTouchEventRelease )
-    { data->state = LV_INDEV_STATE_REL; }
+    else if(touchState.lastEvent == kTouchEventRelease)
+    {
+      data->state = LV_INDEV_STATE_REL;
+    }
 
     data->point.x = touchState.lastXpos;
     data->point.y = touchState.lastYpos;

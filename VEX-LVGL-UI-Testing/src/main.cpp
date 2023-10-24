@@ -25,9 +25,9 @@ vex::brain       Brain;
 
 LV_IMG_DECLARE(Exclamation_Points)
 
-void testCallback(int id)
+void testCallback(u_int id)
 {
-  printf("Button %d was pressed.\n\n", id);
+  printf("Button %i was pressed.\n\n", id);
 }
 
 uint batteryCapacity = Brain.Battery.capacity();
@@ -50,55 +50,56 @@ double testFunc()
 
 int main() {
   //Auto Page
-  UI.addAutoTab("Auto");
-  UI.addButton(BLUE_SCORING_AUTO, blue);
-  UI.addTitle(BLUE_SCORING_AUTO, "Scoring");
-  UI.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
-  UI.addIcon(BLUE_SCORING_AUTO, LEFT_ARROW);
-  UI.changeIconColor(BLUE_SCORING_AUTO, black);
+  UI.autoSelector.addAutoTab("Auto");
+  UI.autoSelector.addButton(BLUE_SCORING_AUTO, blue);
+  UI.autoSelector.addTitle(BLUE_SCORING_AUTO, "Scoring");
+  UI.autoSelector.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
+  UI.autoSelector.addIcon(BLUE_SCORING_AUTO, iconType::Left_Arrow);
+  UI.autoSelector.changeIconColor(BLUE_SCORING_AUTO, black);
+  UI.autoSelector.addCallbackFunc(BLUE_SCORING_AUTO, testCallback);
 
-  UI.addButton(BLUE_LOADING_AUTO, blue);
-  UI.addTitle(BLUE_LOADING_AUTO, "Load");
-  UI.addDescription(BLUE_LOADING_AUTO, "Auto for a blue alliance robot on the match loading side.");
-  UI.addIcon(BLUE_LOADING_AUTO, RIGHT_ARROW);
-  UI.changeIconColor(BLUE_LOADING_AUTO, black);
+  UI.autoSelector.addButton(BLUE_LOADING_AUTO, blue);
+  UI.autoSelector.addTitle(BLUE_LOADING_AUTO, "Load");
+  UI.autoSelector.addDescription(BLUE_LOADING_AUTO, "Auto for a blue alliance robot on the match loading side.");
+  UI.autoSelector.addIcon(BLUE_LOADING_AUTO, iconType::Right_Arrow);
+  UI.autoSelector.changeIconColor(BLUE_LOADING_AUTO, black);
 
-  UI.addButton(RED_SCORING_AUTO, red);
-  UI.addTitle(RED_SCORING_AUTO, "Scoring");
-  UI.addDescription(RED_SCORING_AUTO, "Auto for a red alliance robot on the scoring side.");
-  UI.addIcon(RED_SCORING_AUTO, LEFT_ARROW);
-  UI.changeIconColor(RED_SCORING_AUTO, black);
+  UI.autoSelector.addButton(RED_SCORING_AUTO, red);
+  UI.autoSelector.addTitle(RED_SCORING_AUTO, "Scoring");
+  UI.autoSelector.addDescription(RED_SCORING_AUTO, "Auto for a red alliance robot on the scoring side.");
+  UI.autoSelector.addIcon(RED_SCORING_AUTO, iconType::Left_Arrow);
+  UI.autoSelector.changeIconColor(RED_SCORING_AUTO, black);
 
-  UI.addButton(RED_LOADING_AUTO, red);
-  UI.addTitle(RED_LOADING_AUTO, "Load");
-  UI.addDescription(RED_LOADING_AUTO, "Auto for a red alliance robot on the match loading side.");
-  UI.addIcon(RED_LOADING_AUTO, RIGHT_ARROW);
-  UI.changeIconColor(RED_LOADING_AUTO, black);
+  UI.autoSelector.addButton(RED_LOADING_AUTO, red);
+  UI.autoSelector.addTitle(RED_LOADING_AUTO, "Load");
+  UI.autoSelector.addDescription(RED_LOADING_AUTO, "Auto for a red alliance robot on the match loading side.");
+  UI.autoSelector.addIcon(RED_LOADING_AUTO, iconType::Right_Arrow);
+  UI.autoSelector.changeIconColor(RED_LOADING_AUTO, black);
     
   //Skills Page
-  UI.addAutoTab("Skills");
-  UI.addButton(SKILLS_AUTO_BASIC, 0xff, 0x10, 0xa0);
-  UI.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
-  UI.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
-  UI.addIcon(SKILLS_AUTO_BASIC, SKILLS_ICON);
-  UI.changeIconColor(SKILLS_AUTO_BASIC, black);
+  UI.autoSelector.addAutoTab("Skills");
+  UI.autoSelector.addButton(SKILLS_AUTO_BASIC, 0xff, 0x10, 0xa0);
+  UI.autoSelector.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
+  UI.autoSelector.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
+  UI.autoSelector.addIcon(SKILLS_AUTO_BASIC, iconType::Skills_Icon);
+  UI.autoSelector.changeIconColor(SKILLS_AUTO_BASIC, black);
 
   //Other Page
-  UI.addAutoTab("Other");
-  UI.addButton(16, noAlliance);
-  UI.addTitle(16, "Built In");
-  UI.addCallbackFunc(16, testCallback);
-  UI.addIcon(16, EXCLAMATION_POINTS);
+  UI.autoSelector.addAutoTab("Other");
+  UI.autoSelector.addButton(16, noAlliance);
+  UI.autoSelector.addTitle(16, "Built In");
+  UI.autoSelector.addCallbackFunc(16, testCallback);
+  UI.autoSelector.addIcon(16, iconType::Exclamation_Points);
 
-  UI.addButton(20, noAlliance);
-  UI.addTitle(20, "Dance");
-  UI.addCallbackFunc(20, testCallback);
-  UI.addIcon(20, Exclamation_Points);
-  UI.changeIconColor(20, black);
+  UI.autoSelector.addButton(20, noAlliance);
+  UI.autoSelector.addTitle(20, "Dance");
+  UI.autoSelector.addCallbackFunc(20, testCallback);
+  UI.autoSelector.addIcon(20, &Exclamation_Points);
+  UI.autoSelector.changeIconColor(20, black);
 
-  UI.setDisplayTime(1500);
+  //UI.autoSelector.setDisplayTime(1500);
 
-  UI.addMatchTab("Brain");
+  /* UI.addMatchTab("Brain");
   UI.createBrainDisplay(0, "Capacity: ");
   UI.setBrainDisplayColor(0, ClrSteelBlue);
   UI.setBrainDisplayData(0, &batteryCapacity, matchDisplayDataType::UINT);
@@ -120,12 +121,12 @@ int main() {
   UI.setBrainDisplayData(1, testFunc);
 
   UI.addMatchTab("Other");
-  UI.createBrainDisplay(8, "Test 1:");
+  UI.createBrainDisplay(8, "Test 1:"); */
 
-  UI.startUIThreads();
-  UI.selectButton(BLUE_LOADING_AUTO, true);
+  //UI.startUI();
+  //UI.autoSelector.selectButton(BLUE_LOADING_AUTO, true);
 
-  UI.enableManualUIControl(true);
+  //UI.setManualControl(false);
 
   /* startLVGL();
 
@@ -157,8 +158,8 @@ int main() {
   printf("\n"); */
 
   //wait(20, msec);
-  timer toggleTimer;
-  UI.setUIMode(UIStates::Match_UI);
+  //timer toggleTimer;
+  //UI.setUIMode(UIStates::Match_UI);
 
   while(1)
   {

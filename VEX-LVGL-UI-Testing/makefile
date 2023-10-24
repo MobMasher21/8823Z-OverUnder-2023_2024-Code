@@ -17,13 +17,16 @@ OBJ = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(SRC_C))) )
 # location of include files that c and cpp files depend on
 SRC_H  = $(wildcard include/*.h)
 
+#Includes for LVGL files
 SRC_H += $(wildcard lvgl/*.h)
 SRC_H += $(wildcard lvgl/*/*.h)
 SRC_H += $(wildcard lvgl/*/*/*.h)
 SRC_H += $(wildcard lvgl/*/*/*/*.h)
 SRC_H += $(wildcard lvgl/*/*/*/*/*.h)
 
-include evAPI/make/evAPI.mk
+#Includes for the evAPI
+include evAPI/make/SRC.mk
+include evAPI/make/INCLUDE.mk
 
 # additional dependancies
 SRC_A  = makefile
