@@ -175,14 +175,14 @@ namespace evAPI
        *          Object_Property_Not_Specified: If the title wasn't specified.
        *          No_Error: If the title was returned successfully + The title.
       */
-      evErrorData<std::string *> &getTitle();
+      evErrorString &getTitle();
 
       /**
        * @returns The description as an evErrorData structure with the std::string type.
        *          Object_Property_Not_Specified: If the description wasn't specified.
        *          No_Error: If the description was returned successfully + The description.
       */
-      evErrorData<std::string *> &getDescription();
+      evErrorString &getDescription();
   };
 } //evAPI
 

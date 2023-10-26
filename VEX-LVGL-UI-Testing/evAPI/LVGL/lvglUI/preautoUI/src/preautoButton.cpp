@@ -248,10 +248,10 @@ namespace evAPI
     lv_obj_set_style_outline_opa(LVGLButton, LV_OPA_0, 0);
   }
 
-  evErrorData<std::string *> &preautoButton::getTitle()
+  evErrorString &preautoButton::getTitle()
   {
     //Data to return
-    static evErrorData<std::string *> returnData;
+    static evErrorString returnData;
 
     //Get the data to return
     if(Title == "NULL")
@@ -268,10 +268,10 @@ namespace evAPI
     return returnData;
   }
 
-  evErrorData<std::string *> &preautoButton::getDescription()
+  evErrorString &preautoButton::getDescription()
   {
     //Data to return
-    static evErrorData<std::string *> returnData;
+    static evErrorString returnData;
 
     //Get the data to return
     if(Description == "NULL")

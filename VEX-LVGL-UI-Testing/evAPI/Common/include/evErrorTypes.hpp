@@ -10,6 +10,8 @@
 #ifndef EVERRORTYPES_H
 #define EVERRORTYPES_H
 
+#include <string>
+
 namespace evAPI
 {
   /**
@@ -33,7 +35,10 @@ namespace evAPI
     Calibration_Already_Complete,
     Invalid_Argument_Data,
     Object_Does_Not_Exist,
-    Object_Property_Not_Specified
+    Object_Property_Not_Specified,
+    Range_Limit_Reached,
+    Index_Out_Of_Range,
+    Index_Out_Of_Range_Non_Critical
   };
 
   /**
@@ -53,6 +58,7 @@ namespace evAPI
   typedef evErrorData<unsigned int> evErrorUInt;
   typedef evErrorData<float> evErrorFloat;
   typedef evErrorData<double> evErrorDouble;
+  typedef evErrorData<std::string *> evErrorString;
 
 } // namespace evAPI
 
