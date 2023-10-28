@@ -72,9 +72,9 @@ enum {
 };
 
 int highCataAngle = 30;
-int lowCataAngle = 45;
+int lowCataAngle = 46;
 int cataAngle;
-int cataStartAngle;
+double cataStartAngle;
 #define CRNT_CATA_ANGL (cataSensor.angle(deg) - cataStartAngle)
 int cataSpeed = 75;
 int intakeSpeed = 100;
@@ -99,6 +99,24 @@ void tglCataMode() {
         cataLaunchMode = HIGH_CATA;
     }
 }
+void cataInc() {
+    if (cataSpeed >= 100) {
+        cataSpeed = 100;
+    } else {
+        cataSpeed += 5;
+    }
+}
+void cataDec() {
+    if (cataSpeed <= 0) {
+        cataSpeed = 0;
+    } else {
+        cataSpeed -= 5;
+    }
+}
+
+
+double robotBattery = Brain.Battery.capacity();
+
 // ---------------------------------------------------------------------------
 
 // define your global instances of motors and other devices here
@@ -119,9 +137,15 @@ void pre_auton(void) {
     primaryController.INTK_PST_BUTTON.pressed(tglIntake);
     primaryController.WINGS_BUTTON.pressed(tglWings);
     primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
+    primaryController.CATA_SPEED_INC.pressed(cataInc);
+    primaryController.CATA_SPEED_DEC.pressed(cataDec);
 
     Drivetrain.setDriveVelocity(20, percent);
     Drivetrain.setTurnVelocity(20, percent);
+
+    primaryController.Screen.clearScreen();
+    primaryController.Screen.setCursor(1, 1);
+    primaryController.Screen.print("Calibrating...");;
 
     Inertial.calibrate();
 
@@ -154,15 +178,20 @@ void pre_auton(void) {
     UI.addBlank();
     UI.addBlank();
     UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
-    UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.number0);
+    UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.leftArrow);
     UI.addBlank();
     UI.addBlank();
     UI.addBlank();
     UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
 
+    UI.createControllerReadOut("Speed: ", cataSpeed);
+    UI.createControllerReadOut("Battery: ", robotBattery);
+
     UI.selectButton(3, true);
     UI.setDisplayTime(1500);
     UI.startUIThreads();
+   
+    cataStartAngle = cataSensor.angle(deg);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -229,6 +258,7 @@ void autonomous(void) {
             Drivetrain.driveFor(reverse, 4, distanceUnits::in);
             Drivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
 
+            /*
             //Push othe nugget in
             Drivetrain.setDriveVelocity(70, percent);
             Drivetrain.turnFor(turnType::right, 62, rotationUnits::deg);
@@ -255,6 +285,7 @@ void autonomous(void) {
             Drivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
             Drivetrain.setDriveVelocity(30, percent);
             Drivetrain.driveFor(forward, 20, distanceUnits::in);
+            */
 
             break;
     
@@ -280,9 +311,9 @@ void usercontrol(void) {
 
     printf("Speed: %i\n", cataSpeed);
 
-    primaryController.Screen.clearScreen();
+    /* primaryController.Screen.clearScreen();
     primaryController.Screen.setCursor(1, 1);
-    primaryController.Screen.print(cataSpeed);
+    primaryController.Screen.print(cataSpeed); */
 
     leftMotor1.setStopping(brake);
     leftMotor2.setStopping(brake);
@@ -292,11 +323,10 @@ void usercontrol(void) {
     rightMotor3.setStopping(brake);
 
     // User control code here, inside the loop
-    cataStartAngle = cataSensor.angle(deg);
     while (1) {
         // ------------------------- make it drive -----------------------
-        leftSpeed = (primaryController.Axis3.position() + primaryController.Axis1.position());
-        rightSpeed = (primaryController.Axis3.position() - primaryController.Axis1.position());
+        leftSpeed = (primaryController.Axis3.position() + (primaryController.Axis1.position() * .8));
+        rightSpeed = (primaryController.Axis3.position() - (primaryController.Axis1.position() * .8));
         leftMotor1.spin(fwd, leftSpeed, pct);
         leftMotor2.spin(fwd, leftSpeed, pct);
         leftMotor3.spin(fwd, leftSpeed, pct);
@@ -305,28 +335,13 @@ void usercontrol(void) {
         rightMotor3.spin(fwd, rightSpeed, pct);
 
         // --------------------- control cata -------------------------
-        if (primaryController.CATA_SPEED_INC.pressing()) {
-            if (cataSpeed >= 100) {
-                cataSpeed = 100;
-            } else {
-                cataSpeed++;
-            }
-        }
-
-        if (primaryController.CATA_SPEED_DEC.pressing()) {
-            if (cataSpeed <= 0) {
-                cataSpeed = 0;
-            } else {
-                cataSpeed--;
-            }
-        }
 
         if (cataSpeed != cataSpeed_old) {
             printf("Speed: %i\n", cataSpeed);
 
-            primaryController.Screen.clearScreen();
+            /* primaryController.Screen.clearScreen();
             primaryController.Screen.setCursor(1, 1);
-            primaryController.Screen.print(cataSpeed);
+            primaryController.Screen.print(cataSpeed); */
             
             cataSpeed_old = cataSpeed;
         }
@@ -390,6 +405,7 @@ int main() {
 
     // Prevent main from exiting with an infinite loop.
     while (true) {
-        wait(100, msec);
+        robotBattery = Brain.Battery.capacity();
+        wait(50, msec);
     }
 }

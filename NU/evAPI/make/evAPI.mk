@@ -5,21 +5,6 @@ SRC_C += $(wildcard evAPI/Common/src/*.c)
 SRC_C += $(wildcard evAPI/Common/src/*/*.cpp)
 SRC_C += $(wildcard evAPI/Common/src/*/*.c)
 
-SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*.c)
-SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*/*.c)
-
-SRC_C += $(wildcard evAPI/robotControl/Flywheel/src/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Flywheel/src/*.c)
-SRC_C += $(wildcard evAPI/robotControl/Flywheel/src/*/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Flywheel/src/*/*.c)
-
-SRC_C += $(wildcard evAPI/robotControl/Intake/src/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Intake/src/*.c)
-SRC_C += $(wildcard evAPI/robotControl/Intake/src/*/*.cpp)
-SRC_C += $(wildcard evAPI/robotControl/Intake/src/*/*.c)
-
 SRC_C += $(wildcard evAPI/vexUI/src/*.cpp)
 SRC_C += $(wildcard evAPI/vexUI/src/*.c)
 SRC_C += $(wildcard evAPI/vexUI/src/*/*.cpp)
