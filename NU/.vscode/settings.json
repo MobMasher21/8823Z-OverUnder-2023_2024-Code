@@ -7,6 +7,9 @@
 		"CRNT",
 		"drivercontrol",
 		"INTK",
-		"usercontrol"
+		"Preauto",
+		"smartdrive",
+		"usercontrol",
+		"USERINTERFACE"
 	]
 }

@@ -17,6 +17,8 @@ OBJ = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(SRC_C))) )
 # location of include files that c and cpp files depend on
 SRC_H  = $(wildcard include/*.h)
 
+include evAPI/make/evAPI.mk
+
 # additional dependancies
 SRC_A  = makefile
 

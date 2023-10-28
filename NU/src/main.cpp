@@ -8,8 +8,9 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
+#include "evAPI.h"
 
-using namespace vex;
+using namespace evAPI;
 
 // A global instance of brian
 brain Brain;
@@ -26,6 +27,15 @@ motor rightMotor1 = motor(PORT19, gearSetting::ratio6_1, false);
 motor rightMotor2 = motor(PORT17, gearSetting::ratio6_1, false);
 motor rightMotor3 = motor(PORT16, gearSetting::ratio6_1, false);
 
+//Inertial Sensor
+inertial Inertial = inertial(PORT8);
+
+//Drivetrain
+motor_group leftMotors = motor_group(leftMotor1, leftMotor2, leftMotor3);
+motor_group rightMotors = motor_group(rightMotor1, rightMotor2, rightMotor3);
+
+smartdrive Drivetrain = smartdrive(leftMotors, rightMotors, Inertial, 319.19, 320, 40, mm, 0.6666666666666666);
+
 // catapult motor/sensors
 motor cataMotor = motor(PORT20, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT9, true);
@@ -34,7 +44,7 @@ rotation cataSensor = rotation(PORT9, true);
 motor intakeMotor = motor(PORT2, gearSetting::ratio6_1, false);
 
 // controllers
-controller Controller1 = controller(controllerType::primary);
+//controller Controller1 = controller(controllerType::primary);
 
 // pistons
 digital_out wingPistons = digital_out(Brain.ThreeWirePort.A);
@@ -106,11 +116,53 @@ void tglCataMode() {
 void pre_auton(void) {
     // All activities that occur before the competition starts
     // Example: clearing encoders, setting servo positions, ...
-    intakePistons.set(true);
-    intakeState = true;
-    Controller1.INTK_PST_BUTTON.pressed(tglIntake);
-    Controller1.WINGS_BUTTON.pressed(tglWings);
-    Controller1.CATA_SET_BUTTON.pressed(tglCataMode);
+    primaryController.INTK_PST_BUTTON.pressed(tglIntake);
+    primaryController.WINGS_BUTTON.pressed(tglWings);
+    primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
+
+    Drivetrain.setDriveVelocity(20, percent);
+    Drivetrain.setTurnVelocity(20, percent);
+
+    Inertial.calibrate();
+
+    while(Inertial.isCalibrating())
+    {
+        this_thread::sleep_for(10);
+    }
+
+    /* UI.addAutoTab("Auto");
+    UI.addButton(BLUE_SCORING_AUTO, ClrGray);
+    UI.addTitle(BLUE_SCORING_AUTO, "Push In");
+    UI.addDescription(BLUE_SCORING_AUTO, "Auto for pushing in a nugget in on either side.");
+    UI.addIcon(BLUE_SCORING_AUTO, RIGHT_ARROW);
+    UI.addAlliance(BLUE_SCORING_AUTO, allianceType::noAlliance);
+
+    UI.addButton(BLUE_LOADING_AUTO, blue);
+    UI.addTitle(BLUE_LOADING_AUTO, "Load");
+    UI.addDescription(BLUE_LOADING_AUTO, "Auto for a blue alliance robot on the match loading side.");
+    //UI.addIcon(BLUE_LOADING_AUTO, RIGHT_ARROW);
+    UI.changeIconColor(BLUE_LOADING_AUTO, black);
+
+    UI.setDisplayTime(1500);
+
+    UI.startUIThreads();
+    UI.selectButton(BLUE_LOADING_AUTO, true);
+
+    UI.enableManualUIControl(true);
+    UI.setUIMode(UIStates::Preauto_UI); */
+
+    UI.addBlank();
+    UI.addBlank();
+    UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
+    UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.number0);
+    UI.addBlank();
+    UI.addBlank();
+    UI.addBlank();
+    UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
+
+    UI.selectButton(3, true);
+    UI.setDisplayTime(1500);
+    UI.startUIThreads();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -126,33 +178,90 @@ void pre_auton(void) {
 void autonomous(void) {
     // ..........................................................................
     // Insert autonomous user code here.
-    leftMotor1.spin(reverse, 100, pct);
-    leftMotor2.spin(reverse, 100, pct);
-    leftMotor3.spin(reverse, 100, pct);
-    rightMotor1.spin(reverse, 100, pct);
-    rightMotor2.spin(reverse, 100, pct);
-    rightMotor3.spin(reverse, 100, pct);
-    vex::task::sleep(2000);
-    leftMotor1.stop(coast);
-    leftMotor2.stop(coast);
-    leftMotor3.stop(coast);
-    rightMotor1.stop(coast);
-    rightMotor2.stop(coast);
-    rightMotor3.stop(coast);
-    vex::task::sleep(1000);
-    leftMotor1.spin(forward, 25, pct);
-    leftMotor2.spin(forward, 25, pct);
-    leftMotor3.spin(forward, 25, pct);
-    rightMotor1.spin(forward, 25, pct);
-    rightMotor2.spin(forward, 25, pct);
-    rightMotor3.spin(forward, 25, pct);
-    vex::task::sleep(500);
-    leftMotor1.stop(coast);
-    leftMotor2.stop(coast);
-    leftMotor3.stop(coast);
-    rightMotor1.stop(coast);
-    rightMotor2.stop(coast);
-    rightMotor3.stop(coast);
+
+    switch (UI.getProgNumber())
+    {
+        case 2: //Skills
+            cataMotor.spin(forward, 80, percent);
+            break;
+
+        case 3: //Push In
+            leftMotor1.spin(reverse, 100, pct);
+            leftMotor2.spin(reverse, 100, pct);
+            leftMotor3.spin(reverse, 100, pct);
+            rightMotor1.spin(reverse, 100, pct);
+            rightMotor2.spin(reverse, 100, pct);
+            rightMotor3.spin(reverse, 100, pct);
+            vex::task::sleep(2000);
+            leftMotor1.stop(coast);
+            leftMotor2.stop(coast);
+            leftMotor3.stop(coast);
+            rightMotor1.stop(coast);
+            rightMotor2.stop(coast);
+            rightMotor3.stop(coast);
+            vex::task::sleep(1000);
+            leftMotor1.spin(forward, 25, pct);
+            leftMotor2.spin(forward, 25, pct);
+            leftMotor3.spin(forward, 25, pct);
+            rightMotor1.spin(forward, 25, pct);
+            rightMotor2.spin(forward, 25, pct);
+            rightMotor3.spin(forward, 25, pct);
+            vex::task::sleep(500);
+            leftMotor1.stop(coast);
+            leftMotor2.stop(coast);
+            leftMotor3.stop(coast);
+            rightMotor1.stop(coast);
+            rightMotor2.stop(coast);
+            rightMotor3.stop(coast);
+            break;
+
+        case 7: //Match load side
+            intakePistons.set(true);
+            intakeState = true;
+            this_thread::sleep_for(100);
+
+            Drivetrain.setDriveVelocity(10, percent);
+            Drivetrain.setTurnVelocity(5, percent);
+
+            Drivetrain.setTurnThreshold(5);
+
+            //Remove nugget
+            Drivetrain.driveFor(reverse, 4, distanceUnits::in);
+            Drivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
+
+            //Push othe nugget in
+            Drivetrain.setDriveVelocity(70, percent);
+            Drivetrain.turnFor(turnType::right, 62, rotationUnits::deg);
+            Drivetrain.driveFor(forward, 28, distanceUnits::in);
+
+            //Go back and hi it again
+            Drivetrain.setDriveVelocity(15, percent);
+            Drivetrain.driveFor(reverse, 10, distanceUnits::in);
+            Drivetrain.turnFor(turnType::right, 5, rotationUnits::deg);
+            Drivetrain.setDriveVelocity(80, percent);
+            Drivetrain.driveFor(forward, 10, distanceUnits::in);
+
+            //Go back and realign
+            Drivetrain.setDriveVelocity(15, percent);
+            Drivetrain.driveFor(reverse, 24, distanceUnits::in);
+
+            //Go and hit the pole
+            Drivetrain.setDriveVelocity(8, percent);
+            Drivetrain.driveFor(forward, 5, distanceUnits::in);
+            Drivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
+            Drivetrain.driveFor(forward, 10, distanceUnits::in);
+            Drivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
+            Drivetrain.driveFor(forward, 20, distanceUnits::in);
+            Drivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
+            Drivetrain.setDriveVelocity(30, percent);
+            Drivetrain.driveFor(forward, 20, distanceUnits::in);
+
+            break;
+    
+        default:
+            break;
+    }
+    
     // ..........................................................................
 }
 
@@ -171,10 +280,9 @@ void usercontrol(void) {
 
     printf("Speed: %i\n", cataSpeed);
 
-    Controller1.Screen.clearScreen();
-    Controller1.Screen.setCursor(1, 1);
-    Controller1.Screen.print(cataSpeed);
-
+    primaryController.Screen.clearScreen();
+    primaryController.Screen.setCursor(1, 1);
+    primaryController.Screen.print(cataSpeed);
 
     leftMotor1.setStopping(brake);
     leftMotor2.setStopping(brake);
@@ -187,8 +295,8 @@ void usercontrol(void) {
     cataStartAngle = cataSensor.angle(deg);
     while (1) {
         // ------------------------- make it drive -----------------------
-        leftSpeed = (Controller1.Axis3.position() + Controller1.Axis1.position());
-        rightSpeed = (Controller1.Axis3.position() - Controller1.Axis1.position());
+        leftSpeed = (primaryController.Axis3.position() + primaryController.Axis1.position());
+        rightSpeed = (primaryController.Axis3.position() - primaryController.Axis1.position());
         leftMotor1.spin(fwd, leftSpeed, pct);
         leftMotor2.spin(fwd, leftSpeed, pct);
         leftMotor3.spin(fwd, leftSpeed, pct);
@@ -197,7 +305,7 @@ void usercontrol(void) {
         rightMotor3.spin(fwd, rightSpeed, pct);
 
         // --------------------- control cata -------------------------
-        if (Controller1.CATA_SPEED_INC.pressing()) {
+        if (primaryController.CATA_SPEED_INC.pressing()) {
             if (cataSpeed >= 100) {
                 cataSpeed = 100;
             } else {
@@ -205,7 +313,7 @@ void usercontrol(void) {
             }
         }
 
-        if (Controller1.CATA_SPEED_DEC.pressing()) {
+        if (primaryController.CATA_SPEED_DEC.pressing()) {
             if (cataSpeed <= 0) {
                 cataSpeed = 0;
             } else {
@@ -216,15 +324,15 @@ void usercontrol(void) {
         if (cataSpeed != cataSpeed_old) {
             printf("Speed: %i\n", cataSpeed);
 
-            Controller1.Screen.clearScreen();
-            Controller1.Screen.setCursor(1, 1);
-            Controller1.Screen.print(cataSpeed);
+            primaryController.Screen.clearScreen();
+            primaryController.Screen.setCursor(1, 1);
+            primaryController.Screen.print(cataSpeed);
             
             cataSpeed_old = cataSpeed;
         }
         
-        if (!Controller1.CATA_STOP_BUTTON.pressing()) {
-            if (Controller1.CATA_FIRE_BUTTON.pressing() || CRNT_CATA_ANGL < cataAngle) {
+        if (!primaryController.CATA_STOP_BUTTON.pressing()) {
+            if (primaryController.CATA_FIRE_BUTTON.pressing() || CRNT_CATA_ANGL < cataAngle) {
                 cataMotor.spin(fwd, cataSpeed, pct);
             } else {
                 cataMotor.stop(hold);
@@ -239,28 +347,28 @@ void usercontrol(void) {
         }
 
         // --------------------- control intake -----------------------
-        if (Controller1.INTK_IN_BUTTON.pressing()) {
+        if (primaryController.INTK_IN_BUTTON.pressing()) {
             intakeMotor.spin(fwd, intakeSpeed, pct);
-        } else if (Controller1.INTK_OUT_BUTTON.pressing()) {
+        } else if (primaryController.INTK_OUT_BUTTON.pressing()) {
             intakeMotor.spin(reverse, intakeSpeed, pct);
         } else {
             intakeMotor.stop();
         }
 
         /*
-        if(intakeBounce != Controller1.INTK_PST_BUTTON.pressing()) {
-          intakeState = Controller1.INTK_PST_BUTTON.pressing();
+        if(intakeBounce != primaryController.INTK_PST_BUTTON.pressing()) {
+          intakeState = primaryController.INTK_PST_BUTTON.pressing();
         }
-        intakeBounce = Controller1.INTK_PST_BUTTON.pressing();
+        intakeBounce = primaryController.INTK_PST_BUTTON.pressing();
         */
         intakePistons.set(intakeState);
 
         // -------------------- control wings ------------------------
         /*
-        if(wingBounce != Controller1.WINGS_BUTTON.pressing()) {
-          wingState = Controller1.WINGS_BUTTON.pressing();
+        if(wingBounce != primaryController.WINGS_BUTTON.pressing()) {
+          wingState = primaryController.WINGS_BUTTON.pressing();
         }
-        wingBounce = Controller1.WINGS_BUTTON.pressing();
+        wingBounce = primaryController.WINGS_BUTTON.pressing();
         */
         wingPistons.set(wingState);
 
