@@ -9,6 +9,7 @@
 
 #include "vex.h"
 #include "evAPI.h"
+#include "RobotConfig.h"
 
 using namespace evAPI;
 
@@ -72,6 +73,7 @@ enum {
 };
 
 int highCataAngle = 30;
+<<<<<<< Updated upstream
 int lowCataAngle = 46;
 int cataAngle;
 double cataStartAngle;
@@ -191,6 +193,11 @@ void pre_auton(void) {
     UI.setDisplayTime(1500);
     UI.startUIThreads();
    
+    intakePistons.set(true);
+    intakeState = true;
+    Controller1.INTK_PST_BUTTON.pressed(tglIntake);
+    Controller1.WINGS_BUTTON.pressed(tglWings);
+    Controller1.CATA_SET_BUTTON.pressed(tglCataMode);
     cataStartAngle = cataSensor.angle(deg);
 }
 
@@ -360,6 +367,7 @@ void usercontrol(void) {
         } else {
             cataMotor.stop(coast);
         }
+        printf("\n%f\n\n", CRNT_CATA_ANGL);
 
         // --------------------- control intake -----------------------
         if (primaryController.INTK_IN_BUTTON.pressing()) {
