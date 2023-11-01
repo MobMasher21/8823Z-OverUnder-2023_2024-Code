@@ -46,12 +46,12 @@ namespace evAPI
     V5_TouchStatus touchState;
     vexTouchDataGet(&touchState);
 
-    if(touchState.lastEvent == kTouchEventPress)
+    if(touchState.lastEvent == kTouchEventPress || touchState.lastEvent == kTouchEventPressAuto)
     {
       data->state = LV_INDEV_STATE_PR;
     }
 
-    else if(touchState.lastEvent == kTouchEventRelease)
+    else /* if(touchState.lastEvent == kTouchEventRelease) */
     {
       data->state = LV_INDEV_STATE_REL;
     }
@@ -116,5 +116,7 @@ namespace evAPI
 
     //Start thread for LVGL.
     LVGLThread = new thread(lvglThreadFunc);
+
+    LVGLThread->setPriority(13);
   }
 } // namespace evAPI

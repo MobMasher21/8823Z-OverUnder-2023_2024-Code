@@ -20,6 +20,12 @@ SRC_H += $(wildcard evAPI/LVGL/lvglUI/preautoUI/include/*.hpp)
 SRC_H += $(wildcard evAPI/LVGL/lvglUI/matchUI/include/*.h)
 SRC_H += $(wildcard evAPI/LVGL/lvglUI/matchUI/include/*.hpp)
 
+SRC_H += $(wildcard evAPI/LVGL/lvglUI/controllerUI/include/*.h)
+SRC_H += $(wildcard evAPI/LVGL/lvglUI/controllerUI/include/*.hpp)
+
+SRC_H += $(wildcard evAPI/LVGL/lvglUI/Common/include/*.h)
+SRC_H += $(wildcard evAPI/LVGL/lvglUI/Common/include/*.hpp)
+
 SRC_H += $(wildcard evAPI/LVGL/lvglUI/Assets/include/*.h)
 
 #SRC_H += $(wildcard evAPI/vexUI/include/*.h)

@@ -1,7 +1,7 @@
 {
 	"extension": {
-		"version": "0.3.0",
-		"json": 1
+		"version": "0.5.0",
+		"json": 2
 	},
 	"project": {
 		"name": "LVGL_UI",
@@ -12,7 +12,8 @@
 		"slot": 1,
 		"sdkVersion": "V5_20220726_10_00_00",
 		"cpp": {
-			"includePath": []
+			"includePath": [],
+			"printf_float": true
 		}
 	}
 }

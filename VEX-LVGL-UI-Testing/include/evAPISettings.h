@@ -37,12 +37,6 @@
 #define SELECTOR_TAB_COUNT 5
 #define SELECTOR_TAB_NAME_LENGTH 5
 
-//*Define icon IDs here!
-#define SKILLS_ICON 0
-#define LEFT_ARROW 1
-#define RIGHT_ARROW 2
-#define EXCLAMATION_POINTS 3
-
 //*Auto Selector UI
 #define MAX_AUTO_BUTTON_COUNT (SELECTOR_TAB_COUNT * 8)
 

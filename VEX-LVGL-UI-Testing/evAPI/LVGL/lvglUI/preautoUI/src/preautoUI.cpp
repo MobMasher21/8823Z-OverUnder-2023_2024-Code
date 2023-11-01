@@ -149,6 +149,9 @@ namespace evAPI
     //Create the button
     buttonList[id] = new preautoButton(id, buttonX, buttonY, pageTabs[buttonTabID], autoButtonPressFunc);
 
+    //Keep track of the number of buttons
+    buttonCount++;
+
     return evError::No_Error;
   }
 
@@ -269,7 +272,7 @@ namespace evAPI
     return evError::No_Error;
   }
 
-  evError preautoUI::addIcon(uint id, const lv_img_dsc_t *icon, evColor iconColor)
+  evError preautoUI::addIcon(uint id, const lv_img_dsc_t &icon, evColor iconColor)
   {
     //Make sure LVGL has started
     startLVGL();
@@ -286,17 +289,8 @@ namespace evAPI
       return evError::Object_Does_Not_Exist;
     }
 
-    //The error returned by the setIcon function;
-    evError returnError;
-
     //Add the custom icon to the button
-    returnError = buttonList[id]->setIcon(icon, iconColor);
-
-    //Return any errors from setIcon
-    if(returnError != evError::No_Error)
-    {
-      return returnError;
-    }
+    buttonList[id]->setIcon(icon, iconColor);
 
     return evError::No_Error;
   }

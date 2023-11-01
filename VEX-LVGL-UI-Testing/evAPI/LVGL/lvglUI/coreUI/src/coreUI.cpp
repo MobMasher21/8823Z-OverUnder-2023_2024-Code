@@ -24,7 +24,11 @@ namespace evAPI
 
   int brainUIUpdateFunc()
   {
-    while (true)
+    //Initalize the controller UIs
+    UI.primaryControllerUI.updateScreen();
+    UI.secondaryControllerUI.updateScreen();
+  
+    while(true)
     {
       //Update the UI mode if manual control is off
       if(!UI.getManualControlStatus())
@@ -69,6 +73,10 @@ namespace evAPI
           //UI.matchDisplays.showMatchUI(false);
           break;
       }
+
+      //Update controller UIs
+      UI.primaryControllerUI.updateScreenData();
+      //UI.secondaryControllerUI.updateScreenData();
       
       this_thread::sleep_for(10);
     }
@@ -79,10 +87,10 @@ namespace evAPI
   evError coreUI::startUI()
   {
     //Return if the auto selector UI hasn't been created
-    if(autoSelector.getButtonCount() == 0)
+    /* if(autoSelector.getButtonCount() == 0)
     {
       return evError::Object_Property_Not_Specified;
-    }
+    } */
 
     //Exit if the thread has already been created
     if(brainUIThread != nullptr)

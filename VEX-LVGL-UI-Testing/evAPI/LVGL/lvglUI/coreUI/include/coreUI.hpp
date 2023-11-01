@@ -12,7 +12,9 @@
 #define COREUI_HPP
 
 #include "vex_thread.h"
+#include "../evAPI/Common/include/constantObjects.h"
 #include "../../preautoUI/include/preautoUI.hpp"
+#include "../../controllerUI/include/controllerUI.hpp"
 #include "../evAPI/Common/include/evErrorTypes.hpp"
 
 namespace evAPI
@@ -46,11 +48,19 @@ namespace evAPI
       */
       preautoUI autoSelector;
       //matchUI matchDisplays;
-      //controllerUI primaryControllerUI;
-      //controllerUI secondaryControllerUI;
 
       /**
-       * @brief Starts the UI if it hasn't already been started.
+       * @brief UI for the primary controller.
+      */
+      controllerUI primaryControllerUI = controllerUI(&primaryController.Screen);
+
+      /**
+       * @brief UI for the secondary controller.
+      */
+      controllerUI secondaryControllerUI = controllerUI(&secondaryController.Screen);
+
+      /**
+       * @brief Starts the UI if it hasn't already been started. Required for the controller UIs.
        * @returns An evError.
        *          Object_Property_Not_Specified: If neither brain UI has been configured.
        *          Device_Already_Exists: If the UI has already been started.

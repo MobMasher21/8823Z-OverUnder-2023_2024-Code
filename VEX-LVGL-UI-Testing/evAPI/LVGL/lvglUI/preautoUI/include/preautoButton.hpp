@@ -136,10 +136,9 @@ namespace evAPI
        * @param icon An icon to display on the button.
        * @param iconColor The color the icon will be.
        * @returns An evError.
-       *          Object_Property_Not_Specified: If the icon is invalid.
        *          No_Error: If the icon was added successful.
       */
-      evError setIcon(const lv_img_dsc_t *icon, evColor iconColor);
+      void setIcon(const lv_img_dsc_t &icon, evColor iconColor);
 
       /**
        * @brief Sets the color of the icon.

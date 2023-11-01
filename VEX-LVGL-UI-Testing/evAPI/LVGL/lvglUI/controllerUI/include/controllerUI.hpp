@@ -12,9 +12,9 @@
 
 #include <vector>
 #include <sys/types.h>
-#include "vex_controller.h"
+#include "vex.h"
 #include "../evAPI/Common/include/evErrorTypes.hpp"
-#include "../evAPI/Common/include/templateData.hpp"
+#include "../../Common/include/templateData.hpp"
 
 namespace evAPI
 {
@@ -30,7 +30,8 @@ namespace evAPI
       //The ID of the line at the top of the screen
       uint currentLine = 0;
 
-      bool isDisabled = false;
+      //True is the screen is being updated
+      bool updatingScreen = false;
 
     public:
       controllerUI(vex::controller::lcd *controller);
@@ -38,17 +39,23 @@ namespace evAPI
 
       /**
        * @brief Updates all the data points on the controller screen if their values have changed.
+       * @param exitIfUpdating Optional. Set to true if the function should just exit if the screen is
+       *                       being updated.
        * @returns An evError.
-       *          
+       *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
+       *          No_Error: The screen is updated successfully.
       */
-      evError updateScreenData();
+      evError updateScreenData(bool exitIfUpdating = false);
 
       /**
        * @brief Redraws the entire controller screen.
+       * @param exitIfUpdating Optional. Set to true if the function should just exit if the screen is
+       *                       being updated.
        * @returns An evError.
-       *          
+       *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
+       *          No_Error: The screen is updated successfully.
       */
-      evError updateScreen();
+      evError updateScreen(bool exitIfUpdating = false);
 
       /**
        * @brief Scrolls down the screen by one if possible.
@@ -95,6 +102,12 @@ namespace evAPI
       */
       template<typename T> evError addData(uint id, const char name[20], T &displayData)
       {
+        //Make sure the vector has size for the new data point.
+        if(displayLines.size() < id+1)
+        {
+          displayLines.resize(id+1);
+        }
+
         //Exit if a line already exists with that ID.
         if(displayLines[id] != nullptr)
         {
@@ -107,28 +120,19 @@ namespace evAPI
           return evError::Invalid_Argument_Data;
         }
 
-        //Make sure the vector has size for the new data point.
-        if(displayLines.size() < id+1)
-        {
-          //Create new null data points until the size is correct.
-          for(size_t i = 0; i < (id+1) - displayLines.size(); i++)
-          {
-            displayLines.push_back(nullptr);
-          }
-        }
-
         //Create the new data point.
         displayLines[id] = new templateData<T>;
 
         //Set the parameters for the data point.
-        displayLines[id]->setData(name, displayData);
+        displayLines[id]->setData(name, &displayData);
 
         return evError::No_Error;
       }
 
       /**
        * @brief Adds a new line to display text on the controller.
-       * @param id The ID of the line.
+       * @param id The ID of the
+       *  line.
        * @param name The text displayed on the line. Can be a max of 19 characters.
        * @returns An evError.
        *          Data_Already_Exists: If a line already exists with that ID.

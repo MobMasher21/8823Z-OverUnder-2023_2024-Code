@@ -28,6 +28,16 @@ SRC_C += $(wildcard evAPI/LVGL/lvglUI/matchUI/src/*.c)
 SRC_C += $(wildcard evAPI/LVGL/lvglUI/matchUI/src/*/*.cpp)
 SRC_C += $(wildcard evAPI/LVGL/lvglUI/matchUI/src/*/*.c)
 
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/controllerUI/src/*.cpp)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/controllerUI/src/*.c)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/controllerUI/src/*/*.cpp)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/controllerUI/src/*/*.c)
+
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/Common/src/*.cpp)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/Common/src/*.c)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/Common/src/*/*.cpp)
+SRC_C += $(wildcard evAPI/LVGL/lvglUI/Common/src/*/*.c)
+
 SRC_C += $(wildcard evAPI/LVGL/lvglUI/Assets/src/*.c)
 
 #SRC_C += $(wildcard evAPI/robotControl/Drivetrain/src/*.cpp)

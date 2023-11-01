@@ -173,19 +173,13 @@ namespace evAPI
     return evError::No_Error;
   }
 
-  evError preautoButton::setIcon(const lv_img_dsc_t *icon, evColor iconColor)
+  void preautoButton::setIcon(const lv_img_dsc_t &icon, evColor iconColor)
   {
-    //Make sure the icon exists
-    if(icon == nullptr)
-    {
-      return evError::Object_Property_Not_Specified;
-    }
-
     //Create the icon
     LVGLButtonIcon = lv_img_create(LVGLButton);
 
     //Set the image of the icon
-    lv_img_set_src(LVGLButtonIcon, icon);
+    lv_img_set_src(LVGLButtonIcon, &icon);
 
     //Align the icon with the button
     lv_obj_align_to(LVGLButtonIcon, LVGLButton, LV_ALIGN_CENTER, 0, 0);
@@ -193,8 +187,6 @@ namespace evAPI
     //Set color parameters for the icon
     lv_obj_set_style_img_recolor_opa(LVGLButtonIcon, LV_OPA_100, 0);
     lv_obj_set_style_img_recolor(LVGLButtonIcon, iconColor, 0);
-
-    return evError::No_Error;
   }
 
   evError preautoButton::changeIconColor(evColor iconColor)

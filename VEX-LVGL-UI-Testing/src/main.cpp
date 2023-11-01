@@ -12,28 +12,30 @@
 
 using namespace evAPI;
 
+//IDs of buttons in the preauto UI
 #define BLUE_SCORING_AUTO 0
 #define BLUE_LOADING_AUTO 4
 #define RED_SCORING_AUTO 3
 #define RED_LOADING_AUTO 7
 #define SKILLS_AUTO_BASIC 8
 
-// A global instance of vex::brain used for printing to the V5 brain screen
-vex::brain       Brain;
-
-// define your global instances of motors and other devices here
+//A global instance of vex::brain used for printing to the V5 brain screen
+vex::brain Brain;
 
 LV_IMG_DECLARE(Exclamation_Points)
 
-void testCallback(u_int id)
+void testCallback(uint id)
 {
   printf("Button %i was pressed.\n\n", id);
 }
 
 uint batteryCapacity = Brain.Battery.capacity();
-double batteryTemperature = Brain.Battery.temperature(celsius);
+double batteryTemperature = Brain.Battery.temperature(fahrenheit);
 double batteryCurrent = Brain.Battery.current();
 double batteryVoltage = Brain.Battery.voltage();
+
+uint selectedProgramID = UI.autoSelector.getProgNumber();
+uint preautoUIButtons = UI.autoSelector.getButtonCount();
 
 double testFunc()
 {
@@ -48,40 +50,52 @@ double testFunc()
   return var;
 }
 
+void scrollUp()
+{
+  UI.primaryControllerUI.scrollUp();
+}
+
+void scrollDown()
+{
+  UI.primaryControllerUI.scrollDown();
+}
+
 int main() {
+
+  //*Auto Selector / Preauto UI
   //Auto Page
   UI.autoSelector.addAutoTab("Auto");
   UI.autoSelector.addButton(BLUE_SCORING_AUTO, blue);
   UI.autoSelector.addTitle(BLUE_SCORING_AUTO, "Scoring");
   UI.autoSelector.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
-  UI.autoSelector.addIcon(BLUE_SCORING_AUTO, iconType::Left_Arrow);
+  UI.autoSelector.addIcon(BLUE_SCORING_AUTO, LEFT_ARROW);
   UI.autoSelector.changeIconColor(BLUE_SCORING_AUTO, black);
   UI.autoSelector.addCallbackFunc(BLUE_SCORING_AUTO, testCallback);
 
   UI.autoSelector.addButton(BLUE_LOADING_AUTO, blue);
   UI.autoSelector.addTitle(BLUE_LOADING_AUTO, "Load");
   UI.autoSelector.addDescription(BLUE_LOADING_AUTO, "Auto for a blue alliance robot on the match loading side.");
-  UI.autoSelector.addIcon(BLUE_LOADING_AUTO, iconType::Right_Arrow);
+  UI.autoSelector.addIcon(BLUE_LOADING_AUTO, RIGHT_ARROW);
   UI.autoSelector.changeIconColor(BLUE_LOADING_AUTO, black);
 
   UI.autoSelector.addButton(RED_SCORING_AUTO, red);
   UI.autoSelector.addTitle(RED_SCORING_AUTO, "Scoring");
   UI.autoSelector.addDescription(RED_SCORING_AUTO, "Auto for a red alliance robot on the scoring side.");
-  UI.autoSelector.addIcon(RED_SCORING_AUTO, iconType::Left_Arrow);
+  UI.autoSelector.addIcon(RED_SCORING_AUTO, LEFT_ARROW);
   UI.autoSelector.changeIconColor(RED_SCORING_AUTO, black);
 
   UI.autoSelector.addButton(RED_LOADING_AUTO, red);
   UI.autoSelector.addTitle(RED_LOADING_AUTO, "Load");
   UI.autoSelector.addDescription(RED_LOADING_AUTO, "Auto for a red alliance robot on the match loading side.");
-  UI.autoSelector.addIcon(RED_LOADING_AUTO, iconType::Right_Arrow);
+  UI.autoSelector.addIcon(RED_LOADING_AUTO, RIGHT_ARROW);
   UI.autoSelector.changeIconColor(RED_LOADING_AUTO, black);
     
   //Skills Page
   UI.autoSelector.addAutoTab("Skills");
-  UI.autoSelector.addButton(SKILLS_AUTO_BASIC, 0xff, 0x10, 0xa0);
+  UI.autoSelector.addButton(SKILLS_AUTO_BASIC, 0xff10a0);
   UI.autoSelector.addTitle(SKILLS_AUTO_BASIC, "Skills 1");
   UI.autoSelector.addDescription(SKILLS_AUTO_BASIC, "Skills auto that just shoots match loads into the field.");
-  UI.autoSelector.addIcon(SKILLS_AUTO_BASIC, iconType::Skills_Icon);
+  UI.autoSelector.addIcon(SKILLS_AUTO_BASIC, SKILLS_ICON);
   UI.autoSelector.changeIconColor(SKILLS_AUTO_BASIC, black);
 
   //Other Page
@@ -89,15 +103,19 @@ int main() {
   UI.autoSelector.addButton(16, noAlliance);
   UI.autoSelector.addTitle(16, "Built In");
   UI.autoSelector.addCallbackFunc(16, testCallback);
-  UI.autoSelector.addIcon(16, iconType::Exclamation_Points);
+  UI.autoSelector.addIcon(16, EXCLAMATION_POINTS);
 
   UI.autoSelector.addButton(20, noAlliance);
-  UI.autoSelector.addTitle(20, "Dance");
+  UI.autoSelector.addTitle(20, "Test");
   UI.autoSelector.addCallbackFunc(20, testCallback);
-  UI.autoSelector.addIcon(20, &Exclamation_Points);
+  UI.autoSelector.addIcon(20, Exclamation_Points);
   UI.autoSelector.changeIconColor(20, black);
 
-  //UI.autoSelector.setDisplayTime(1500);
+  //Preauto UI Parameters
+  UI.autoSelector.setDisplayTime(1500);
+  UI.autoSelector.selectButton(BLUE_LOADING_AUTO, true);
+  UI.setManualControl(true);
+  UI.setUIMode(UIStates::Preauto_UI);
 
   /* UI.addMatchTab("Brain");
   UI.createBrainDisplay(0, "Capacity: ");
@@ -123,50 +141,36 @@ int main() {
   UI.addMatchTab("Other");
   UI.createBrainDisplay(8, "Test 1:"); */
 
-  //UI.startUI();
-  //UI.autoSelector.selectButton(BLUE_LOADING_AUTO, true);
+  //*Primary Controller UI
+  //Battery info
+  UI.primaryControllerUI.addData(0, "Battery:");
+  UI.primaryControllerUI.addData(1, "  Capacity: ", batteryCapacity);
+  UI.primaryControllerUI.addData(2, "  Voltage: ", batteryVoltage);
+  UI.primaryControllerUI.addData(3, "  Current: ", batteryCurrent);
+  UI.primaryControllerUI.addData(4, "  Temperature: ", batteryTemperature);
 
-  //UI.setManualControl(false);
+  UI.primaryControllerUI.addData(6, "UI:");
+  UI.primaryControllerUI.addData(7, "  Preauto ID: ", selectedProgramID);
+  UI.primaryControllerUI.addData(8, "  Button Count: ", preautoUIButtons);
 
-  /* startLVGL();
+  //Have buttons scroll the screen up and down
+  primaryController.ButtonDown.pressed(scrollDown);
+  primaryController.ButtonUp.pressed(scrollUp);
 
-  const char * codeData = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  //Start UI Thread
+  UI.startUI();
 
-  lv_color_hsv_t hsvColor;
-  hsvColor.h = 121;
-  hsvColor.s = 76;
-  hsvColor.v = 34;
-
-  evColor qrCodeColor = hsvColor;
-  evColor defaultBackgroundColor = vexDisplayBackgroundDark;
-
-  lv_obj_t * qrCode = lv_qrcode_create(lv_scr_act(), 150, qrCodeColor, defaultBackgroundColor);
-  lv_qrcode_update(qrCode, codeData, strlen(codeData));
-
-  lv_obj_center(qrCode);
-
-  evColorData qrCodeColorInfoRGB = qrCodeColor.rgbData();
-  evColorData qrCodeColorInfoHSV = qrCodeColor.hsvData();
-
-  printf("QR Code Color Red: %d\n", qrCodeColorInfoRGB.red);
-  printf("QR Code Color Green: %d\n", qrCodeColorInfoRGB.green);
-  printf("QR Code Color Blue: %d\n", qrCodeColorInfoRGB.blue);
-  printf("\n");
-  printf("QR Code Color Hue: %d\n", qrCodeColorInfoHSV.hue);
-  printf("QR Code Color Saturation: %d\n", qrCodeColorInfoHSV.saturation);
-  printf("QR Code Color Value: %d\n", qrCodeColorInfoHSV.value);
-  printf("\n"); */
-
-  //wait(20, msec);
   //timer toggleTimer;
-  //UI.setUIMode(UIStates::Match_UI);
 
   while(1)
   {
+    //Update stored variables
     batteryCapacity = Brain.Battery.capacity();
-    batteryTemperature = Brain.Battery.temperature(celsius);
+    batteryTemperature = Brain.Battery.temperature(fahrenheit);
     batteryCurrent = Brain.Battery.current();
     batteryVoltage = Brain.Battery.voltage();
+    selectedProgramID = UI.autoSelector.getProgNumber();
+    preautoUIButtons = UI.autoSelector.getButtonCount();
 
     /* if(toggleTimer.time() >= 1000)
     {

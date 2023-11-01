@@ -12,7 +12,12 @@
 
 #include "preautoButton.hpp"
 #include "../evAPI/Common/include/evErrorTypes.hpp"
-#include "../../coreUI/include/tabGroup.hpp"
+#include "../../Common/include/tabGroup.hpp"
+
+#define SKILLS_ICON iconType::Skills_Icon
+#define LEFT_ARROW iconType::Left_Arrow
+#define RIGHT_ARROW iconType::Right_Arrow
+#define EXCLAMATION_POINTS iconType::Exclamation_Points
 
 namespace evAPI
 {
@@ -106,11 +111,10 @@ namespace evAPI
        * @param iconColor Optional. The color of the icon.
        * @returns An evError.
        *          Object_Does_Not_Exist: If there isn't a button with the ID.
-       *          Invalid_Argument_Data: If the ID is greater than the maximum amount of buttons ot if the
-       *                                 icon pointer is invalid.
+       *          Invalid_Argument_Data: If the ID is greater than the maximum amount of buttons.
        *          No_Error: IF the functions adds the icon successfully.
       */
-      evError addIcon(uint id, const lv_img_dsc_t *icon, evColor iconColor = vex::color::white);
+      evError addIcon(uint id, const lv_img_dsc_t &icon, evColor iconColor = vex::color::white);
 
       /**
        * @brief Changes the color of an icon on a button.
