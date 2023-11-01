@@ -20,6 +20,15 @@ extern motor rightMotor1;
 extern motor rightMotor2;
 extern motor rightMotor3;
 
+//Inertial Sensor
+extern inertial Inertial;
+
+//Drivetrain
+extern motor_group leftMotors;
+extern motor_group rightMotors;
+
+extern smartdrive Drivetrain;
+
 // catapult motor/sensors
 extern motor cataMotor;
 extern rotation cataSensor;

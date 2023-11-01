@@ -18,6 +18,15 @@ motor rightMotor1 = motor(PORT19, gearSetting::ratio6_1, false);
 motor rightMotor2 = motor(PORT17, gearSetting::ratio6_1, false);
 motor rightMotor3 = motor(PORT16, gearSetting::ratio6_1, false);
 
+//Inertial Sensor
+inertial Inertial = inertial(PORT8);
+
+//Drivetrain
+motor_group leftMotors = motor_group(leftMotor1, leftMotor2, leftMotor3);
+motor_group rightMotors = motor_group(rightMotor1, rightMotor2, rightMotor3);
+
+smartdrive Drivetrain = smartdrive(leftMotors, rightMotors, Inertial, 319.19, 320, 40, mm, 0.6666666666666666);
+
 // catapult motor/sensors
 motor cataMotor = motor(PORT20, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT9, true);
