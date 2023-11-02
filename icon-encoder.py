@@ -34,7 +34,7 @@ def main():
         name = file.name.split(".")[0]
 
         # appends bool name[size1][size2] to the array and adds it to the output
-        output += f"bool {name}[{size[0]}][{size[1]}] = " + format(parse_image(image, size))
+        output += f"bool {name}[{size[0]}][{size[1]}] = " + format(parse_image(image, size, args.invert))
 
     # formating creates extra newlines
     output = output.strip()
@@ -73,7 +73,7 @@ def apply_template(data: str, template: str|pathlib.Path) -> str:
     return output
     
 # sorts colors based on their "brightness"
-def sort_colors(colors: list[tuple[int, int, int]]) -> list[tuple[int, int, int]]:
+def sort_colors(colors: list[tuple[int, int, int]], invert: bool) -> list[tuple[int, int, int]]:
     # blank dict to hold the brightness as the key and the rgb as the value
     brightneses = {}
     
@@ -89,13 +89,13 @@ def sort_colors(colors: list[tuple[int, int, int]]) -> list[tuple[int, int, int]
         brightneses[brightness] = color
     
     # uses the standerd python sort function
-    sorted_colors = sorted(brightneses.values(), reverse=True)
+    sorted_colors = sorted(brightneses.values(), reverse=invert)
 
     return sorted_colors
         
 
 
-def parse_image(image: Image.Image, size: tuple[int]) -> str:
+def parse_image(image: Image.Image, size: tuple[int], invert: bool) -> str:
     array = list(generate_array(size))
 
     # makes sure that the image is the same size as the array
@@ -116,7 +116,7 @@ def parse_image(image: Image.Image, size: tuple[int]) -> str:
     color2 = image.getcolors()[1][1]
 
     # sorts the colors by their brightness, from high to low
-    sorted_colors = sort_colors([color1, color2])
+    sorted_colors = sort_colors([color1, color2], invert)
 
     for i in range(size[0]):
         for j in range(size[1]):
@@ -165,6 +165,8 @@ def parse_args() -> argparse.Namespace:
     path_or_string = lambda text : pathlib.Path(text) if isfile(text) else text
 
     parser.add_argument("--template", action="store", type=path_or_string, help="a template to put the result into with c format syntax", required=False)
+
+    parser.add_argument("--invert", action="store_true", help="Flips the 1's and 0's in the output")
 
     return parser.parse_args()
 
