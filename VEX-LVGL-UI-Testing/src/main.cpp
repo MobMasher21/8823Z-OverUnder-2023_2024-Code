@@ -70,7 +70,6 @@ int main() {
   UI.autoSelector.addDescription(BLUE_SCORING_AUTO, "Auto for a blue alliance robot on the scoring side.");
   UI.autoSelector.addIcon(BLUE_SCORING_AUTO, LEFT_ARROW);
   UI.autoSelector.changeIconColor(BLUE_SCORING_AUTO, black);
-  UI.autoSelector.addCallbackFunc(BLUE_SCORING_AUTO, testCallback);
 
   UI.autoSelector.addButton(BLUE_LOADING_AUTO, blue);
   UI.autoSelector.addTitle(BLUE_LOADING_AUTO, "Load");
