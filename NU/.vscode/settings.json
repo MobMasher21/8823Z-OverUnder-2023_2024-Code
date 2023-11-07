@@ -6,9 +6,12 @@
 		"auton",
 		"CRNT",
 		"drivercontrol",
+		"EVAPI",
 		"INTK",
 		"Preauto",
+		"ROBOTCONFIG",
 		"smartdrive",
+		"triball",
 		"usercontrol",
 		"USERINTERFACE"
 	]

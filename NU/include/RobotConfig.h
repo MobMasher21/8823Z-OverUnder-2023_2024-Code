@@ -36,9 +36,6 @@ extern rotation cataSensor;
 // intake motor
 extern motor intakeMotor;
 
-// controllers
-extern controller Controller1;
-
 // pistons
 extern digital_out wingPistons;
 extern digital_out intakePistons;

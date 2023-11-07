@@ -34,9 +34,6 @@ rotation cataSensor = rotation(PORT9, true);
 // intake motor
 motor intakeMotor = motor(PORT2, gearSetting::ratio6_1, false);
 
-// controllers
-controller Controller1 = controller(controllerType::primary);
-
 // pistons
 digital_out wingPistons = digital_out(Brain.ThreeWirePort.A);
 digital_out intakePistons = digital_out(Brain.ThreeWirePort.B);
