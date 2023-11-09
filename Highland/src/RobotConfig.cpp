@@ -9,8 +9,8 @@ brain Brain;
 // A global instance of competition
 competition Competition;
 
-// Motor and sensor setup ----------------------------------------------------
-// drive motors
+//* Motor and sensor setup
+//Drive motors
 motor leftMotor1 = motor(PORT15, gearSetting::ratio6_1, true);
 motor leftMotor2 = motor(PORT14, gearSetting::ratio6_1, true);
 motor leftMotor3 = motor(PORT13, gearSetting::ratio6_1, true);
@@ -25,17 +25,15 @@ inertial Inertial = inertial(PORT8);
 motor_group leftMotors = motor_group(leftMotor1, leftMotor2, leftMotor3);
 motor_group rightMotors = motor_group(rightMotor1, rightMotor2, rightMotor3);
 
-smartdrive Drivetrain = smartdrive(leftMotors, rightMotors, Inertial, 319.19, 320, 40, mm, 0.6666666666666666);
+smartdrive autoDrivetrain = smartdrive(leftMotors, rightMotors, Inertial, 319.19, 320, 40, mm, 0.6666666666666666);
 
-// catapult motor/sensors
+//Catapult motor/sensors
 motor cataMotor = motor(PORT20, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT9, true);
 
-// intake motor
+//Intake motor
 motor intakeMotor = motor(PORT2, gearSetting::ratio6_1, false);
 
-// pistons
-digital_out wingPistons = digital_out(Brain.ThreeWirePort.A);
-digital_out intakePistons = digital_out(Brain.ThreeWirePort.B);
-// ---------------------------------------------------------------------------
-
+//Pistons
+digital_out wingPistons = digital_out(Brain.ThreeWirePort.B);
+digital_out intakePistons = digital_out(Brain.ThreeWirePort.A);

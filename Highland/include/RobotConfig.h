@@ -11,14 +11,14 @@ extern brain Brain;
 // A global instance of competition
 extern competition Competition;
 
-// Motor and sensor setup ----------------------------------------------------
-// drive motors
-extern motor leftMotor1;
+//*Motor and sensor setup
+//Drive motors
+/* extern motor leftMotor1;
 extern motor leftMotor2;
 extern motor leftMotor3;
 extern motor rightMotor1;
 extern motor rightMotor2;
-extern motor rightMotor3;
+extern motor rightMotor3; */
 
 //Inertial Sensor
 extern inertial Inertial;
@@ -27,18 +27,17 @@ extern inertial Inertial;
 extern motor_group leftMotors;
 extern motor_group rightMotors;
 
-extern smartdrive Drivetrain;
+extern smartdrive autoDrivetrain;
 
-// catapult motor/sensors
+//Catapult motor/sensors
 extern motor cataMotor;
 extern rotation cataSensor;
 
-// intake motor
+//Intake motor
 extern motor intakeMotor;
 
-// pistons
+//Pistons
 extern digital_out wingPistons;
 extern digital_out intakePistons;
-// ---------------------------------------------------------------------------
 
 #endif // ROBOTCONFIG_H_
