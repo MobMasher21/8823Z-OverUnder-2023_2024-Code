@@ -1,22 +1,22 @@
 #ifndef __EVNAMESPACE_H__
 #define __EVNAMESPACE_H__ 
 
-//Format Year/Month/Day
-#define EVAPI_VERSION 20230613
+#include "vex.h"
 
 namespace evAPI
 {
   using namespace vex;
 
-  enum allianceMode
+  enum robotMode
   {
     disabled = 0,
     driverControl = 1,
     autonomousControl = 2
   };
 
-  enum robotAlliance
+  enum allianceType
   {
+    noChange = -1,
     noAlliance = 0,
     redAlliance = 1,
     blueAlliance = 2
@@ -87,9 +87,9 @@ namespace evAPI
   };
 
   const int32_t smartPortLookupTable[22] = {
-    0,      PORT1,  PORT2,  PORT3,  PORT4,  PORT5,  PORT6,  PORT7,
-    PORT8,  PORT9,  PORT10, PORT11, PORT12, PORT13, PORT14, PORT15,
-    PORT16, PORT17, PORT18, PORT19, PORT20, PORT21
+    0,      vex::PORT1,  vex::PORT2,  vex::PORT3,  vex::PORT4,  vex::PORT5,  vex::PORT6,  vex::PORT7,
+    vex::PORT8,  vex::PORT9,  vex::PORT10, vex::PORT11, vex::PORT12, vex::PORT13, vex::PORT14, vex::PORT15,
+    vex::PORT16, vex::PORT17, vex::PORT18, vex::PORT19, vex::PORT20, vex::PORT21
   };
 
   const gearSetting redGearBox = ratio36_1;

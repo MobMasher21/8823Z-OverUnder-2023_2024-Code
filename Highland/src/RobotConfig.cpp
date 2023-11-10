@@ -6,9 +6,6 @@ using namespace vex;
 // A global instance of brian
 brain Brain;
 
-// A global instance of competition
-competition Competition;
-
 //* Motor and sensor setup
 //Drive motors
 motor leftMotor1 = motor(PORT15, gearSetting::ratio6_1, true);

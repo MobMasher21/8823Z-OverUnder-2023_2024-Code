@@ -1,8 +1,7 @@
 #include <ctype.h>
 #include "../include/UserInterface.h"
 #include "../include/pageArrowsIcons.h"
-#include "../../Common/include/evNamespace.h"
-#include "../../Common/include/Controllers.h"
+#include "../evAPI/Common/include/evNamespace.h"
 
 #define TILE_SIDE_LENGTH 30
 #define TILE_BORDER_DISTANCE 10
@@ -20,7 +19,6 @@
 #define BRAIN_CHARACTER_WIDTH 10
 
 #define BRAIN_DISPLAY_TRIGGER 1 //How often the Brain display graphs get updated
-#define CONTROLLER_DISPLAY_TRIGGER 2 //How often the Brain display graphs get updated
 
 extern brain Brain;
 
@@ -31,26 +29,21 @@ namespace evAPI
   uint8_t currentMatchState = disabled; //0 = Disabled; 1 = Auto; 2 = Driver
   uint8_t preMatchState = 0;
 
-  int UIControllerFunc()
+  void UIControllerFunc()
   {
-    uint8_t controllerUpdateCounter = 0;
-
+    //Initialise the screens
+    UI.primaryControllerUI.updateScreen();
+    UI.secondaryControllerUI.updateScreen();
+    
     while(true)
     {
-      if(controllerUpdateCounter >= CONTROLLER_DISPLAY_TRIGGER) //Update Controller
-      {
-        UI.drawControllerGraphData();
-        controllerUpdateCounter = 0;
-      }
-      
-      else
-      { controllerUpdateCounter++; }
+      //Update the screen data on the controllers
+      UI.primaryControllerUI.updateScreenData();
+      UI.secondaryControllerUI.updateScreenData();
 
-      this_thread::sleep_for(25);
+      this_thread::sleep_for(10);
     }
-    return 0;
   }
-
 
   int UIBrainFunc()
   {
@@ -58,10 +51,10 @@ namespace evAPI
     
     while(true)
     {
-      if(!competition().isEnabled()) //Stores the current match state
+      if(!Competition.isEnabled()) //Stores the current match state
       { currentMatchState = disabled; }
 
-      else if(competition().isAutonomous())
+      else if(Competition.isAutonomous())
       { currentMatchState = autonomousControl; }
 
       else
@@ -103,7 +96,7 @@ namespace evAPI
 
       preMatchState = currentMatchState;
 
-      this_thread::sleep_for(50);
+      this_thread::sleep_for(20);
     }
 
     return 0;
@@ -331,7 +324,6 @@ namespace evAPI
     buttonList[buttonCount - 1]->setDescription(Description);
     return(buttonCount);
   }
-
 
   int goodUI::addBlank() {
     buttonList[buttonCount] = new button(0, blankPagePointer);
@@ -608,12 +600,11 @@ namespace evAPI
 
     Brain.Screen.setFont(mono20); //Updates Match mode
     Brain.Screen.setCursor(12, 1);
-    Brain.Screen.print("          ");
     Brain.Screen.setCursor(12, 1);
-    this_thread::sleep_for(10);
+    this_thread::sleep_for(5);
 
     if(currentMatchState == disabled)
-    { Brain.Screen.print("Disabled"); }
+    { Brain.Screen.print("Disabled  "); }
 
     else
     {
@@ -621,10 +612,9 @@ namespace evAPI
       { Brain.Screen.print("Autonomous"); }
 
       else
-      { Brain.Screen.print("Driver"); }
+      { Brain.Screen.print("Driver    "); }
     }
   }
-
 
   void goodUI::selectButton(int button, bool doNotShowSettings)
   {
@@ -892,267 +882,6 @@ namespace evAPI
     { brainObjects[brainOutCount].Name[i] = name[i]; }
 
     brainOutCount++;
-    return 0;
-  }
-
-  //!Controller UI
-  
-  void goodUI::drawControllerGraphData()
-  {
-    int currentLine = 0;
-    int primaryDataCount = 0;
-    int secondaryDataCount = 0;
-
-    static bool clearedPrimaryScreen = 0;
-    static bool clearedSecondaryScreen = 0;
-
-    if(controllerOutCount <= 3) //How many objects need to be printed to the primary controller.
-    { primaryDataCount = controllerOutCount; }
-
-    else
-    { primaryDataCount = 3; }
-
-    if(controllerOutCount >= 4) //How many objects need to be printed to the secondary controller.
-    { secondaryDataCount = (controllerOutCount - 3); }
-
-    if(controllerOutCount > 0) //Draws UI on primary controller
-    {
-      if(!clearedPrimaryScreen) //Clear screen if it has not been.
-      {
-        primaryController.Screen.clearScreen();
-        clearedPrimaryScreen = true;
-      }
-
-      for (int i = 0; i < primaryDataCount; i++)
-      {
-        switch (controllerObjects[i].graphDataType)
-        {
-          case TEXT:
-            if(controllerObjects[i].prevRunIntData != 1) //Prevent the name from being printed multiple times
-            {
-              primaryController.Screen.setCursor(i + 1, 1);
-
-              primaryController.Screen.print(controllerObjects[i].Name);
-
-              controllerObjects[i].prevRunIntData = 1; //Make sure it only runs once.
-            }
-            break;
-
-          case INT:
-            if(controllerObjects[i].prevRunIntData != *controllerObjects[i].intData)
-            {
-              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
-              primaryController.Screen.clearLine(i + 1);
-
-              this_thread::sleep_for(5);
-
-              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
-              primaryController.Screen.print("%d", *controllerObjects[i].intData); //Print Data
-
-              //Make sure it only runs when the value changes.
-              controllerObjects[i].prevRunIntData = *controllerObjects[i].intData;
-            }
-            break;
-          
-          case FLOAT:
-            if(controllerObjects[i].prevRunFloatData != *controllerObjects[i].floatData)
-            {
-              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
-              primaryController.Screen.clearLine(i + 1);
-
-              this_thread::sleep_for(5);
-
-              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
-              primaryController.Screen.print("%.2f", *controllerObjects[i].floatData); //Print Data
-
-              //Make sure it only runs when the value changes.
-              controllerObjects[i].prevRunFloatData = *controllerObjects[i].floatData;
-            }
-            break;
-        
-          case DOUBLE:
-            if(controllerObjects[i].prevRunDoubleData != *controllerObjects[i].doubleData)
-            {
-              primaryController.Screen.setCursor(i + 1, 1); //Select and clear lines
-              primaryController.Screen.clearLine(i + 1);
-
-              this_thread::sleep_for(5);
-
-              primaryController.Screen.print(controllerObjects[i].Name); //Print Name
-              primaryController.Screen.print("%.2f", *controllerObjects[i].doubleData); //Print Data
-
-              //Make sure it only runs when the value changes.
-              controllerObjects[i].prevRunDoubleData = *controllerObjects[i].doubleData;
-            }
-            break;
-          
-          default:
-            break;
-        }
-      }
-
-      if(secondaryDataCount != 0) //Draws UI on secondary controller
-      {
-        currentLine = 1;
-
-        if(!clearedSecondaryScreen) //Clear screen if it has not been.
-        {
-          secondaryController.Screen.clearScreen();
-          clearedSecondaryScreen = true;
-        }
-
-        for (int i = 3; i < secondaryDataCount + 3; i++)
-        {
-          switch (controllerObjects[i].graphDataType)
-          {
-            case TEXT:
-              if(controllerObjects[i].prevRunIntData != 1) //Prevent the name from being printed multiple times
-              {
-                secondaryController.Screen.setCursor(currentLine, 1);
-
-                for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { secondaryController.Screen.print(controllerObjects[ii].Name); }
-
-                controllerObjects[i].prevRunIntData = 1; //Make sure it only runs once.
-                currentLine++;
-              }
-              break;
-        
-            case INT:
-              if(controllerObjects[i].prevRunIntData != *controllerObjects[i].intData)
-              {
-                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
-                secondaryController.Screen.clearLine();
-
-                for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { secondaryController.Screen.print(controllerObjects[ii].Name); }
-
-                secondaryController.Screen.print("%d", *controllerObjects[i].intData);
-
-                //Make sure it only runs when the value changes.
-                controllerObjects[i].prevRunIntData = *controllerObjects[i].intData;
-                currentLine++;
-              }
-              break;
-          
-            case FLOAT:
-              if(controllerObjects[i].prevRunFloatData != *controllerObjects[i].floatData)
-              {
-                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
-                secondaryController.Screen.clearLine();
-
-                for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { secondaryController.Screen.print(controllerObjects[ii].Name); }
-
-                secondaryController.Screen.print("%.2f", *controllerObjects[i].floatData);
-
-                //Make sure it only runs when the value changes.
-                controllerObjects[i].prevRunFloatData = *controllerObjects[i].floatData;
-                currentLine++;
-              }
-              break;
-        
-            case DOUBLE:
-              if(controllerObjects[i].prevRunDoubleData != *controllerObjects[i].doubleData)
-              {
-                secondaryController.Screen.setCursor(currentLine, 1); //Select and clear lines
-                secondaryController.Screen.clearLine();
-
-                for (int ii = 0; ii < controllerObjects[ii].nameLength; ii++) //Print Name
-                { secondaryController.Screen.print(controllerObjects[ii].Name); }
-
-                secondaryController.Screen.print("%.2f", *controllerObjects[i].doubleData);
-
-                //Make sure it only runs when the value changes.
-                controllerObjects[i].prevRunDoubleData = *controllerObjects[i].doubleData;
-                currentLine++;
-              }
-              break;
-
-            default:
-              break;
-          }
-        }
-      }
-    }
-  }
-
-  bool goodUI::createBlankControllerReadOut()
-  {
-    //Stops if the maximum amount of data points has been reached.
-    if(controllerOutCount >= MAX_CONTROLLER_GRAPH_COUNT) 
-    { return 1; }
-
-    controllerObjects[controllerOutCount].graphDataType = NO_DATA;
-
-    controllerOutCount++;
-    return 0;
-  }
-
-  bool goodUI::createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH])
-  {
-    //Stops if the maximum amount of data points has been reached.
-    if(controllerOutCount >= MAX_CONTROLLER_GRAPH_COUNT) 
-    { return 1; }
-
-    controllerObjects[controllerOutCount].graphDataType = TEXT;
-    controllerObjects[controllerOutCount].nameLength = strlen(name);
-    
-    for (uint8_t i = 0; i < strlen(name); i++) //Stores the name.
-    { controllerObjects[controllerOutCount].Name[i] = name[i]; }
-
-    controllerOutCount++;
-    return 0;
-  }
-
-  bool goodUI::createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], int &data)
-  {
-    //Stops if the maximum amount of data points has been reached.
-    if(controllerOutCount >= MAX_CONTROLLER_GRAPH_COUNT) 
-    { return 1; }
-
-    controllerObjects[controllerOutCount].graphDataType = INT;
-    controllerObjects[controllerOutCount].intData = &data;
-    controllerObjects[controllerOutCount].nameLength = strlen(name);
-    
-    for (uint8_t i = 0; i < strlen(name); i++) //Stores the name.
-    { controllerObjects[controllerOutCount].Name[i] = name[i]; }
-
-    controllerOutCount++;
-    return 0;
-  }
-
-  bool goodUI::createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], float &data)
-  {
-    //Stops if the maximum amount of data points has been reached.
-    if(controllerOutCount >= MAX_CONTROLLER_GRAPH_COUNT) 
-    { return 1; }
-
-    controllerObjects[controllerOutCount].graphDataType = FLOAT;
-    controllerObjects[controllerOutCount].floatData = &data;
-    controllerObjects[controllerOutCount].nameLength = strlen(name);
-    
-    for (uint8_t i = 0; i < strlen(name); i++) //Stores the name.
-    { controllerObjects[controllerOutCount].Name[i] = name[i]; }
-
-    controllerOutCount++;
-    return 0;
-  }
-
-  bool goodUI::createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], double &data)
-  {
-    //Stops if the maximum amount of data points has been reached.
-    if(controllerOutCount >= MAX_CONTROLLER_GRAPH_COUNT) 
-    { return 1; }
-
-    controllerObjects[controllerOutCount].graphDataType = DOUBLE;
-    controllerObjects[controllerOutCount].doubleData = &data;
-    controllerObjects[controllerOutCount].nameLength = strlen(name);
-    
-    for (uint8_t i = 0; i < strlen(name); i++) //Stores the name.
-    { controllerObjects[controllerOutCount].Name[i] = name[i]; }
-
-    controllerOutCount++;
     return 0;
   }
 }

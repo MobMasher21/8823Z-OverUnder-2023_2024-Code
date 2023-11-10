@@ -4,7 +4,9 @@
 #include "vex.h"
 #include "../include/button.h"
 #include "../include/iconArrays.h"
-#include "../../Common/include/colors.h"
+#include "../evAPI/Common/include/colors.h"
+#include "../evAPI/Common/include/constantObjects.h"
+#include "../../controllerUI/include/controllerUI.hpp"
 
 #define maxButtonCount 64  //Setup for the max amount of buttons used
 #define MAX_BRAIN_GRAPH_COUNT 32 
@@ -19,8 +21,8 @@ namespace evAPI
     private:
       //!General Private
       bool debugMode = false;
-      thread * brainThread;
-      thread * controllerThread;
+      thread *brainThread;
+      thread *controllerThread;
 
       enum dataType
       {
@@ -80,23 +82,6 @@ namespace evAPI
       } brainObjects[MAX_BRAIN_GRAPH_COUNT];
 
       color defaultReadoutColor = blue;
-
-      //!Controller UI Private
-
-      struct controllerReadOut
-      {
-        dataType graphDataType;
-        char Name[MAX_BRAIN_NAME_LENGTH];
-        uint nameLength = 0;
-        int *intData;
-        float *floatData;
-        double *doubleData;
-        int prevRunIntData;
-        float prevRunFloatData;
-        double prevRunDoubleData;
-      } controllerObjects[MAX_CONTROLLER_GRAPH_COUNT];
-
-      int controllerOutCount = 0; //Number of displayed outputs on controllers.
   
     public:
       //!General
@@ -275,38 +260,14 @@ namespace evAPI
       //!Controller UI
 
       /**
-       * @brief Draws the match UI to the screen.
+       * @brief UI for the primary controller.
       */
-      void drawControllerGraphData();
-
-      bool createBlankControllerReadOut();
+      controllerUI primaryControllerUI = controllerUI(&primaryController.Screen);
 
       /**
-       * @brief Creates text to display on the Controllers.
-       * @param name An array of characters containing the name of the data.
+       * @brief UI for the secondary controller.
       */
-      bool createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH]);
-
-      /**
-       * @brief Creates a new variable display on the Controllers.
-       * @param name An array of characters containing the name of the data.
-       * @param &data A variable to display.
-      */
-      bool createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], int &data);
-
-      /**
-       * @brief Creates a new variable display on the Controllers.
-       * @param name An array of characters containing the name of the data.
-       * @param &data A variable to display.
-      */
-      bool createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], float &data);
-
-      /**
-       * @brief Creates a new variable display on the Controllers.
-       * @param name An array of characters containing the name of the data.
-       * @param &data A variable to display.
-      */
-      bool createControllerReadOut(const char name[MAX_BRAIN_NAME_LENGTH], double &data);
+      controllerUI secondaryControllerUI = controllerUI(&secondaryController.Screen);
   };
 
   extern goodUI UI;

@@ -43,16 +43,10 @@ const int highCataAngle = 30;
 const int lowCataAngle = 46;
 int targetCataAngle;
 double cataStartAngle;
-#define CRNT_CATA_ANGL (cataSensor.angle(deg) - cataStartAngle)
+double currentCataAngle;
 int cataSpeed = 75;
 
 int intakeSpeed = 100;
-
-/* bool intakeBounce = false;
-bool intakeState;
-
-bool wingBounce = false;
-bool wingState; */
 
 /**
  * @brief Toggles the state of the wings.
@@ -60,7 +54,6 @@ bool wingState; */
 void tglWings()
 {
   wingPistons.set(!wingPistons.value());
-  //wingState = !wingState;
 }
 
 /**
@@ -69,7 +62,6 @@ void tglWings()
 void tglIntake()
 {
   intakePistons.set(!intakePistons.value());
-  //intakeState = !intakeState;
 }
 
 /**
@@ -121,7 +113,9 @@ void cataDec()
 }
 
 //Percentage of the robot battery.
-double robotBattery = Brain.Battery.capacity();
+double robotBatteryCapacity = Brain.Battery.capacity();
+double robotBatteryVolt = Brain.Battery.voltage();
+double robotBatteryCurrent = Brain.Battery.current();
 
 // ---------------------------------------------------------------------------
 
@@ -148,37 +142,55 @@ void pre_auton(void)
   primaryController.CATA_SPEED_INC.pressed(cataInc);
   primaryController.CATA_SPEED_DEC.pressed(cataDec);
 
-  // Clear the screen and print the calibrating message for the inertial
+  // Clear the screens and print the calibrating message for the inertial
   primaryController.Screen.clearScreen();
   primaryController.Screen.setCursor(1, 1);
   primaryController.Screen.print("Calibrating...");
+
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1, 1);
+  Brain.Screen.print("Calibrating Inertial...");
 
   // Calibrate the inertial
   Inertial.calibrate();
 
   // Wait for the inertial to finish calibrating
-  while(Inertial.isCalibrating())
+  /* while(Inertial.isCalibrating())
   {
     this_thread::sleep_for(10);
-  }
+  } */
 
   //*Setup the UI
-  //Add the buttons
+  //Add the buttons to the preauto
   UI.addBlank();
   UI.addBlank();
   UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
   UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.leftArrow);
   UI.addBlank();
   UI.addBlank();
-  UI.addButton(red, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
+  UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
   UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
 
+  //Add the displays to the match UI
+  UI.setDefaultReadOutColor(ClrDarkSlateBlue);
+
+  UI.createBrainReadOut("Battery Info:", ClrDarkRed);
+  UI.createBrainReadOut("Capacity: ", robotBatteryCapacity);
+  UI.createBrainReadOut("Voltage: ", robotBatteryVolt);
+  UI.createBrainReadOut("Current: ", robotBatteryCurrent);
+
+  UI.createBrainReadOut("Catapult Info:", ClrDarkGreen);
+  UI.createBrainReadOut("Motor Speed: ", cataSpeed);
+  UI.createBrainReadOut("Target Angle: ", targetCataAngle);
+  UI.createBrainReadOut("Cata Angle: ", currentCataAngle);
+
   //Add variables to the controller UI
-  UI.createControllerReadOut("Speed: ", cataSpeed);
-  UI.createControllerReadOut("Battery: ", robotBattery);
+  UI.primaryControllerUI.addData(0, "Catapult Speed: ", cataSpeed);
+  UI.primaryControllerUI.addData(1, "Capacity: ", robotBatteryCapacity);
+  UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
 
   //Setup auto selector
-  UI.selectButton(3, true);
+  UI.selectButton(6, true);
   UI.setDisplayTime(1500);
 
   //Start the UI
@@ -192,6 +204,7 @@ void pre_auton(void)
   wingPistons.set(true);
 
   cataStartAngle = cataSensor.angle(deg);
+  currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -304,7 +317,7 @@ void usercontrol(void)
   int cataSpeed_old = cataSpeed;
 
   // Print out catapult speed to the terminal
-  printf("Speed: %i\n", cataSpeed);
+  //printf("Speed: %i\n", cataSpeed);
 
   // Set stopping modes for the base motors
   leftMotors.setStopping(brake);
@@ -322,23 +335,26 @@ void usercontrol(void)
                 - (primaryController.Axis1.position() * TURN_HANDICAP));
 
     //Set the speed of the left and right motors
-    leftMotors.spin(fwd, leftSpeed, pct);
-    rightMotors.spin(fwd, rightSpeed, pct);
+    //leftMotors.spin(fwd, leftSpeed, pct);
+    //rightMotors.spin(fwd, rightSpeed, pct);
 
     //! --------------------- control cata -------------------------
     //Keep track of the catapult speed and log when it changes
     if(cataSpeed != cataSpeed_old)
     {
-      printf("Speed: %i\n", cataSpeed);
+      //printf("Speed: %i\n", cataSpeed);
 
       cataSpeed_old = cataSpeed;
     }
+
+    //Get the angle of the catapult
+    currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
 
     //*Run cata control code if the stop button isn't pressed
     if(!primaryController.CATA_STOP_BUTTON.pressing())
     {
       //Lower the catapult if the fire button is pressed, or if the angle is less than the target angle
-      if(primaryController.CATA_FIRE_BUTTON.pressing() || CRNT_CATA_ANGL < targetCataAngle)
+      if(primaryController.CATA_FIRE_BUTTON.pressing() || currentCataAngle < targetCataAngle)
       {
         cataMotor.spin(fwd, cataSpeed, pct);
       }
@@ -368,7 +384,7 @@ void usercontrol(void)
     }
 
     // Print out the angle of the catapult
-    printf("\n%f\n\n", CRNT_CATA_ANGL);
+    //printf("\n%f\n\n", currentCataAngle);
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -390,8 +406,10 @@ int main()
   // Prevent main from exiting with an infinite loop.
   while (true)
   {
-    //Store the percentage of the battery to display on the controller.
-    robotBattery = Brain.Battery.capacity();
+    //Store parameters to display on the screens
+    robotBatteryCapacity = Brain.Battery.capacity();
+    robotBatteryVolt = Brain.Battery.voltage();
+    robotBatteryCurrent = Brain.Battery.current();
 
     // Wait to allow other threads to use the CPU
     wait(50, msec);

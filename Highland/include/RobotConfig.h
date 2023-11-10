@@ -8,9 +8,6 @@ using namespace vex;
 // A global instance of brian
 extern brain Brain;
 
-// A global instance of competition
-extern competition Competition;
-
 //*Motor and sensor setup
 //Drive motors
 /* extern motor leftMotor1;
