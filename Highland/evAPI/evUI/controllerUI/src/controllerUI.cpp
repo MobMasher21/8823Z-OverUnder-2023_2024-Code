@@ -51,6 +51,7 @@ namespace evAPI
     //The amount of lines to draw
     uint8_t lineDrawCount = 3;
 
+    //Set the amount of lines to draw if there are less than three data points
     if(displayLines.size() < 3)
     {
       lineDrawCount = displayLines.size();
@@ -83,6 +84,7 @@ namespace evAPI
         }
       }
       
+      //Increment the line being drawn on the screen
       currentScreenLine++;
     }
 
@@ -125,6 +127,7 @@ namespace evAPI
     //The amount of lines to draw
     uint8_t lineDrawCount = 3;
 
+    //Set the amount of lines to draw if there are less than three data points
     if(displayLines.size() < 3)
     {
       lineDrawCount = displayLines.size();
@@ -152,6 +155,7 @@ namespace evAPI
         }
       }
 
+      //Increment the line being drawn on the screen
       currentScreenLine++;
     }
 

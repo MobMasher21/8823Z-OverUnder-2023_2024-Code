@@ -10,7 +10,7 @@
 #ifndef __CONSTANTOBJECTS_H__
 #define __CONSTANTOBJECTS_H__
 
-#include "evNamespace.h"
+#include "evNamespace.hpp"
 
 namespace evAPI
 {

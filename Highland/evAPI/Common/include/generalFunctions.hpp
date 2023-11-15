@@ -1,7 +1,7 @@
 #ifndef __GENERALFUNCTIONS_H__
 #define __GENERALFUNCTIONS_H__
 
-#include "evNamespace.h"
+#include "evNamespace.hpp"
 
 //https://www.arduino.cc/reference/en/
 

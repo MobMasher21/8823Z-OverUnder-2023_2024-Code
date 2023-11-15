@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Cameron Barclay                                           */
+/*    Authors:      Cameron Barclay, Jayden Liffick, Teo Carrion              */
 /*    Created:      9/30/2023, 12:45:32 AM                                    */
 /*    Description:  V5 project                                                */
 /*                                                                            */
@@ -25,6 +25,7 @@ using namespace evAPI;
 #define INTK_PST_BUTTON ButtonR1
 #define WINGS_BUTTON ButtonB
 
+//Limiters for controller driving
 #define TURN_HANDICAP 0.8
 #define DRIVE_HANDICAP 1
 
@@ -39,8 +40,8 @@ enum class cataStates
 
 cataStates cataLaunchMode = cataStates::HIGH_CATA;
 
-const int highCataAngle = 30;
-const int lowCataAngle = 46;
+const int16_t highCataAngle = 30;
+const int16_t lowCataAngle = 46;
 int targetCataAngle;
 double cataStartAngle;
 double currentCataAngle;
@@ -112,14 +113,10 @@ void cataDec()
   }
 }
 
-//Percentage of the robot battery.
-double robotBatteryCapacity = Brain.Battery.capacity();
+//Information about the robot battery
+int robotBatteryCapacity = (int)Brain.Battery.capacity();
 double robotBatteryVolt = Brain.Battery.voltage();
 double robotBatteryCurrent = Brain.Battery.current();
-
-// ---------------------------------------------------------------------------
-
-// define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -133,16 +130,16 @@ double robotBatteryCurrent = Brain.Battery.current();
 
 void pre_auton(void)
 {
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
-  // Setup functions to be run when buttons on the controller are pressed
+  //All activities that occur before the competition starts
+  //Example: clearing encoders, setting servo positions, ...
+  //Setup functions to be run when buttons on the controller are pressed
   primaryController.INTK_PST_BUTTON.pressed(tglIntake);
   primaryController.WINGS_BUTTON.pressed(tglWings);
   primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
   primaryController.CATA_SPEED_INC.pressed(cataInc);
   primaryController.CATA_SPEED_DEC.pressed(cataDec);
 
-  // Clear the screens and print the calibrating message for the inertial
+  //Clear the screens and print the calibrating message for the inertial
   primaryController.Screen.clearScreen();
   primaryController.Screen.setCursor(1, 1);
   primaryController.Screen.print("Calibrating...");
@@ -151,14 +148,14 @@ void pre_auton(void)
   Brain.Screen.setCursor(1, 1);
   Brain.Screen.print("Calibrating Inertial...");
 
-  // Calibrate the inertial
+  //Calibrate the inertial
   Inertial.calibrate();
 
-  // Wait for the inertial to finish calibrating
-  /* while(Inertial.isCalibrating())
+  //Wait for the inertial to finish calibrating
+  while(Inertial.isCalibrating())
   {
     this_thread::sleep_for(10);
-  } */
+  }
 
   //*Setup the UI
   //Add the buttons to the preauto
@@ -203,6 +200,7 @@ void pre_auton(void)
   //Retract the wings
   wingPistons.set(true);
 
+  //Configure the starting values for the catapult
   cataStartAngle = cataSensor.angle(deg);
   currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
 }
@@ -219,9 +217,6 @@ void pre_auton(void)
 
 void autonomous(void)
 {
-  // ..........................................................................
-  // Insert autonomous user code here.
-
   // Select which auto to run based on what button is pressed
   switch (UI.getProgNumber())
   {
@@ -296,8 +291,6 @@ void autonomous(void)
     default:
       break;
   }
-
-  // ..........................................................................
 }
 
 /*---------------------------------------------------------------------------*/
@@ -313,11 +306,11 @@ void autonomous(void)
 void usercontrol(void)
 {
   //*User control start
-  // Stores the previous speed of the catapult
+  //Stores the previous speed of the catapult
   int cataSpeed_old = cataSpeed;
 
-  // Print out catapult speed to the terminal
-  //printf("Speed: %i\n", cataSpeed);
+  //Print out catapult speed to the terminal
+  printf("Speed: %i\n", cataSpeed);
 
   // Set stopping modes for the base motors
   leftMotors.setStopping(brake);
@@ -335,8 +328,8 @@ void usercontrol(void)
                 - (primaryController.Axis1.position() * TURN_HANDICAP));
 
     //Set the speed of the left and right motors
-    //leftMotors.spin(fwd, leftSpeed, pct);
-    //rightMotors.spin(fwd, rightSpeed, pct);
+    leftMotors.spin(fwd, leftSpeed, pct);
+    rightMotors.spin(fwd, rightSpeed, pct);
 
     //! --------------------- control cata -------------------------
     //Keep track of the catapult speed and log when it changes
@@ -383,8 +376,8 @@ void usercontrol(void)
       cataMotor.stop(coast);
     }
 
-    // Print out the angle of the catapult
-    //printf("\n%f\n\n", currentCataAngle);
+    //Print out the angle of the catapult
+    printf("\n%f\n\n", currentCataAngle);
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -404,10 +397,10 @@ int main()
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (true)
+  while(true)
   {
     //Store parameters to display on the screens
-    robotBatteryCapacity = Brain.Battery.capacity();
+    robotBatteryCapacity = (int)Brain.Battery.capacity();
     robotBatteryVolt = Brain.Battery.voltage();
     robotBatteryCurrent = Brain.Battery.current();
 

@@ -1,7 +1,8 @@
 #include <ctype.h>
 #include "../include/UserInterface.h"
 #include "../include/pageArrowsIcons.h"
-#include "../evAPI/Common/include/evNamespace.h"
+#include "../evAPI/Common/include/evNamespace.hpp"
+#include "../evAPI/Common/include/generalFunctions.hpp"
 
 #define TILE_SIDE_LENGTH 30
 #define TILE_BORDER_DISTANCE 10
@@ -26,20 +27,51 @@ namespace evAPI
 {
   goodUI UI = goodUI();
 
-  uint8_t currentMatchState = disabled; //0 = Disabled; 1 = Auto; 2 = Driver
-  uint8_t preMatchState = 0;
+  robotMode currentMatchState = disabled;
+  robotMode preMatchState = disabled;
 
   void UIControllerFunc()
   {
+    //Stores if the controllers were previously installed
+    bool prevPrimaryControllerInstalled = false;
+    bool prevSecondaryControllerInstalled = false;
+
+    bool primaryControllerInstalled;
+    bool secondaryControllerInstalled;
+
     //Initialise the screens
     UI.primaryControllerUI.updateScreen();
     UI.secondaryControllerUI.updateScreen();
     
     while(true)
     {
-      //Update the screen data on the controllers
-      UI.primaryControllerUI.updateScreenData();
-      UI.secondaryControllerUI.updateScreenData();
+      primaryControllerInstalled = primaryController.installed();
+      secondaryControllerInstalled = secondaryController.installed();
+
+      //*Update the controller screens if they were just connected
+      if(primaryControllerInstalled && !prevPrimaryControllerInstalled)
+      {
+        UI.primaryControllerUI.updateScreen();
+      }
+
+      if(secondaryControllerInstalled && !prevSecondaryControllerInstalled)
+      {
+        UI.secondaryControllerUI.updateScreen();
+      }
+
+      //*Update the screen data on the controllers if they are currently connected
+      if(primaryControllerInstalled)
+      {
+        UI.primaryControllerUI.updateScreenData();
+      }
+
+      if(secondaryControllerInstalled)
+      {
+        UI.secondaryControllerUI.updateScreenData();
+      }
+
+      prevPrimaryControllerInstalled = primaryControllerInstalled;
+      prevSecondaryControllerInstalled = secondaryControllerInstalled;
 
       this_thread::sleep_for(10);
     }
@@ -51,14 +83,8 @@ namespace evAPI
     
     while(true)
     {
-      if(!Competition.isEnabled()) //Stores the current match state
-      { currentMatchState = disabled; }
-
-      else if(Competition.isAutonomous())
-      { currentMatchState = autonomousControl; }
-
-      else
-      { currentMatchState = driverControl; }
+      //Get the current state of the competition
+      currentMatchState = getCompetitionStatus();
 
       UI.pressCheck(); //Checks the screen for presses
 
@@ -198,7 +224,6 @@ namespace evAPI
 
   int goodUI::addButton(int r, int g, int b, const char Title[MAX_TITLE_LENGTH]) {
     goodUI::addButton(NULL);
-    
     buttonList[buttonCount - 1]->setColor(r, g, b);
     buttonList[buttonCount - 1]->setTitle(Title);
     return(buttonCount);
@@ -762,20 +787,20 @@ namespace evAPI
 
     //Sets the coordinates of each tile on the brain.
     uint8_t Row = 0;
-    uint8_t Colum = 0;
+    uint8_t Column = 0;
 
     for (int i = 0; i <= 35; i++)
     {
-      if(Colum > 5)
+      if(Column > 5)
       {
-        Colum = 0;
+        Column = 0;
         Row++;
       }
 
-      fieldTiles[i].xCord = horizontalOffset + (TILE_SIDE_LENGTH * Colum);
+      fieldTiles[i].xCord = horizontalOffset + (TILE_SIDE_LENGTH * Column);
       fieldTiles[i].yCord = TILE_VERTICAL_OFFSET + (TILE_SIDE_LENGTH * Row);
 
-      Colum++;
+      Column++;
     }
 
     createdField = true;

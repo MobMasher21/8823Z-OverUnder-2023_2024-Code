@@ -13,7 +13,7 @@
 
 #include "string"
 #include "../evAPI/Common/include/evErrorTypes.hpp"
-#include "../evAPI/Common/include/evPatch.h"
+#include "../evAPI/Common/include/evPatch.hpp"
 
 namespace evAPI
 {

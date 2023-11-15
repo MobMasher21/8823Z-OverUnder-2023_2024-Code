@@ -4,8 +4,8 @@
 #include "vex.h"
 #include "../include/button.h"
 #include "../include/iconArrays.h"
-#include "../evAPI/Common/include/colors.h"
-#include "../evAPI/Common/include/constantObjects.h"
+#include "../evAPI/Common/include/colors.hpp"
+#include "../evAPI/Common/include/constantObjects.hpp"
 #include "../../controllerUI/include/controllerUI.hpp"
 
 #define maxButtonCount 64  //Setup for the max amount of buttons used

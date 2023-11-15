@@ -6,11 +6,11 @@
 
 #include "evAPISettings.h"
 
-#include "../evAPI/Common/include/colors.h"
-#include "../evAPI/Common/include/generalFunctions.h"
-#include "../evAPI/Common/include/evNamespace.h"
-#include "../evAPI/Common/include/constantObjects.h"
-#include "../evAPI/Common/include/evPatch.h"
+#include "../evAPI/Common/include/colors.hpp"
+#include "../evAPI/Common/include/generalFunctions.hpp"
+#include "../evAPI/Common/include/evNamespace.hpp"
+#include "../evAPI/Common/include/constantObjects.hpp"
+#include "../evAPI/Common/include/evPatch.hpp"
 #include "../evAPI/Common/include/vexPrivateRebuild.h"
 #include "../evAPI/Common/include/evErrorTypes.hpp"
 

@@ -4,6 +4,7 @@
 	],
 	"cSpell.words": [
 		"auton",
+		"CONSTANTOBJECTS",
 		"CONTROLLERUI",
 		"Cornsilk",
 		"CRNT",
@@ -11,15 +12,23 @@
 		"EVAPI",
 		"EVAPIFILES",
 		"EVAPISETTINGS",
+		"EVERRORTYPES",
+		"EVNAMESPACE",
+		"EVPATCH",
 		"Gainsboro",
+		"GENERALFUNCTIONS",
 		"INTK",
 		"LVGL",
+		"Mecanum",
+		"odometry",
+		"omniwheels",
 		"Preauto",
 		"ROBOTCONFIG",
 		"smartdrive",
 		"TEMPLATEDATA",
 		"triball",
 		"usercontrol",
-		"USERINTERFACE"
+		"USERINTERFACE",
+		"VEXPRIVATEREBUILD"
 	]
 }

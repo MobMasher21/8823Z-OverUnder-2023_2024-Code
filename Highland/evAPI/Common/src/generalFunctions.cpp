@@ -1,6 +1,6 @@
 #include <math.h>
-#include "../include/constantObjects.h"
-#include "../include/generalFunctions.h"
+#include "../include/constantObjects.hpp"
+#include "../include/generalFunctions.hpp"
 
 namespace evAPI
 {
