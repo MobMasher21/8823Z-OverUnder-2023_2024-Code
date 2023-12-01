@@ -35,6 +35,5 @@ extern motor intakeMotor;
 
 //Pistons
 extern digital_out wingPistons;
-extern digital_out intakePistons;
 
 #endif // ROBOTCONFIG_H_

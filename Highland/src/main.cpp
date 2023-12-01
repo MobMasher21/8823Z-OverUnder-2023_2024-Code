@@ -3,7 +3,7 @@
 /*    Module:       main.cpp                                                  */
 /*    Authors:      Cameron Barclay, Jayden Liffick, Teo Carrion              */
 /*    Created:      9/30/2023, 12:45:32 AM                                    */
-/*    Description:  V5 project                                                */
+/*    Description:  Main code for 8823Z robot.                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -22,11 +22,10 @@ using namespace evAPI;
 #define CATA_SPEED_DEC ButtonDown
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
-// #define INTK_PST_BUTTON ButtonR1
 #define WINGS_BUTTON ButtonR1
 
 //Limiters for controller driving
-// #define TURN_HANDICAP 0.5 // made this a varible so that it can be set to diffrent values depending on the driver
+// #define TURN_HANDICAP 0.5 // made this a variable so that it can be set to different values depending on the driver
 #define DRIVE_HANDICAP 1
 
 int leftSpeed;
@@ -40,8 +39,8 @@ enum class cataStates
 
 cataStates cataLaunchMode = cataStates::HIGH_CATA;
 
-const int16_t highCataAngle = 30;
-const int16_t lowCataAngle = 46;
+//const int16_t highCataAngle = 30;
+//const int16_t lowCataAngle = 46;
 int targetCataAngle;
 double cataStartAngle;
 double currentCataAngle;
@@ -56,14 +55,6 @@ float turnHandicap;
 void tglWings()
 {
   wingPistons.set(!wingPistons.value());
-}
-
-/**
- * @brief Toggles the state of the intake piston.
-*/
-void tglIntake()
-{
-  intakePistons.set(!intakePistons.value());
 }
 
 /**
@@ -166,7 +157,6 @@ void pre_auton(void)
   //All activities that occur before the competition starts
   //Example: clearing encoders, setting servo positions, ...
   //Setup functions to be run when buttons on the controller are pressed
-  // primaryController.INTK_PST_BUTTON.pressed(tglIntake);
   primaryController.WINGS_BUTTON.pressed(tglWings);
   primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
   primaryController.CATA_SPEED_INC.pressed(cataInc);
@@ -184,24 +174,69 @@ void pre_auton(void)
   //Calibrate the inertial
   Inertial.calibrate();
 
+  //Allow the driver to select which handicap speed hey want to use
+  if(getCompetitionStatus() != disabled)
+  {
+    printf("Run handicap config\n");
+    setTurnHandicap();
+  }
+
   //Wait for the inertial to finish calibrating
   while(Inertial.isCalibrating())
   {
     this_thread::sleep_for(10);
   }
 
-  setTurnHandicap();
-
   //Setup the drivetrain for autonomous
   autoDrivetrain.setDriveVelocity(20, percent);
   autoDrivetrain.setTurnVelocity(20, percent);
 
   //Retract the wings
-  wingPistons.set(true);
+  wingPistons.set(false);
 
   //Configure the starting values for the catapult
   cataStartAngle = cataSensor.angle(deg);
   currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
+
+  printf("Start UI Setup\n");
+
+  //*Setup the UI
+  //Add the buttons to the preauto
+  UI.addBlank();
+  UI.addBlank();
+  UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
+  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.leftArrow);
+  UI.addBlank();
+  UI.addBlank();
+  UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
+  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
+
+  //Add the displays to the match UI
+  UI.setDefaultReadOutColor(ClrDarkSlateBlue);
+
+  UI.createBrainReadOut("Battery Info:", ClrDarkRed);
+  UI.createBrainReadOut("Capacity: ", robotBatteryCapacity);
+  UI.createBrainReadOut("Voltage: ", robotBatteryVolt);
+  UI.createBrainReadOut("Current: ", robotBatteryCurrent);
+
+  UI.createBrainReadOut("Catapult Info:", ClrDarkGreen);
+  UI.createBrainReadOut("Motor Speed: ", cataSpeed);
+  UI.createBrainReadOut("Target Angle: ", targetCataAngle);
+  UI.createBrainReadOut("Cata Angle: ", currentCataAngle);
+
+  //Add variables to the controller UI
+  UI.primaryControllerUI.addData(0, "Catapult Speed: ", cataSpeed);
+  UI.primaryControllerUI.addData(1, "Capacity: ", robotBatteryCapacity);
+  UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
+
+  //Setup auto selector
+  UI.selectButton(7, true);
+  UI.setDisplayTime(1500);
+
+  //Start the UI
+  UI.startUIThreads();
+
+  printf("Done with preauto\n");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -216,8 +251,11 @@ void pre_auton(void)
 
 void autonomous(void)
 {
+  //Times how long the auto runs
+  timer autoTimer = timer();
+
   // Select which auto to run based on what button is pressed
-  switch (0)
+  switch (UI.getProgNumber())
   {
     case 2: // Skills
       cataMotor.spin(forward, 80, percent);
@@ -240,7 +278,7 @@ void autonomous(void)
 
     case 7: // Match load side
       // Extend the wings
-      intakePistons.set(true);
+      /* wingPistons.set(true);
       this_thread::sleep_for(100);
 
       // Set speed parameters for the drivetrain
@@ -250,36 +288,32 @@ void autonomous(void)
 
       // Remove nugget from match loading zone
       autoDrivetrain.driveFor(reverse, 4, distanceUnits::in);
+      autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg); */
+
+      //Set base speeds
+      autoDrivetrain.setDriveVelocity(20, percent);
+      autoDrivetrain.setTurnVelocity(5, percent);
+      autoDrivetrain.setTurnThreshold(1);
+
+      //Turn and remove triball
+      wingPistons.set(true);
+      autoDrivetrain.driveFor(directionType::rev, 4, distanceUnits::in);
       autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
-
-      /*
-      //Push othe nugget in
-      autoDrivetrain.setDriveVelocity(70, percent);
-      autoDrivetrain.turnFor(turnType::right, 62, rotationUnits::deg);
-      autoDrivetrain.driveFor(forward, 28, distanceUnits::in);
-
-      //Go back and hi it again
-      autoDrivetrain.setDriveVelocity(15, percent);
-      autoDrivetrain.driveFor(reverse, 10, distanceUnits::in);
       autoDrivetrain.turnFor(turnType::right, 5, rotationUnits::deg);
-      autoDrivetrain.setDriveVelocity(80, percent);
-      autoDrivetrain.driveFor(forward, 10, distanceUnits::in);
 
-      //Go back and realign
-      autoDrivetrain.setDriveVelocity(15, percent);
-      autoDrivetrain.driveFor(reverse, 24, distanceUnits::in);
+      //Wait for triballs to calm down
+      //wait(100, msec);
 
-      //Go and hit the pole
-      autoDrivetrain.setDriveVelocity(8, percent);
-      autoDrivetrain.driveFor(forward, 5, distanceUnits::in);
-      autoDrivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
-      autoDrivetrain.driveFor(forward, 10, distanceUnits::in);
-      autoDrivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
-      autoDrivetrain.driveFor(forward, 20, distanceUnits::in);
-      autoDrivetrain.turnFor(turnType::right, 10, rotationUnits::deg);
-      autoDrivetrain.setDriveVelocity(30, percent);
-      autoDrivetrain.driveFor(forward, 20, distanceUnits::in);
-      */
+      //Ram the triballs into the goal.
+      autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
+      wait(1000, msec);
+      autoDrivetrain.setDriveVelocity(20, percent);
+      autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
+      wingPistons.set(false);
+      autoDrivetrain.turnFor(turnType::right, 30, rotationUnits::deg);
+      autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
+      wait(1000, msec);
+      autoDrivetrain.driveFor(directionType::fwd, 5, distanceUnits::in);
 
       break;
 
@@ -290,6 +324,8 @@ void autonomous(void)
     default:
       break;
   }
+
+  printf("Auto Time: %f seconds.\n", autoTimer.value());
 }
 
 /*---------------------------------------------------------------------------*/
@@ -306,7 +342,7 @@ void usercontrol(void)
 {
   //*User control start
   //Stores the previous speed of the catapult
-  int cataSpeed_old = cataSpeed;
+  //int cataSpeed_old = cataSpeed;
 
   //Print out catapult speed to the terminal
   printf("Speed: %i\n", cataSpeed);
@@ -332,7 +368,7 @@ void usercontrol(void)
 
     //! --------------------- control cata -------------------------
     //Keep track of the catapult speed and log when it changes
-    if(cataSpeed != cataSpeed_old)
+    /* if(cataSpeed != cataSpeed_old)
     {
       //printf("Speed: %i\n", cataSpeed);
 
@@ -342,7 +378,7 @@ void usercontrol(void)
     //Get the angle of the catapult
     currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
 
-    //*Run cata control code if the stop button isn't pressed
+    //Run cata control code if the stop button isn't pressed
     if(!primaryController.CATA_STOP_BUTTON.pressing())
     {
       //Lower the catapult if the fire button is pressed, or if the angle is less than the target angle
@@ -376,9 +412,24 @@ void usercontrol(void)
     }
 
     //Print out the angle of the catapult
-    printf("\n%f\n\n", currentCataAngle);
+    printf("\n%f\n\n", currentCataAngle); */
 
-    //! --------------------- control cata -------------------------
+    if(primaryController.CATA_FIRE_BUTTON.pressing())
+    {
+      cataMotor.spin(fwd, cataSpeed, pct);
+    }
+
+    else if(primaryController.CATA_STOP_BUTTON.pressing())
+    {
+      cataMotor.stop(coast);
+    }
+
+    else
+    {
+      cataMotor.stop(hold);
+    }
+
+    //! --------------------- control intake -------------------------
     if(primaryController.INTK_IN_BUTTON.pressing()) {
       intakeMotor.spin(fwd, intakeSpeed, pct);
     } else if(primaryController.INTK_OUT_BUTTON.pressing()) {
