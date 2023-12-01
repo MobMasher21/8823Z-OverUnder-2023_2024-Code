@@ -22,11 +22,11 @@ using namespace evAPI;
 #define CATA_SPEED_DEC ButtonDown
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
-#define INTK_PST_BUTTON ButtonR1
-#define WINGS_BUTTON ButtonB
+// #define INTK_PST_BUTTON ButtonR1
+#define WINGS_BUTTON ButtonR1
 
 //Limiters for controller driving
-#define TURN_HANDICAP 0.5
+// #define TURN_HANDICAP 0.5 // made this a varible so that it can be set to diffrent values depending on the driver
 #define DRIVE_HANDICAP 1
 
 int leftSpeed;
@@ -48,6 +48,7 @@ double currentCataAngle;
 int cataSpeed = 75;
 
 int intakeSpeed = 100;
+float turnHandicap;
 
 /**
  * @brief Toggles the state of the wings.
@@ -113,6 +114,38 @@ void cataDec()
   }
 }
 
+
+/// @brief sets the turn handicap based on wether left or right is pressed
+void setTurnHandicap() {
+  primaryController.Screen.clearScreen();
+  primaryController.Screen.setCursor(0, 0);
+  primaryController.Screen.print("Set turn handicap:");
+  primaryController.Screen.newLine();
+  primaryController.Screen.print("Left = 0.75");
+  primaryController.Screen.newLine();
+  primaryController.Screen.print("Right = 0.5");
+
+  while (!primaryController.ButtonLeft.pressing() && !primaryController.ButtonRight.pressing())
+  {
+    this_thread::sleep_for(10);
+  }
+
+  if (primaryController.ButtonLeft.pressing())
+  {
+    turnHandicap = 0.75;
+  }
+  else if (primaryController.ButtonRight.pressing()) 
+  {
+    turnHandicap = 0.5;
+  } 
+  else
+  {
+    turnHandicap = (0.75 + 0.5) / 2;
+  }
+
+  primaryController.Screen.clearScreen();
+}
+
 //Information about the robot battery
 int robotBatteryCapacity = (int)Brain.Battery.capacity();
 double robotBatteryVolt = Brain.Battery.voltage();
@@ -133,7 +166,7 @@ void pre_auton(void)
   //All activities that occur before the competition starts
   //Example: clearing encoders, setting servo positions, ...
   //Setup functions to be run when buttons on the controller are pressed
-  primaryController.INTK_PST_BUTTON.pressed(tglIntake);
+  // primaryController.INTK_PST_BUTTON.pressed(tglIntake);
   primaryController.WINGS_BUTTON.pressed(tglWings);
   primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
   primaryController.CATA_SPEED_INC.pressed(cataInc);
@@ -156,6 +189,8 @@ void pre_auton(void)
   {
     this_thread::sleep_for(10);
   }
+
+  setTurnHandicap();
 
   //Setup the drivetrain for autonomous
   autoDrivetrain.setDriveVelocity(20, percent);
@@ -286,10 +321,10 @@ void usercontrol(void)
     //! ------------------------- make it drive -----------------------
     //Get the speed for the left and right side motors
     leftSpeed = ((primaryController.Axis3.position() * DRIVE_HANDICAP)
-               + (primaryController.Axis1.position() * TURN_HANDICAP));
+               + (primaryController.Axis1.position() * turnHandicap));
 
     rightSpeed = ((primaryController.Axis3.position() * DRIVE_HANDICAP)
-                - (primaryController.Axis1.position() * TURN_HANDICAP));
+                - (primaryController.Axis1.position() * turnHandicap));
 
     //Set the speed of the left and right motors
     leftMotors.spin(fwd, leftSpeed, pct);
