@@ -26,7 +26,7 @@ using namespace evAPI;
 #define WINGS_BUTTON ButtonB
 
 //Limiters for controller driving
-#define TURN_HANDICAP 0.8
+#define TURN_HANDICAP 0.5
 #define DRIVE_HANDICAP 1
 
 int leftSpeed;
@@ -157,42 +157,6 @@ void pre_auton(void)
     this_thread::sleep_for(10);
   }
 
-  //*Setup the UI
-  //Add the buttons to the preauto
-  UI.addBlank();
-  UI.addBlank();
-  UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
-  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.leftArrow);
-  UI.addBlank();
-  UI.addBlank();
-  UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
-  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
-
-  //Add the displays to the match UI
-  UI.setDefaultReadOutColor(ClrDarkSlateBlue);
-
-  UI.createBrainReadOut("Battery Info:", ClrDarkRed);
-  UI.createBrainReadOut("Capacity: ", robotBatteryCapacity);
-  UI.createBrainReadOut("Voltage: ", robotBatteryVolt);
-  UI.createBrainReadOut("Current: ", robotBatteryCurrent);
-
-  UI.createBrainReadOut("Catapult Info:", ClrDarkGreen);
-  UI.createBrainReadOut("Motor Speed: ", cataSpeed);
-  UI.createBrainReadOut("Target Angle: ", targetCataAngle);
-  UI.createBrainReadOut("Cata Angle: ", currentCataAngle);
-
-  //Add variables to the controller UI
-  UI.primaryControllerUI.addData(0, "Catapult Speed: ", cataSpeed);
-  UI.primaryControllerUI.addData(1, "Capacity: ", robotBatteryCapacity);
-  UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
-
-  //Setup auto selector
-  UI.selectButton(6, true);
-  UI.setDisplayTime(1500);
-
-  //Start the UI
-  UI.startUIThreads();
-
   //Setup the drivetrain for autonomous
   autoDrivetrain.setDriveVelocity(20, percent);
   autoDrivetrain.setTurnVelocity(20, percent);
@@ -218,7 +182,7 @@ void pre_auton(void)
 void autonomous(void)
 {
   // Select which auto to run based on what button is pressed
-  switch (UI.getProgNumber())
+  switch (0)
   {
     case 2: // Skills
       cataMotor.spin(forward, 80, percent);
@@ -378,6 +342,15 @@ void usercontrol(void)
 
     //Print out the angle of the catapult
     printf("\n%f\n\n", currentCataAngle);
+
+    //! --------------------- control cata -------------------------
+    if(primaryController.INTK_IN_BUTTON.pressing()) {
+      intakeMotor.spin(fwd, intakeSpeed, pct);
+    } else if(primaryController.INTK_OUT_BUTTON.pressing()) {
+      intakeMotor.spin(reverse, intakeSpeed, pct);
+    } else {
+      intakeMotor.stop();
+    }
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

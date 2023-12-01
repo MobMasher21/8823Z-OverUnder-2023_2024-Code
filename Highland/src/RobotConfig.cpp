@@ -8,12 +8,12 @@ brain Brain;
 
 //* Motor and sensor setup
 //Drive motors
-motor leftMotor1 = motor(PORT15, gearSetting::ratio6_1, true);
-motor leftMotor2 = motor(PORT14, gearSetting::ratio6_1, true);
-motor leftMotor3 = motor(PORT13, gearSetting::ratio6_1, true);
-motor rightMotor1 = motor(PORT19, gearSetting::ratio6_1, false);
-motor rightMotor2 = motor(PORT17, gearSetting::ratio6_1, false);
-motor rightMotor3 = motor(PORT16, gearSetting::ratio6_1, false);
+motor leftMotor1 = motor(PORT9, gearSetting::ratio6_1, true);
+motor leftMotor2 = motor(PORT8, gearSetting::ratio6_1, true);
+motor leftMotor3 = motor(PORT7, gearSetting::ratio6_1, true);
+motor rightMotor1 = motor(PORT2, gearSetting::ratio6_1, false);
+motor rightMotor2 = motor(PORT14, gearSetting::ratio6_1, false);
+motor rightMotor3 = motor(PORT4, gearSetting::ratio6_1, false);
 
 //Inertial Sensor
 inertial Inertial = inertial(PORT8);
@@ -29,7 +29,7 @@ motor cataMotor = motor(PORT20, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT9, true);
 
 //Intake motor
-motor intakeMotor = motor(PORT2, gearSetting::ratio6_1, false);
+motor intakeMotor = motor(PORT10, gearSetting::ratio6_1, true);
 
 //Pistons
 digital_out wingPistons = digital_out(Brain.ThreeWirePort.B);
