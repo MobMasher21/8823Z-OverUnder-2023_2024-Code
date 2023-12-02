@@ -202,7 +202,7 @@ void pre_auton(void)
 
   //*Setup the UI
   //Add the buttons to the preauto
-  UI.addBlank();
+  UI.addButton(green, "Push In Simp", "Goes back then forward", UI.Icons.number0);
   UI.addBlank();
   UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
   UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
@@ -257,11 +257,16 @@ void autonomous(void)
   // Select which auto to run based on what button is pressed
   switch (UI.getProgNumber())
   {
+    case 0:
+      autoDrivetrain.setDriveVelocity(100, pct);
+      autoDrivetrain.driveFor(directionType::rev, 42, distanceUnits::in);
+      autoDrivetrain.driveFor(directionType::fwd, 12, distanceUnits::in);
+
+      break;
     case 2: // Skills
       cataMotor.spin(forward, 80, percent);
+
       break;
-
-
     case 3: // Push in
       // Extend the wings
       /* wingPistons.set(true);
@@ -299,7 +304,7 @@ void autonomous(void)
       autoDrivetrain.turnFor(turnType::right, 30, rotationUnits::deg);
       autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
       wait(1000, msec);
-      autoDrivetrain.driveFor(directionType::fwd, 5, distanceUnits::in);
+      autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
 
       break;
 
