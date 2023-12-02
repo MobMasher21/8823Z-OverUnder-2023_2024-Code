@@ -205,11 +205,11 @@ void pre_auton(void)
   UI.addBlank();
   UI.addBlank();
   UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
-  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.leftArrow);
+  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
   UI.addBlank();
   UI.addBlank();
   UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
-  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.number0);
+  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.leftArrow);
 
   //Add the displays to the match UI
   UI.setDefaultReadOutColor(ClrDarkSlateBlue);
@@ -261,22 +261,8 @@ void autonomous(void)
       cataMotor.spin(forward, 80, percent);
       break;
 
-    case 3: // Push In
-      // Ram the triball into the goal
-      autoDrivetrain.drive(reverse, 100, velocityUnits::pct);
-      vex::task::sleep(2000);
 
-      // Stop moving and wait a bit
-      autoDrivetrain.stop(coast);
-      vex::task::sleep(1000);
-
-      // Drive away from the goal
-      autoDrivetrain.drive(forward, 25, velocityUnits::pct);
-      vex::task::sleep(500);
-      autoDrivetrain.stop(coast);
-      break;
-
-    case 7: // Match load side
+    case 3: // Push in
       // Extend the wings
       /* wingPistons.set(true);
       this_thread::sleep_for(100);
@@ -317,8 +303,21 @@ void autonomous(void)
 
       break;
 
+    case 7: // Load side
+      autoDrivetrain.setDriveVelocity(20, percent);
+      autoDrivetrain.setTurnVelocity(5, percent);
+      autoDrivetrain.setTurnThreshold(1);
+
+      autoDrivetrain.driveFor(directionType::fwd, 14, distanceUnits::in);
+      wingPistons.set(true);
+      autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
+      wingPistons.set(false);
+      autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg);
+
+      break;
+
     case 6: //Do nothing auto
-      //!NO CODE HERE
+      //! NO CODE HERE
       break;
 
     default:
