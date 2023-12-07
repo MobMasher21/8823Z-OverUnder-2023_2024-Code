@@ -1,13 +1,15 @@
 #include "../include/RobotConfig.h"
 #include "../include/vex.h"
-#include "../evAPI/evAPIFiles.h"
 
 using namespace vex;
+
+// A global instance of brian
+brain Brain;
 
 //* Motor and sensor setup
 //Drive motors
 motor leftMotor1 = motor(PORT9, gearSetting::ratio6_1, true);
-motor leftMotor2 = motor(PORT8, gearSetting::ratio6_1, true);
+motor leftMotor2 = motor(PORT16, gearSetting::ratio6_1, true);
 motor leftMotor3 = motor(PORT7, gearSetting::ratio6_1, true);
 motor rightMotor1 = motor(PORT2, gearSetting::ratio6_1, false);
 motor rightMotor2 = motor(PORT14, gearSetting::ratio6_1, false);
@@ -27,7 +29,7 @@ motor cataMotor = motor(PORT6, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT20, true);
 
 //Intake motor
-motor intakeMotor = motor(PORT10, gearSetting::ratio6_1, true);
+motor intakeMotor = motor(PORT5, gearSetting::ratio6_1, true);
 
 //Pistons
 digital_out wingPistons = digital_out(Brain.ThreeWirePort.A);

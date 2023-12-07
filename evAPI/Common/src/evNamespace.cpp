@@ -1,6 +1,6 @@
-#include "../include/evNamespace.h"
+#include "../include/evNamespace.hpp"
 
 namespace evAPI
 {
-  allianceType robotAlliance = noAlliance;
+  allianceType robotAlliance;
 } // namespace evAPI

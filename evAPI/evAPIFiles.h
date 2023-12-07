@@ -1,16 +1,19 @@
 #ifndef EVAPIFILES_H
 #define EVAPIFILES_H
 
-#include "../evAPI/Common/include/generalFunctions.h"
-#include "../evAPI/Common/include/evNamespace.h"
-#include "../evAPI/Common/include/PID.h"
-#include "../evAPI/Common/include/colors.h"
+//Format Year/Month/Day
+#define EVAPI_VERSION 20231108
 
-#include "../evAPI/robotControl/Drivetrain/include/Drive.h"
-#include "../evAPI/robotControl/DriverBaseControl/include/DriverBaseControl.h"
+#include "evAPISettings.h"
 
-#include "../evAPI/VisionTracker/include/VisionTracker.h"
+#include "../evAPI/Common/include/colors.hpp"
+#include "../evAPI/Common/include/generalFunctions.hpp"
+#include "../evAPI/Common/include/evNamespace.hpp"
+#include "../evAPI/Common/include/constantObjects.hpp"
+#include "../evAPI/Common/include/evPatch.hpp"
+#include "../evAPI/Common/include/vexPrivateRebuild.h"
+#include "../evAPI/Common/include/evErrorTypes.hpp"
 
-#include "../evAPI/vexUI/AutoSelector/include/AutoSelector.h"
+#include "../evAPI/evUI/brainUI/include/UserInterface.h"
 
 #endif // EVAPIFILES_H

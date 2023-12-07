@@ -8,19 +8,102 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include "../evAPI/evAPIFiles.h"
+#include "evAPI.h"
 #include "RobotConfig.h"
-#include "GlobalDeclarations.h"
+
+using namespace evAPI;
+
+// Driver control settings and variables -------------------------------------
+// contorl buttons
+#define CATA_FIRE_BUTTON ButtonR2
+#define CATA_SET_BUTTON ButtonA
+#define CATA_STOP_BUTTON ButtonX
+#define CATA_SPEED_INC ButtonUp
+#define CATA_SPEED_DEC ButtonDown
+#define INTK_IN_BUTTON ButtonL1
+#define INTK_OUT_BUTTON ButtonL2
+#define WINGS_BUTTON ButtonR1
+
+//Limiters for controller driving
+// #define TURN_HANDICAP 0.5 // made this a variable so that it can be set to different values depending on the driver
+#define DRIVE_HANDICAP 1
+
+int leftSpeed;
+int rightSpeed;
+
+enum class cataStates
+{
+  HIGH_CATA = 0,
+  LOW_CATA = 1
+};
+
+cataStates cataLaunchMode = cataStates::HIGH_CATA;
+
+//const int16_t highCataAngle = 30;
+//const int16_t lowCataAngle = 46;
+int targetCataAngle;
+double cataStartAngle;
+double currentCataAngle;
+int cataSpeed = 75;
+
+int intakeSpeed = 100;
+float turnHandicap;
 
 /**
- * ! A note to anyone that will be writing code here 
- * ! All function and variable declaration are now in GlobalDeclarations.handicap
- * ! To keep things organized group together functions in their own .cpp files
- * ! Each auto should be its own function, but driver contorl can be written in main
- * 
- * ! All unused code was removed to clean up files and it can be seen in old branches
- */
+ * @brief Toggles the state of the wings.
+*/
+void tglWings()
+{
+  wingPistons.set(!wingPistons.value());
+}
 
+/**
+ * @brief Toggles the state of the catapult.
+*/
+void tglCataMode()
+{
+  if(cataLaunchMode == cataStates::HIGH_CATA)
+  {
+    cataLaunchMode = cataStates::LOW_CATA;
+  }
+
+  else
+  {
+    cataLaunchMode = cataStates::HIGH_CATA;
+  }
+}
+
+/**
+ * @brief Increments the catapult speed by 5.
+*/
+void cataInc()
+{
+  if(cataSpeed >= 100)
+  {
+    cataSpeed = 100;
+  }
+
+  else
+  {
+    cataSpeed += 5;
+  }
+}
+
+/**
+ * @brief Decrements the catapult speed by 5.
+*/
+void cataDec()
+{
+  if(cataSpeed <= 0)
+  {
+    cataSpeed = 0;
+  }
+
+  else
+  {
+    cataSpeed -= 5;
+  }
+}
 
 
 /// @brief sets the turn handicap based on wether left or right is pressed
@@ -33,19 +116,31 @@ void setTurnHandicap() {
   primaryController.Screen.newLine();
   primaryController.Screen.print("Right = 0.5");
 
-  while (!primaryController.ButtonLeft.pressing() && !primaryController.ButtonRight.pressing()) {
+  while (!primaryController.ButtonLeft.pressing() && !primaryController.ButtonRight.pressing())
+  {
     this_thread::sleep_for(10);
   }
 
-  if (primaryController.ButtonLeft.pressing()) {
-    turnHandicap = LOGAN_TURNS;
-  } else if (primaryController.ButtonRight.pressing()) {
-    turnHandicap = ELI_TURNS;
+  if (primaryController.ButtonLeft.pressing())
+  {
+    turnHandicap = 0.75;
+  }
+  else if (primaryController.ButtonRight.pressing()) 
+  {
+    turnHandicap = 0.5;
+  } 
+  else
+  {
+    turnHandicap = (0.75 + 0.5) / 2;
   }
 
   primaryController.Screen.clearScreen();
-
 }
+
+//Information about the robot battery
+int robotBatteryCapacity = (int)Brain.Battery.capacity();
+double robotBatteryVolt = Brain.Battery.voltage();
+double robotBatteryCurrent = Brain.Battery.current();
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -59,13 +154,14 @@ void setTurnHandicap() {
 
 void pre_auton(void)
 {
-  //*Controller button callback setup =====================================================
+  //All activities that occur before the competition starts
+  //Example: clearing encoders, setting servo positions, ...
+  //Setup functions to be run when buttons on the controller are pressed
   primaryController.WINGS_BUTTON.pressed(tglWings);
   primaryController.CATA_SET_BUTTON.pressed(tglCataMode);
   primaryController.CATA_SPEED_INC.pressed(cataInc);
   primaryController.CATA_SPEED_DEC.pressed(cataDec);
 
-  //*Run calibration for inertial sensor ==================================================
   //Clear the screens and print the calibrating message for the inertial
   primaryController.Screen.clearScreen();
   primaryController.Screen.setCursor(1, 1);
@@ -76,67 +172,71 @@ void pre_auton(void)
   Brain.Screen.print("Calibrating Inertial...");
 
   //Calibrate the inertial
-  driveBase.calibrateInertial();
+  Inertial.calibrate();
+
+  //Allow the driver to select which handicap speed hey want to use
+  if(getCompetitionStatus() != disabled)
+  {
+    printf("Run handicap config\n");
+    setTurnHandicap();
+  }
 
   //Wait for the inertial to finish calibrating
-  while(driveBase.isInertialCalibrating()) {
+  while(Inertial.isCalibrating())
+  {
     this_thread::sleep_for(10);
   }
 
-  //*Run driver set turn handicap stuff ====================================================
-  if(!Competition.isEnabled()) {
-    printf("Run handicap config\n");
-    setTurnHandicap();
-  } else {
-    turnHandicap = (LOGAN_TURNS + ELI_TURNS) / 2;
-  }
+  //Setup the drivetrain for autonomous
+  autoDrivetrain.setDriveVelocity(20, percent);
+  autoDrivetrain.setTurnVelocity(20, percent);
 
-  //*Drivetrain setup =====================================================================
-  //Set speeds
-  driveBase.setDriveSpeed(20);
-  driveBase.setTurnSpeed(20);
+  //Retract the wings
+  wingPistons.set(false);
 
-  //*Set piston starting states ===========================================================
-  wingPistons.set(false);  //retract wings
+  //Configure the starting values for the catapult
+  cataStartAngle = cataSensor.angle(deg);
+  currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
 
-  //*Automatic driver control setup =======================================================
-  driveControl.setHandicaps(DRIVE_HANDICAP, turnHandicap);
-  driveControl.setPrimaryStick(leftStick);
+  printf("Start UI Setup\n");
 
-  //*Setup the UI =========================================================================
-  UI.addButton(0, green);
-  UI.addButton(2, 0xff, 0x10, 0xa0);
-  UI.addButton(3, blue);
-  UI.addButton(6, Gray);
-  UI.addButton(7, blue);
+  //*Setup the UI
+  //Add the buttons to the preauto
+  UI.addButton(green, "Push In Simp", "Goes back then forward", UI.Icons.number0);
+  UI.addBlank();
+  UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
+  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
+  UI.addBlank();
+  UI.addBlank();
+  UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
+  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.leftArrow);
 
-  UI.setButtonTitle(0, "Push In Simp");
-  UI.setButtonTitle(2, "Skills");
-  UI.setButtonTitle(3, "Push In");
-  UI.setButtonTitle(6, "Do Nothing");
-  UI.setButtonTitle(7, "Load");
+  //Add the displays to the match UI
+  UI.setDefaultReadOutColor(ClrDarkSlateBlue);
 
-  UI.setButtonDescription(0, "Goes back then forward");
-  UI.setButtonDescription(2, "Shoots all the match loads into the field.");
-  UI.setButtonDescription(3, "Auto for pushing in a nugget in on either side.");
-  UI.setButtonDescription(6, "Auto that does nothing.");
-  UI.setButtonDescription(7, "Auto for a robot on the loading side of the field.");
+  UI.createBrainReadOut("Battery Info:", ClrDarkRed);
+  UI.createBrainReadOut("Capacity: ", robotBatteryCapacity);
+  UI.createBrainReadOut("Voltage: ", robotBatteryVolt);
+  UI.createBrainReadOut("Current: ", robotBatteryCurrent);
 
-  UI.setButtonIcon(0, UI.icons.number0);
-  UI.setButtonIcon(2, UI.icons.skills);
-  UI.setButtonIcon(3, UI.icons.rightArrow);
-  UI.setButtonIcon(6, UI.icons.exclamationMark);
-  UI.setButtonIcon(7, UI.icons.leftArrow);
+  UI.createBrainReadOut("Catapult Info:", ClrDarkGreen);
+  UI.createBrainReadOut("Motor Speed: ", cataSpeed);
+  UI.createBrainReadOut("Target Angle: ", targetCataAngle);
+  UI.createBrainReadOut("Cata Angle: ", currentCataAngle);
 
-  //Setup default selection
-  UI.setSelectedButton(7);
+  //Add variables to the controller UI
+  UI.primaryControllerUI.addData(0, "Catapult Speed: ", cataSpeed);
+  UI.primaryControllerUI.addData(1, "Capacity: ", robotBatteryCapacity);
+  UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
 
-  //Set time that button data will be on screen
-  UI.setDataDisplayTime(2000);
+  //Setup auto selector
+  UI.selectButton(7, true);
+  UI.setDisplayTime(1500);
 
   //Start the UI
-  UI.startThread();
+  UI.startUIThreads();
 
+  printf("Done with preauto\n");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -155,7 +255,7 @@ void autonomous(void)
   timer autoTimer = timer();
 
   // Select which auto to run based on what button is pressed
-  switch (UI.getSelectedButton())
+  switch (UI.getProgNumber())
   {
     case 0:
       autoDrivetrain.setDriveVelocity(100, pct);
@@ -251,18 +351,85 @@ void usercontrol(void)
   //Print out catapult speed to the terminal
   printf("Speed: %i\n", cataSpeed);
 
+  // Set stopping modes for the base motors
+  leftMotors.setStopping(brake);
+  rightMotors.setStopping(brake);
+
   // User control code here, inside the loop
   while(true)
   {
     //! ------------------------- make it drive -----------------------
-    driveControl.driverLoop();
+    //Get the speed for the left and right side motors
+    leftSpeed = ((primaryController.Axis3.position() * DRIVE_HANDICAP)
+               + (primaryController.Axis1.position() * turnHandicap));
+
+    rightSpeed = ((primaryController.Axis3.position() * DRIVE_HANDICAP)
+                - (primaryController.Axis1.position() * turnHandicap));
+
+    //Set the speed of the left and right motors
+    leftMotors.spin(fwd, leftSpeed, pct);
+    rightMotors.spin(fwd, rightSpeed, pct);
 
     //! --------------------- control cata -------------------------
-    if(primaryController.CATA_FIRE_BUTTON.pressing()) {
-      cataMotor.spin(fwd, cataSpeed, pct);
-    } else if(primaryController.CATA_STOP_BUTTON.pressing()) {
+    //Keep track of the catapult speed and log when it changes
+    /* if(cataSpeed != cataSpeed_old)
+    {
+      //printf("Speed: %i\n", cataSpeed);
+
+      cataSpeed_old = cataSpeed;
+    }
+
+    //Get the angle of the catapult
+    currentCataAngle = cataSensor.angle(deg) - cataStartAngle;
+
+    //Run cata control code if the stop button isn't pressed
+    if(!primaryController.CATA_STOP_BUTTON.pressing())
+    {
+      //Lower the catapult if the fire button is pressed, or if the angle is less than the target angle
+      if(primaryController.CATA_FIRE_BUTTON.pressing() || currentCataAngle < targetCataAngle)
+      {
+        cataMotor.spin(fwd, cataSpeed, pct);
+      }
+
+      //Stop and hold down the catapult
+      else
+      {
+        cataMotor.stop(hold);
+      }
+
+      //Update the target angle when the launch mode changes
+      if(cataLaunchMode == cataStates::HIGH_CATA)
+      {
+        targetCataAngle = highCataAngle;
+      }
+
+      else
+      {
+        targetCataAngle = lowCataAngle;
+      }
+    }
+
+    //Stop the catapult if the stop button is pressed
+    else
+    {
       cataMotor.stop(coast);
-    } else {
+    }
+
+    //Print out the angle of the catapult
+    printf("\n%f\n\n", currentCataAngle); */
+
+    if(primaryController.CATA_FIRE_BUTTON.pressing())
+    {
+      cataMotor.spin(fwd, cataSpeed, pct);
+    }
+
+    else if(primaryController.CATA_STOP_BUTTON.pressing())
+    {
+      cataMotor.stop(coast);
+    }
+
+    else
+    {
       cataMotor.stop(hold);
     }
 
