@@ -202,10 +202,10 @@ void pre_auton(void)
 
   //*Setup the UI
   //Add the buttons to the preauto
-  UI.addButton(green, "Push In Simp", "Goes back then forward", UI.Icons.number0);
+  UI.addButton(green, "Goal Side Simp", "Goes back then forward", UI.Icons.number0);
   UI.addBlank();
   UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
-  UI.addButton(blue, "Push In", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
+  UI.addButton(blue, "Goal Side", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
   UI.addBlank();
   UI.addBlank();
   UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
@@ -230,7 +230,7 @@ void pre_auton(void)
   UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
 
   //Setup auto selector
-  UI.selectButton(7, true);
+  UI.selectButton(3, true);
   UI.setDisplayTime(1500);
 
   //Start the UI
@@ -257,7 +257,7 @@ void autonomous(void)
   // Select which auto to run based on what button is pressed
   switch (UI.getProgNumber())
   {
-    case 0:
+    case 0: // Goal side simp
       autoDrivetrain.setDriveVelocity(100, pct);
       autoDrivetrain.driveFor(directionType::rev, 42, distanceUnits::in);
       autoDrivetrain.driveFor(directionType::fwd, 12, distanceUnits::in);
@@ -267,31 +267,86 @@ void autonomous(void)
       cataMotor.spin(forward, 80, percent);
 
       break;
-    case 3: // Push in
-      //Set base speeds
-      autoDrivetrain.setDriveVelocity(20, percent);
-      autoDrivetrain.setTurnVelocity(5, percent);
-      autoDrivetrain.setTurnThreshold(1);
+    case 3: // Goal Side
+      //set speeds
+      autoDrivetrain.setDriveVelocity(50, percent);
+      autoDrivetrain.setTurnVelocity(6, percent);
+      autoDrivetrain.setTurnThreshold(2);
+      autoDrivetrain.setTurnConstant(.5);
 
-      //Turn and remove triball
-      wingPistons.set(true);
-      autoDrivetrain.driveFor(directionType::rev, 4, distanceUnits::in);
-      autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
-      autoDrivetrain.turnFor(turnType::right, 5, rotationUnits::deg);
+      //drop intake and grab first ball
+      cataMotor.spin(fwd, 80, pct);
+      intakeMotor.spin(fwd, 100, pct);
+      vex::task::sleep(750);
+      cataMotor.stop(coast);
+      intakeMotor.stop();
 
-      //Wait for triballs to calm down
-      //wait(100, msec);
+      //first drive move before dropping match load ball
+      autoDrivetrain.driveFor(50, inches);
+      autoDrivetrain.turnFor(right, 60, deg);
 
-      //Ram the triballs into the goal.
-      autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
-      wait(1000, msec);
-      autoDrivetrain.setDriveVelocity(20, percent);
-      autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
-      wingPistons.set(false);
-      autoDrivetrain.turnFor(turnType::right, 30, rotationUnits::deg);
-      autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
-      wait(1000, msec);
-      autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
+      //drop match load ball
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(750);
+      intakeMotor.stop();
+
+      //aim and grab second ball
+      autoDrivetrain.setDriveVelocity(30, pct);
+      autoDrivetrain.turnFor(left, 85, deg);
+      intakeMotor.spin(fwd, 100, pct);
+      autoDrivetrain.driveFor(18, inches);
+      intakeMotor.stop();
+
+      //drop second ball
+      autoDrivetrain.turnToHeading(90, deg);
+      autoDrivetrain.driveFor(12, inches);
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(750);
+      intakeMotor.stop();
+
+      //grab ball 3
+      autoDrivetrain.driveFor(-6, inches);
+      autoDrivetrain.turnFor(right, 180, deg);
+      intakeMotor.spin(fwd, 100, pct);
+      autoDrivetrain.driveFor(16, inches);
+
+      //goal Ram
+      autoDrivetrain.driveFor(-32, inches);
+      autoDrivetrain.driveFor(12, inches);
+      autoDrivetrain.turnFor(left, 180, deg);
+
+      //drop last ball
+      autoDrivetrain.setDriveVelocity(100, pct);
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(100);
+      autoDrivetrain.driveFor(6, inches);
+      autoDrivetrain.driveFor(-6, inches);
+
+      /* old code
+        //Set base speeds
+        autoDrivetrain.setDriveVelocity(20, percent);
+        autoDrivetrain.setTurnVelocity(5, percent);
+        autoDrivetrain.setTurnThreshold(1);
+
+        //Turn and remove triball
+        wingPistons.set(true);
+        autoDrivetrain.driveFor(directionType::rev, 4, distanceUnits::in);
+        autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
+        autoDrivetrain.turnFor(turnType::right, 5, rotationUnits::deg);
+
+        //Wait for triballs to calm down
+        //wait(100, msec);
+
+        //Ram the triballs into the goal.
+        autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
+        wait(1000, msec);
+        autoDrivetrain.setDriveVelocity(20, percent);
+        autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
+        wingPistons.set(false);
+        autoDrivetrain.turnFor(turnType::right, 30, rotationUnits::deg);
+        autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
+        wait(1000, msec);
+        autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in); */
 
       break;
 

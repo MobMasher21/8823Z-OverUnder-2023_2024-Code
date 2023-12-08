@@ -22,7 +22,7 @@ inertial Inertial = inertial(PORT17);
 motor_group leftMotors = motor_group(leftMotor1, leftMotor2, leftMotor3);
 motor_group rightMotors = motor_group(rightMotor1, rightMotor2, rightMotor3);
 
-smartdrive autoDrivetrain = smartdrive(leftMotors, rightMotors, Inertial, 299.24, 320, 40, mm, 0.75);
+smartdrive autoDrivetrain = smartdrive(leftMotors, rightMotors, Inertial, 299.24, 320, 40, mm, 0.6);
 
 //Catapult motor/sensors
 motor cataMotor = motor(PORT6, gearSetting::ratio36_1, true);
