@@ -10,8 +10,7 @@
 #include <math.h>
 #include "../../Common/include/generalFunctions.h"
 
-namespace evAPI
-{
+namespace evAPI {
   long map(long value, long fromLow, long fromHigh, long toLow, long toHigh)
   { return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow; }
 

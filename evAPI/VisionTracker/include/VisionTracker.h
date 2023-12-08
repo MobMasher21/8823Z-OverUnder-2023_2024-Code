@@ -8,8 +8,7 @@
 
 using namespace evAPI;
 
-class VisionTracker
-{
+class VisionTracker {
   public:
     /****** setup code ******/
     /**

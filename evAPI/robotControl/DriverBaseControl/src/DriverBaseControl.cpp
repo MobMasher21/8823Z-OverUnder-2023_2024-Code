@@ -8,10 +8,10 @@ namespace evAPI {
    * @param driveTypeIN The type of controlling that will be used
    * @param drivetrainIN The drivetrain that will be controlled
    */
-  DriverBaseControl::DriverBaseControl(controller &controllerIN, driveMode driveTypeIN, Drive &drivetrainIN) {
-    vexController = &controllerIN;
+  DriverBaseControl::DriverBaseControl(controller * controllerIN, driveMode driveTypeIN, Drive * drivetrainIN) {
+    vexController = controllerIN;
     driverType = driveTypeIN;
-    drivetrain = &drivetrainIN;
+    drivetrain = drivetrainIN;
   }
 
   /**
@@ -61,9 +61,11 @@ namespace evAPI {
             break;
         }
         break;
+      default:
       case Tank:
         leftSpeed = vexController->Axis3.position(pct);
         rightSpeed = vexController->Axis2.position(pct);
+        break;
       case RCControl:
         switch (primaryStick) {
           case leftStick:

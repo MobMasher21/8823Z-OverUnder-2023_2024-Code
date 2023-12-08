@@ -6,8 +6,7 @@
 //Format YYYYMMDD
 #define EVAPI_VERSION 20230805
 
-namespace evAPI
-{
+namespace evAPI {
   using namespace vex;
 
   enum robotMode

@@ -17,7 +17,7 @@ namespace evAPI {
        * @param driveTypeIN The type of controlling that will be used
        * @param drivetrainIN The drivetrain that will be controlled
        */
-      DriverBaseControl(controller &controllerIN, driveMode driveTypeIN, Drive &drivetrainIN);
+      DriverBaseControl(controller * controllerIN, driveMode driveTypeIN, Drive * drivetrainIN);
 
       /**
        * @brief Set the Handicaps

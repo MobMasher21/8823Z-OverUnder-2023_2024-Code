@@ -1,7 +1,6 @@
 #include "../../../robotControl/Drivetrain/include/Drive.h"
 
-namespace evAPI
-{
+namespace evAPI {
   //======================================== public =============================================
   /*********** setup ***********/
   /*----- Base Setup -----*/

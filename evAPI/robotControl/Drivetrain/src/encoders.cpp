@@ -1,7 +1,6 @@
 #include "../../../robotControl/Drivetrain/include/Drive.h"
 
-namespace evAPI
-{
+namespace evAPI {
   //======================================== private =============================================
   /****** encoders ******/
   double Drive::getLeftPosition(rotationUnits units) {    //get the position of the left side on motor or rotation sensor
