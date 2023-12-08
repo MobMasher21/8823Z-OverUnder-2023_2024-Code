@@ -174,7 +174,7 @@ void pre_auton(void)
   //Calibrate the inertial
   Inertial.calibrate();
 
-  //Allow the driver to select which handicap speed hey want to use
+  //Allow the driver to select which handicap speed they want to use
   if(getCompetitionStatus() != disabled)
   {
     printf("Run handicap config\n");
@@ -268,19 +268,6 @@ void autonomous(void)
 
       break;
     case 3: // Push in
-      // Extend the wings
-      /* wingPistons.set(true);
-      this_thread::sleep_for(100);
-
-      // Set speed parameters for the drivetrain
-      autoDrivetrain.setDriveVelocity(10, percent);
-      autoDrivetrain.setTurnVelocity(5, percent);
-      autoDrivetrain.setTurnThreshold(5);
-
-      // Remove nugget from match loading zone
-      autoDrivetrain.driveFor(reverse, 4, distanceUnits::in);
-      autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg); */
-
       //Set base speeds
       autoDrivetrain.setDriveVelocity(20, percent);
       autoDrivetrain.setTurnVelocity(5, percent);
