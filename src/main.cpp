@@ -269,8 +269,8 @@ void autonomous(void)
       break;
     case 3: // Goal Side
       //set speeds
-      autoDrivetrain.setDriveVelocity(50, percent);
-      autoDrivetrain.setTurnVelocity(6, percent);
+      autoDrivetrain.setDriveVelocity(57, percent);
+      autoDrivetrain.setTurnVelocity(10, percent);
       autoDrivetrain.setTurnThreshold(2);
       autoDrivetrain.setTurnConstant(.5);
 
@@ -283,7 +283,7 @@ void autonomous(void)
 
       //first drive move before dropping match load ball
       autoDrivetrain.driveFor(50, inches);
-      autoDrivetrain.turnFor(right, 60, deg);
+      autoDrivetrain.turnFor(right, 65, deg);
 
       //drop match load ball
       intakeMotor.spin(reverse, 100, pct);
@@ -292,74 +292,85 @@ void autonomous(void)
 
       //aim and grab second ball
       autoDrivetrain.setDriveVelocity(30, pct);
-      autoDrivetrain.turnFor(left, 85, deg);
+      autoDrivetrain.turnToHeading(302, deg);
       intakeMotor.spin(fwd, 100, pct);
-      autoDrivetrain.driveFor(18, inches);
-      intakeMotor.stop();
+      autoDrivetrain.driveFor(31, inches);
 
       //drop second ball
-      autoDrivetrain.turnToHeading(90, deg);
-      autoDrivetrain.driveFor(12, inches);
+      autoDrivetrain.turnFor(left, 17, deg);
+      autoDrivetrain.setDriveVelocity(100, pct);
+      wingPistons.set(true);
+      autoDrivetrain.driveFor(-19, inches);
+      intakeMotor.stop();
+      autoDrivetrain.driveFor(-19, inches);
+      autoDrivetrain.driveFor(6, inches);
+      wingPistons.set(false);
+      // printf("Start Turn\n");
+      autoDrivetrain.turnFor(right, 180, deg);
+      //autoDrivetrain.turnToHeading(270, deg);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
+      // the false peramiter makes this call non-blocking
+      autoDrivetrain.driveFor(7, inches, false);
+      // lets the robot get up to speed
+      vex::task::sleep(500);
+      // runs the motors until it has driven 7 inches or the velocity of the robot is less then 5
+      // which occures when the robot has ran into somehting and cannot move further
+      while (autoDrivetrain.velocity(pct) > 5)
+      {
+        vex::task::sleep(5);
+      }
+      autoDrivetrain.driveFor(-6, inches);
       intakeMotor.stop();
+      autoDrivetrain.turnToHeading(180, deg);
 
-      //grab ball 3
-      autoDrivetrain.driveFor(-6, inches);
-      autoDrivetrain.turnFor(right, 180, deg);
-      intakeMotor.spin(fwd, 100, pct);
-      autoDrivetrain.driveFor(16, inches);
-
-      //goal Ram
-      autoDrivetrain.driveFor(-32, inches);
-      autoDrivetrain.driveFor(12, inches);
-      autoDrivetrain.turnFor(left, 180, deg);
-
-      //drop last ball
-      autoDrivetrain.setDriveVelocity(100, pct);
-      intakeMotor.spin(reverse, 100, pct);
-      vex::task::sleep(100);
-      autoDrivetrain.driveFor(6, inches);
-      autoDrivetrain.driveFor(-6, inches);
-
-      /* old code
-        //Set base speeds
-        autoDrivetrain.setDriveVelocity(20, percent);
-        autoDrivetrain.setTurnVelocity(5, percent);
-        autoDrivetrain.setTurnThreshold(1);
-
-        //Turn and remove triball
-        wingPistons.set(true);
-        autoDrivetrain.driveFor(directionType::rev, 4, distanceUnits::in);
-        autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
-        autoDrivetrain.turnFor(turnType::right, 5, rotationUnits::deg);
-
-        //Wait for triballs to calm down
-        //wait(100, msec);
-
-        //Ram the triballs into the goal.
-        autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
-        wait(1000, msec);
-        autoDrivetrain.setDriveVelocity(20, percent);
-        autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in);
-        wingPistons.set(false);
-        autoDrivetrain.turnFor(turnType::right, 30, rotationUnits::deg);
-        autoDrivetrain.drive(directionType::rev, 100, velocityUnits::pct);
-        wait(1000, msec);
-        autoDrivetrain.driveFor(directionType::fwd, 15, distanceUnits::in); */
+      // Drive to bar
+      autoDrivetrain.driveFor(35, inches);
+      autoDrivetrain.turnFor(right, 59, deg);
+      autoDrivetrain.driveFor(24.5, inches);
+      autoDrivetrain.driveFor(3, inches, 10, velocityUnits::pct);
 
       break;
 
     case 7: // Load side
-      autoDrivetrain.setDriveVelocity(20, percent);
-      autoDrivetrain.setTurnVelocity(5, percent);
-      autoDrivetrain.setTurnThreshold(1);
+      autoDrivetrain.setDriveVelocity(50, percent);
+      autoDrivetrain.setTurnVelocity(6, percent);
+      autoDrivetrain.setTurnThreshold(2);
+      autoDrivetrain.setTurnConstant(.5);
+     
+      //drop intake and grab first ball
+      cataMotor.spin(fwd, 80, pct);
+      intakeMotor.spin(fwd, 100, pct);
+      vex::task::sleep(750);
+      cataMotor.stop(coast);
+      intakeMotor.stop();
 
-      autoDrivetrain.driveFor(directionType::fwd, 14, distanceUnits::in);
+      //first drive move before dropping match load ball
+      autoDrivetrain.driveFor(55, inches);
+      autoDrivetrain.turnToHeading(275, deg);
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(750);
+      autoDrivetrain.driveFor(8, inches);
+      autoDrivetrain.driveFor(-5, inches);
+      autoDrivetrain.turnToHeading(185, deg);
+      intakeMotor.stop();
+      autoDrivetrain.driveFor(30, inches);
+      autoDrivetrain.turnToHeading(95, deg);
+      autoDrivetrain.driveFor(-35, inches);
+      autoDrivetrain.turnToHeading(140, deg);
+      autoDrivetrain.driveFor(4, inches);
       wingPistons.set(true);
-      autoDrivetrain.turnFor(turnType::left, 45, rotationUnits::deg);
+      autoDrivetrain.driveFor(20, inches);
+      autoDrivetrain.turnToHeading(40, deg);
+      vex::task::sleep(500);
+      autoDrivetrain.turnToHeading(115, deg);
       wingPistons.set(false);
-      autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg);
+      autoDrivetrain.setDriveVelocity(30, pct);
+      autoDrivetrain.driveFor(12, inches);
+      autoDrivetrain.turnToHeading(105, deg);
+      intakeMotor.spin(fwd, 100, pct);
+      autoDrivetrain.driveFor(34, inches);
+      intakeMotor.spin(reverse, 100, pct);
 
       break;
 
