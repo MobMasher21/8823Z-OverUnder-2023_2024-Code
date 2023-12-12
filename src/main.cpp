@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Cameron Barclay                                           */
+/*    Author:       Cameron Barclay, Jayden Liffick, Teo Carrion              */
 /*    Created:      12/6/2023, 10:45:31 PM                                    */
-/*    Description:  V5 project                                                */
+/*    Description:  Main Code for 8823Z Team robot                            */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -73,6 +73,11 @@ void pre_auton(void) {
   driveContorl.setPrimaryStick(leftStick);
   driveContorl.setHandicaps(1, 1);  // main drive, turning
 
+  //* Setup for controller functions when pressed/released ===================
+  primaryContorller.WINGs_BUTTON.pressed(tglWings);
+  primaryContorller.CATA_SPEED_INC.pressed(cataInc);
+  primaryContorller.CATA_SPEED_DEC.pressed(cataDec);
+
 }
 
 
@@ -85,7 +90,7 @@ void autonomous(void) {
     case 0:
       break;
   }
-
+asdfa
 }
 
 /*---------------------------------------------------------------------------------*/
