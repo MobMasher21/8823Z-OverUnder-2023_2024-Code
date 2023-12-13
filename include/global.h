@@ -28,6 +28,7 @@ extern competition Competition;  //vex competition objects to work with competit
 extern AutoSelector UI;  //evAPI auto selector with screen buttons
 extern Drive driveBase;  //evAPI smart drive base for moving whole robot
 extern DriverBaseControl driveContorl;  //evAPI auto base contorl
+extern digital_out wingPistons; //Wings
 
 // Controller callbacks ----------------------------------------
 void tglWings();  // Toggles the state of the wings.
