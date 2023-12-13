@@ -26,6 +26,8 @@ DriverBaseControl driveContorl = DriverBaseControl(&primaryController, RCControl
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out * wingPistons;
+motor cataMotor = motor(PORT8, redGearBox, false);
+motor intakeMotor = motor(PORT9, blueGearBox, false);
 
 // Controller callback function declarations ------------------------------
 void tglWings( void );  // Toggles the state of the wing pistons
@@ -39,6 +41,10 @@ void tglWings( void );  // Toggles the state of the wing pistons
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
 #define WINGS_BUTTON ButtonR1
+
+// Speed and handicap variables -------------------------------------------
+int intakeSpeed = 100;
+int cataSpeed = 75;
 
 
 /*---------------------------------------------------------------------------------*/
@@ -130,6 +136,24 @@ void usercontrol(void) {
     //* Control the base code -----------------------------
     driveContorl.driverLoop();
 
+    //* Control the intake code ---------------------------
+    if(primaryController.INTK_IN_BUTTON.pressing()) {
+      intakeMotor.spin(fwd, intakeSpeed, pct);
+    } else if(primaryController.INTK_OUT_BUTTON.pressing()) {
+      intakeMotor.spin(reverse, intakeSpeed, pct);
+    } else {
+      intakeMotor.stop(coast);
+    }
+
+    //* Control the catapult code -------------------------
+    if(primaryController.CATA_FIRE_BUTTON.pressing()) {
+      cataMotor.spin(fwd, cataSpeed, pct);
+    } else if(primaryController.CATA_STOP_BUTTON.pressing()) {
+      cataMotor.stop(coast);
+    } else {
+      cataMotor.stop(hold);
+    }
+
     //========================================================================
 
     vex::task::sleep(20); // Sleep the task for a short amount of time to prevent wasted resources.
@@ -155,5 +179,5 @@ int main() {
 
 // Controller callback definitions
 void tglWings( void ) {  // Toggles the state of the wing pistons
-  //wingPistons.set(!wingPistons.value());
+  wingPistons->set(!wingPistons->value());
 }

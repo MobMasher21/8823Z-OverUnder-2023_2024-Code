@@ -57,9 +57,7 @@ class VisionTracker {
      * used to calculate single eye distance using downward exponential curve
      * desmos calculator link https://www.desmos.com/calculator/vflase42t0
      * format y=a^(-(x+b))+c
-     */
-    
-    /**
+     *
      * @brief Sets up a, b, and c values for distance curve y=a^(-(x+b))+c
      * 
      * @param a A value in function
