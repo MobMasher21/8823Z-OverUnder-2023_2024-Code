@@ -74,9 +74,9 @@ void pre_auton(void) {
   driveContorl.setHandicaps(1, 1);  // main drive, turning
 
   //* Setup for controller functions when pressed/released ===================
-  primaryContorller.WINGs_BUTTON.pressed(tglWings);
-  primaryContorller.CATA_SPEED_INC.pressed(cataInc);
-  primaryContorller.CATA_SPEED_DEC.pressed(cataDec);
+  primaryController.WINGS_BUTTON.pressed(tglWings);
+  primaryController.CATA_SPEED_INC.pressed(cataInc);
+  primaryController.CATA_SPEED_DEC.pressed(cataDec);
 
 }
 
