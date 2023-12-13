@@ -190,6 +190,7 @@ void pre_auton(void)
   //Setup the drivetrain for autonomous
   autoDrivetrain.setDriveVelocity(20, percent);
   autoDrivetrain.setTurnVelocity(20, percent);
+  autoDrivetrain.setHeading(0, deg);
 
   //Retract the wings
   wingPistons.set(false);
