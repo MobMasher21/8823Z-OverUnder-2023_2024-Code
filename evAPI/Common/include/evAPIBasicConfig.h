@@ -11,5 +11,6 @@
 
 using namespace vex;
 extern brain Brain;
+extern competition Competition;  //vex competition objects to work with competition controller
 
 #endif // _EVAPI_BASIC_CONFIG_
