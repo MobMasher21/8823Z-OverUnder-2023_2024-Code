@@ -202,14 +202,14 @@ void pre_auton(void)
 
   //*Setup the UI
   //Add the buttons to the preauto
-  UI.addButton(green, "Goal Side Simp", "Goes back then forward", UI.Icons.number0);
+  UI.addButton(green, "Basic Goal Side", "Goes back then forward", UI.Icons.number0);
   UI.addBlank();
   UI.addButton(0xff10a0, "Skills", "Shoots all the match loads into the field.", UI.Icons.skills);
-  UI.addButton(blue, "Goal Side", "Auto for pushing in a nugget in on either side.", UI.Icons.rightArrow);
-  UI.addBlank();
+  UI.addButton(blue, "Goal Side", "Scores three triballs, including the match load, and touches the bar.", UI.Icons.rightArrow);
+  UI.addButton(ClrAqua, "Descore Triball", "Descores the triball in the math load zone.", UI.Icons.number1);
   UI.addBlank();
   UI.addButton(ClrGray, "Do Nothing", "Auto that does nothing.", UI.Icons.exclamationMark);
-  UI.addButton(blue, "Load", "Auto for a robot on the loading side of the field.", UI.Icons.leftArrow);
+  UI.addButton(blue, "Load Side", "Scores the match load, pushes two triballs to the other side, and touches the bar.", UI.Icons.leftArrow);
 
   //Add the displays to the match UI
   UI.setDefaultReadOutColor(ClrDarkSlateBlue);
@@ -257,46 +257,48 @@ void autonomous(void)
   // Select which auto to run based on what button is pressed
   switch (UI.getProgNumber())
   {
-    case 0: // Goal side simp
+    case 0: // Basic Goal Side
       autoDrivetrain.setDriveVelocity(100, pct);
       autoDrivetrain.driveFor(directionType::rev, 42, distanceUnits::in);
       autoDrivetrain.driveFor(directionType::fwd, 12, distanceUnits::in);
 
       break;
+
     case 2: // Skills
       cataMotor.spin(forward, 80, percent);
 
       break;
+
     case 3: // Goal Side
-      //set speeds
+      //Set speeds
       autoDrivetrain.setDriveVelocity(57, percent);
       autoDrivetrain.setTurnVelocity(10, percent);
       autoDrivetrain.setTurnThreshold(2);
       autoDrivetrain.setTurnConstant(.5);
 
-      //drop intake and grab first ball
+      //Drop intake and grab first ball
       cataMotor.spin(fwd, 80, pct);
       intakeMotor.spin(fwd, 100, pct);
       vex::task::sleep(750);
       cataMotor.stop(coast);
       intakeMotor.stop();
 
-      //first drive move before dropping match load ball
+      //First drive move before dropping match load ball
       autoDrivetrain.driveFor(50, inches);
       autoDrivetrain.turnFor(right, 65, deg);
 
-      //drop match load ball
+      //Drop match load ball
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
       intakeMotor.stop();
 
-      //aim and grab second ball
+      //Aim and grab second ball
       autoDrivetrain.setDriveVelocity(30, pct);
       autoDrivetrain.turnToHeading(302, deg);
       intakeMotor.spin(fwd, 100, pct);
       autoDrivetrain.driveFor(31, inches);
-
-      //drop second ball
+     
+      //Drop second ball
       autoDrivetrain.turnFor(left, 17, deg);
       autoDrivetrain.setDriveVelocity(100, pct);
       wingPistons.set(true);
@@ -310,21 +312,42 @@ void autonomous(void)
       //autoDrivetrain.turnToHeading(270, deg);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
-      // the false peramiter makes this call non-blocking
+      printf("Ram\n");
+
+      //The false parameter makes this call non-blocking
       autoDrivetrain.driveFor(7, inches, false);
-      // lets the robot get up to speed
+
+      // How many msec are in one sec?
+      // 1000
+      // thanks
+      // thumbs up
+      // can you call me?
+      //Logans doing it now
+      // on facetime?
+      // or discord?
+      //lemme download discord rq logans dumb head cant find his phone
+      // can you turn the computer to face the field?
+      //prolly logging onto discord now
+      //Logan found his phone it was sitting by the computer
+
+
+      //Lets the robot get up to speed
       vex::task::sleep(500);
-      // runs the motors until it has driven 7 inches or the velocity of the robot is less then 5
-      // which occures when the robot has ran into somehting and cannot move further
+
+      //Runs the motors until it has driven 7 inches or the velocity of the robot is less then 5
+      //which occurs when the robot has ran into something and cannot move further
       while (autoDrivetrain.velocity(pct) > 5)
       {
         vex::task::sleep(5);
       }
+
+      //printf("Stop ram\n");
+      //printf("Speed: %f\n", autoDrivetrain.velocity(pct));
       autoDrivetrain.driveFor(-6, inches);
       intakeMotor.stop();
       autoDrivetrain.turnToHeading(180, deg);
 
-      // Drive to bar
+      //Drive to bar
       autoDrivetrain.driveFor(35, inches);
       autoDrivetrain.turnFor(right, 59, deg);
       autoDrivetrain.driveFor(24.5, inches);
@@ -332,32 +355,52 @@ void autonomous(void)
 
       break;
 
+    case 4: //Descore Triball
+      autoDrivetrain.setDriveVelocity(20, percent);
+      autoDrivetrain.setTurnVelocity(5, percent);
+      autoDrivetrain.setTurnThreshold(1);
+
+      autoDrivetrain.driveFor(directionType::fwd, 14, distanceUnits::in);
+      wingPistons.set(true);
+      autoDrivetrain.driveFor(20, inches);
+      autoDrivetrain.turnToHeading(40, deg);
+      vex::task::sleep(500);
+      autoDrivetrain.turnToHeading(115, deg);
+      wingPistons.set(false);
+      autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg);
+      break;
+
     case 7: // Load side
+      //Set drive base parameters
       autoDrivetrain.setDriveVelocity(50, percent);
       autoDrivetrain.setTurnVelocity(6, percent);
       autoDrivetrain.setTurnThreshold(2);
       autoDrivetrain.setTurnConstant(.5);
      
-      //drop intake and grab first ball
+      //Drop intake and grab first ball
       cataMotor.spin(fwd, 80, pct);
       intakeMotor.spin(fwd, 100, pct);
       vex::task::sleep(750);
       cataMotor.stop(coast);
       intakeMotor.stop();
 
-      //first drive move before dropping match load ball
+      //Put the match load triball into te goal
       autoDrivetrain.driveFor(55, inches);
       autoDrivetrain.turnToHeading(275, deg);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
       autoDrivetrain.driveFor(8, inches);
       autoDrivetrain.driveFor(-5, inches);
+
+      //Drive to triball in match load zone
       autoDrivetrain.turnToHeading(185, deg);
       intakeMotor.stop();
       autoDrivetrain.driveFor(30, inches);
       autoDrivetrain.turnToHeading(95, deg);
       autoDrivetrain.driveFor(-35, inches);
       autoDrivetrain.turnToHeading(140, deg);
+
+      //Remove the triball from teh load side
       autoDrivetrain.driveFor(4, inches);
       wingPistons.set(true);
       autoDrivetrain.driveFor(20, inches);
@@ -365,13 +408,14 @@ void autonomous(void)
       vex::task::sleep(500);
       autoDrivetrain.turnToHeading(115, deg);
       wingPistons.set(false);
+
+      //Push the triballs onto the other side and touch the bar
       autoDrivetrain.setDriveVelocity(30, pct);
       autoDrivetrain.driveFor(12, inches);
       autoDrivetrain.turnToHeading(105, deg);
       intakeMotor.spin(fwd, 100, pct);
       autoDrivetrain.driveFor(34, inches);
       intakeMotor.spin(reverse, 100, pct);
-
       break;
 
     case 6: //Do nothing auto
