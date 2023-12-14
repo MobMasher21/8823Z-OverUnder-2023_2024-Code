@@ -25,7 +25,7 @@ motor_group rightMotors = motor_group(rightMotor1, rightMotor2, rightMotor3);
 smartdrive autoDrivetrain = smartdrive(leftMotors, rightMotors, Inertial, 299.24, 320, 40, mm, 0.6);
 
 //Catapult motor/sensors
-motor cataMotor = motor(PORT6, gearSetting::ratio36_1, true);
+motor cataMotor = motor(PORT8, gearSetting::ratio36_1, true);
 rotation cataSensor = rotation(PORT20, true);
 
 //Intake motor

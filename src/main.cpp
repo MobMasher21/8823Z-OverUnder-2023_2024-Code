@@ -44,7 +44,7 @@ cataStates cataLaunchMode = cataStates::HIGH_CATA;
 int targetCataAngle;
 double cataStartAngle;
 double currentCataAngle;
-int cataSpeed = 75;
+int cataSpeed = 100;
 
 int intakeSpeed = 100;
 float turnHandicap;
@@ -231,7 +231,7 @@ void pre_auton(void)
   UI.primaryControllerUI.addData(2, "Current: ", robotBatteryCurrent);
 
   //Setup auto selector
-  UI.selectButton(3, true);
+  UI.selectButton(2, true);
   UI.setDisplayTime(1500);
 
   //Start the UI
@@ -266,7 +266,24 @@ void autonomous(void)
       break;
 
     case 2: // Skills
-      cataMotor.spin(forward, 80, percent);
+      //cataMotor.spin(forward, 80, percent);
+      //Setp base parameters
+      autoDrivetrain.setDriveVelocity(57, percent);
+      autoDrivetrain.setTurnVelocity(10, percent);
+      autoDrivetrain.setTurnThreshold(2);
+      autoDrivetrain.setTurnConstant(.5);
+
+      //Spin the catapult motor for 45 seconds
+      cataMotor.spin(forward, 100, percent);
+      /* wait(45, sec);
+      cataMotor.stop(coast); */
+
+      //Drive to center of Bar
+      //autoDrivetrain.driveFor(forward, 20, inches);
+     // autoDrivetrain.turnFor(left, 45, deg);
+      //autoDrivetrain.driveFor(forward, 20, inches);
+
+      //
 
       break;
 
