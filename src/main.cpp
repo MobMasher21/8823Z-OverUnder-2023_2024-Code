@@ -359,7 +359,7 @@ void autonomous(void)
       intakeMotor.spin(fwd, 100, pct);
       autoDrivetrain.driveFor(31, inches);
      
-      //Allign with goal and ram in first two triballs
+      //Align with goal and ram in first two triballs
       autoDrivetrain.turnFor(left, 17, deg);
       autoDrivetrain.setDriveVelocity(100, pct);
       wingPistons.set(true);
