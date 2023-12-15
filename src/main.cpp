@@ -316,7 +316,7 @@ void autonomous(void)
       intakeMotor.spin(fwd, 100, pct);
       autoDrivetrain.driveFor(31, inches);
      
-      //Drop second ball
+      //Allign with goal and ram in first two triballs
       autoDrivetrain.turnFor(left, 17, deg);
       autoDrivetrain.setDriveVelocity(100, pct);
       wingPistons.set(true);
@@ -325,42 +325,24 @@ void autonomous(void)
       autoDrivetrain.driveFor(-19, inches);
       autoDrivetrain.driveFor(6, inches);
       wingPistons.set(false);
-      // printf("Start Turn\n");
+      //Turn to face the goal and drop 3rd triball
       autoDrivetrain.turnFor(right, 180, deg);
-      //autoDrivetrain.turnToHeading(270, deg);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
-      printf("Ram\n");
 
-      //The false parameter makes this call non-blocking
+      //Start to push in final triball
       autoDrivetrain.driveFor(7, inches, false);
-
-      // How many msec are in one sec?
-      // 1000
-      // thanks
-      // thumbs up
-      // can you call me?
-      //Logans doing it now
-      // on facetime?
-      // or discord?
-      //lemme download discord rq logans dumb head cant find his phone
-      // can you turn the computer to face the field?
-      //prolly logging onto discord now
-      //Logan found his phone it was sitting by the computer
-
 
       //Lets the robot get up to speed
       vex::task::sleep(500);
 
       //Runs the motors until it has driven 7 inches or the velocity of the robot is less then 5
       //which occurs when the robot has ran into something and cannot move further
-      while (autoDrivetrain.velocity(pct) > 5)
-      {
+      while (autoDrivetrain.velocity(pct) > 5) {
         vex::task::sleep(5);
       }
 
-      //printf("Stop ram\n");
-      //printf("Speed: %f\n", autoDrivetrain.velocity(pct));
+      //Turn to face bar
       autoDrivetrain.driveFor(-6, inches);
       intakeMotor.stop();
       autoDrivetrain.turnToHeading(180, deg);
