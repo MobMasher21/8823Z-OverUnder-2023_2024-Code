@@ -255,6 +255,10 @@ void autonomous(void)
   //Times how long the auto runs
   timer autoTimer = timer();
 
+  //Inertial Roll value at the start of auto. Used in skills for going over the bar
+  //double startingRoll = Inertial.roll(deg);
+
+
   // Select which auto to run based on what button is pressed
   switch (UI.getProgNumber())
   {
@@ -269,21 +273,60 @@ void autonomous(void)
       //cataMotor.spin(forward, 80, percent);
       //Setp base parameters
       autoDrivetrain.setDriveVelocity(57, percent);
-      autoDrivetrain.setTurnVelocity(10, percent);
+      autoDrivetrain.setTurnVelocity(8, percent);
       autoDrivetrain.setTurnThreshold(2);
       autoDrivetrain.setTurnConstant(.5);
 
-      //Spin the catapult motor for 45 seconds
+      //Spin the catapult motor for 50 seconds
       cataMotor.spin(forward, 100, percent);
-      /* wait(45, sec);
-      cataMotor.stop(coast); */
+      wait(50, sec);
+      //wait(1, sec);
+      cataMotor.stop(coast);
 
       //Drive to center of Bar
-      //autoDrivetrain.driveFor(forward, 20, inches);
-     // autoDrivetrain.turnFor(left, 45, deg);
-      //autoDrivetrain.driveFor(forward, 20, inches);
+      autoDrivetrain.driveFor(reverse, 5, inches);
+      autoDrivetrain.turnFor(left, 19, deg);
+      autoDrivetrain.driveFor(reverse, 59, inches);
+      autoDrivetrain.turnFor(right, 40, deg);
 
-      //
+      //Drive over the bar
+      autoDrivetrain.drive(reverse);
+      wait(1500, msec);
+      autoDrivetrain.stop(brake);
+
+      //Realign
+      autoDrivetrain.turnToHeading(23, deg);
+
+      //Ram triballs
+      wingPistons.set(true);
+      autoDrivetrain.setDriveVelocity(100, percent);
+      autoDrivetrain.drive(reverse);
+      this_thread::sleep_for(500);
+
+      while(autoDrivetrain.velocity(pct) > 5)
+      {
+        this_thread::sleep_for(10);
+      }
+
+      autoDrivetrain.setDriveVelocity(57, percent);
+      autoDrivetrain.driveFor(forward, 20, inches);
+      wingPistons.set(false);
+
+      //Ram again
+      autoDrivetrain.turnFor(left, 10, deg);
+      wingPistons.set(true);
+      autoDrivetrain.setDriveVelocity(100, percent);
+      autoDrivetrain.drive(reverse);
+      this_thread::sleep_for(500);
+
+      while(autoDrivetrain.velocity(pct) > 5)
+      {
+        this_thread::sleep_for(10);
+      }
+
+      autoDrivetrain.setDriveVelocity(57, percent);
+      autoDrivetrain.driveFor(forward, 20, inches);
+      wingPistons.set(false);
 
       break;
 
