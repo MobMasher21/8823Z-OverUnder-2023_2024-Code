@@ -112,10 +112,12 @@ void setTurnHandicap() {
   primaryController.Screen.setCursor(0, 0);
   primaryController.Screen.print("Set turn handicap:");
   primaryController.Screen.newLine();
-  primaryController.Screen.print("Left = 0.75");
+  primaryController.Screen.print("<- Left = 0.75");
   primaryController.Screen.newLine();
-  primaryController.Screen.print("Right = 0.5");
+  primaryController.Screen.print("-> Right = 0.5");
 
+  turnHandicap = (0.75 + 0.5) / 2;
+  
   while (!primaryController.ButtonLeft.pressing() && !primaryController.ButtonRight.pressing())
   {
     this_thread::sleep_for(10);
@@ -129,10 +131,6 @@ void setTurnHandicap() {
   {
     turnHandicap = 0.5;
   } 
-  else
-  {
-    turnHandicap = (0.75 + 0.5) / 2;
-  }
 
   primaryController.Screen.clearScreen();
 }
@@ -278,7 +276,7 @@ void autonomous(void)
       autoDrivetrain.setTurnConstant(.5);
 
       //Spin the catapult motor for 50 seconds
-      cataMotor.spin(forward, 100, percent);
+      cataMotor.spin(forward, 95, percent);
       wait(50, sec);
       //wait(1, sec);
       cataMotor.stop(coast);
@@ -360,7 +358,7 @@ void autonomous(void)
       autoDrivetrain.driveFor(31, inches);
      
       //Align with goal and ram in first two triballs
-      autoDrivetrain.turnFor(left, 17, deg);
+      autoDrivetrain.turnToHeading(270, rotationUnits::deg);
       autoDrivetrain.setDriveVelocity(100, pct);
       wingPistons.set(true);
       autoDrivetrain.driveFor(-19, inches);
@@ -388,13 +386,14 @@ void autonomous(void)
       //Turn to face bar
       autoDrivetrain.driveFor(-6, inches);
       intakeMotor.stop();
-      autoDrivetrain.turnToHeading(180, deg);
+      // autoDrivetrain.turnToHeading(90, deg);
+      // autoDrivetrain.turnToHeading(180, deg);
 
       //Drive to bar
-      autoDrivetrain.driveFor(35, inches);
-      autoDrivetrain.turnFor(right, 59, deg);
-      autoDrivetrain.driveFor(24.5, inches);
-      autoDrivetrain.driveFor(3, inches, 10, velocityUnits::pct);
+      // autoDrivetrain.driveFor(35, inches);
+      // autoDrivetrain.turnFor(right, 54, deg);
+      // autoDrivetrain.driveFor(24.5, inches);
+      // autoDrivetrain.driveFor(3, inches, 10, velocityUnits::pct);
 
       break;
 
