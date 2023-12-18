@@ -11,7 +11,7 @@ brain Brain;
 motor leftMotor1 = motor(PORT9, gearSetting::ratio6_1, true);
 motor leftMotor2 = motor(PORT16, gearSetting::ratio6_1, true);
 motor leftMotor3 = motor(PORT7, gearSetting::ratio6_1, true);
-motor rightMotor1 = motor(PORT2, gearSetting::ratio6_1, false);
+motor rightMotor1 = motor(PORT1, gearSetting::ratio6_1, false);
 motor rightMotor2 = motor(PORT14, gearSetting::ratio6_1, false);
 motor rightMotor3 = motor(PORT4, gearSetting::ratio6_1, false);
 
