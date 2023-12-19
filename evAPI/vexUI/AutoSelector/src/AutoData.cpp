@@ -6,7 +6,7 @@ namespace evAPI {
     while(1) {
       title[i] = titleIN[i];
       i++;
-      if(titleIN[i] == 0) {
+      if(titleIN[i] == '\0') {
         break;
       }
     }

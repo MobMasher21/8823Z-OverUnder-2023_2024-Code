@@ -16,9 +16,9 @@ namespace evAPI {
       bool printButtonData();  // Prints all the data to the screen
   
     private:
-      char title[MAX_TITLE_LENGTH];
+      char title[MAX_TITLE_LENGTH+1];
       bool hasTitle;
-      char description[MAX_DESCRIPTION_LENGTH];
+      char description[MAX_DESCRIPTION_LENGTH+1];
       bool hasDescription;
       
   };

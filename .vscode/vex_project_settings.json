@@ -5,7 +5,7 @@
 	},
 	"project": {
 		"name": "Kalahari",
-		"description": "",
+		"description": "Code for 8823Z at the Kalahari Classic Competition.",
 		"creationDate": "12/6/2023, 10:45:31 PM",
 		"platform": "V5",
 		"language": "cpp",

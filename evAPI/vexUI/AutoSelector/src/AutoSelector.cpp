@@ -153,15 +153,15 @@ namespace evAPI {
 
   }
 
-  void AutoSelector::setButtonTitle(int ID, char title[MAX_TITLE_LENGTH]) {  // Sets a button's title
+  void AutoSelector::setButtonTitle(int ID, const char title[MAX_TITLE_LENGTH]) {  // Sets a button's title
     if(doesButtonExist(ID)) {
-      dataList[ID]->setTitle(title);
+      dataList[ID]->setTitle((char *)title);
     }
   }
 
-  void AutoSelector::setButtonDescription(int ID, char description[MAX_DESCRIPTION_LENGTH]) {  // Sets a button's description
+  void AutoSelector::setButtonDescription(int ID, const char description[MAX_DESCRIPTION_LENGTH]) {  // Sets a button's description
     if(doesButtonExist(ID)) {
-      dataList[ID]->setDescription(description);
+      dataList[ID]->setDescription((char *)description);
     }
   }
 

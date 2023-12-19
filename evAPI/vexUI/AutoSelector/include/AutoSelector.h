@@ -32,8 +32,8 @@ namespace evAPI {
   
       void printButtons();  // Prints all the buttons to the screen
   
-      void setButtonTitle(int ID, char title[MAX_TITLE_LENGTH]);  // Sets a button's title
-      void setButtonDescription(int ID, char description[MAX_DESCRIPTION_LENGTH]);  // Sets a button's description
+      void setButtonTitle(int ID, const char title[MAX_TITLE_LENGTH]);  // Sets a button's title
+      void setButtonDescription(int ID, const char description[MAX_DESCRIPTION_LENGTH]);  // Sets a button's description
       void setDataDisplayTime(int time);  // Sets the time the data will be displayed in milliseconds
   
       //===== Screen press and thread stuff =====
