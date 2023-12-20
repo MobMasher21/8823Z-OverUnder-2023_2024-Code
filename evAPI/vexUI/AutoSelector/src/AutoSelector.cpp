@@ -12,8 +12,8 @@ namespace evAPI {
     pageBack->setButtonSize(60, 30);
     pageForward->setButtonPosition(255, 200);
     pageForward->setButtonSize(60, 30);
-    pageBack->setButtonIcon((bool*)arrows.previousPageArrow);
-    pageForward->setButtonIcon((bool*)arrows.nextPageArrow);
+    pageBack->setButtonIcon((bool*)arrows.previousPageArrow, 0, 0);
+    pageForward->setButtonIcon((bool*)arrows.nextPageArrow, 0, 0);
 
     thisContext = this;
   }
@@ -124,7 +124,7 @@ namespace evAPI {
 
   void AutoSelector::setButtonIcon(int ID, const bool icon[35][35]) {  // Changes the icon array of the button
     if(doesButtonExist(ID)) {
-      buttonList[ID]->setButtonIcon((bool*)icon);
+      buttonList[ID]->setButtonIcon((bool*)icon, -2, -2);
     }
   }
 
@@ -170,6 +170,7 @@ namespace evAPI {
   }
 
   void AutoSelector::startThread() {  // Starts the main loop thread for the auto selector
+    printButtons();
     selectorThread = new thread(threadFunction);
   }
 

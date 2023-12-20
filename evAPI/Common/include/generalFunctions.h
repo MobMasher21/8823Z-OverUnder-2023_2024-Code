@@ -1,27 +1,14 @@
 #ifndef __GENERALFUNCTIONS_H__
 #define __GENERALFUNCTIONS_H__
 
+#include "evNamespace.h"
+
 //https://www.arduino.cc/reference/en/
 
-namespace evAPI {
+namespace evAPI
+{
   #define DEG_TO_RAD 0.017453292519943295769236907684886
   #define RAD_TO_DEG 57.295779513082320876798154814105
-
-  /**
-   * @brief An arduino function that returns the lowest input provided.
-   * @param a Input #1
-   * @param b Input #2
-   * @returns The lowest of the two inputs.
-  */
-  #define min(a,b) ((a)<(b)?(a):(b))
-
-  /**
-   * @brief An arduino function that returns the largest input provided.
-   * @param a Input #1
-   * @param b Input #2
-   * @returns The larger of the two inputs.
-  */
-  #define max(a,b) ((a)>(b)?(a):(b))
 
   /**
    * @brief Constrains a number between two other numbers.
@@ -31,21 +18,35 @@ namespace evAPI {
    * @returns "amt" if it is between the two constraining values. "low" if it is less than "low".
    * "high" if it is greater than "high".
   */
-  #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+  template <typename T> T constrain(T amt, T low, T high)
+  {
+    if(amt < low)
+    { return low; }
+
+    else if(amt > high)
+    { return high; }
+
+    return amt;
+  }
+  //#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
   /**
    * @brief Converts an input from degrees to radians.
    * @param deg The angle in degrees.
    * @returns The angle in radians.
   */
-  #define radians(deg) ((deg)*DEG_TO_RAD)
+  template <typename T> inline T toRadians(T deg)
+  { return deg * DEG_TO_RAD; }
+  //#define radians(deg) ((deg)*DEG_TO_RAD)
 
   /**
    * @brief Converts an input from radians to degrees.
    * @param rad The angle in radians.
    * @returns The angle in degrees.
   */
-  #define degrees(rad) ((rad)*RAD_TO_DEG)
+  template <typename T> inline T toDegrees(T rad)
+  { return rad * RAD_TO_DEG; }
+  //#define degrees(rad) ((rad)*RAD_TO_DEG)
 
   /**
    * @brief Calculates the square of a number: the number multiplied by itself.
@@ -54,7 +55,9 @@ namespace evAPI {
    * @author Arduino
    * @link https://reference.arduino.cc/reference/en/language/functions/math/sq/
   */
-  #define sq(x) ((x)*(x))
+  template <typename T> inline T sq(T x)
+  { return x * x; }
+  //#define sq(x) ((x)*(x))
 
   /**
    * @brief Re-maps a number from one range to another. That is, a value of fromLow would get mapped to toLow,
@@ -67,35 +70,19 @@ namespace evAPI {
    * @author Arduino
    * @link https://reference.arduino.cc/reference/en/language/functions/math/map/
   */
-  long map(long value, long fromLow, long fromHigh, long toLow, long toHigh);
+  template <typename T> inline T map(T value, T fromLow, T fromHigh, T toLow, T toHigh)
+  { return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow; }
 
   /**
-   * @brief Reduces and angle to be between 0 and 360 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
+   * @brief Gets the current status of the competition.
+   * @returns The status of the competition as evAPI::robotMode.
   */
-  float reduce_0_to_360(float angle);
-  
+  robotMode getCompetitionStatus();
+
   /**
-   * @brief Reduces and angle to be between -180 and 180 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
+   * @returns True if te robot is connected to competition controller.
   */
-  float reduce_negative_180_to_180(float angle);
-  
-  /**
-   * @brief Reduces and angle to be between -90 and 90 degrees.
-   * @param angle The angle to reduce.
-   * @returns The reduced angle.
-  */
-  float reduce_negative_90_to_90(float angle);
-  
-  /**
-   * @brief Converts a motor power value in percentage to one in volts.
-   * @param percent The percentage getting converted to voltage.
-   * @returns The corresponding value in voltage.
-  */
-  float to_volt(float percent);
+  bool isConnectToField();
 }
 
 #endif // __GENERALFUNCTIONS_H__

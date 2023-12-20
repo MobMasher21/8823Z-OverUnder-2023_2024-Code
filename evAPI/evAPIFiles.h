@@ -12,6 +12,5 @@
 
 #include "../evAPI/VisionTracker/include/VisionTracker.h"
 
-#include "../evAPI/vexUI/AutoSelector/include/AutoSelector.h"
-
+#include "../evAPI/vexUI/Common/include/vexUI.h"
 #endif // EVAPIFILES_H

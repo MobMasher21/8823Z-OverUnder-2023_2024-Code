@@ -19,7 +19,7 @@ namespace evAPI {
       void setBorderColor(int r, int g, int b);  // Sets the border color to a RGB value
       void setBorderThickness(int thickness);  // Sets the thickness of the button border
 
-      void setButtonIcon(bool * iconArray);  // Pass in the icon array
+      void setButtonIcon(bool *iconArray, int xOffset, int yOffset);  // Pass in the icon array
 
       void setButtonPosition(int x, int y);  // Sets the position of the top left corner of the button
       void setButtonSize(int widthIN, int hightIN);  // Sets the size of the button
@@ -29,10 +29,12 @@ namespace evAPI {
 
     private:
       int buttonID;  // The number that will be passed to the data output when the button is pressed
-      int * dataOuput;  // A pointer to the variable that the button will set with its ID when it is pressed
+      int *dataOuput;  // A pointer to the variable that the button will set with its ID when it is pressed
       void (*buttonCallback)(int);  // *Optional* The function that will be called when the button is pressed, passes the button ID
       bool hasCallback = false;  // If the button has a callback
-      bool * buttonIcon;  // *Optional* The array that is used to draw a monochrome 35x35 image on the button
+      bool *buttonIcon;  // *Optional* The array that is used to draw a monochrome 35x35 image on the button
+      int xIconOffset = 0; //Offset for the icons x value
+      int yIconOffset = 0; //Offset for the icons y value
       bool hasIcon = false;  // If the button has an icon
       int xPos;  // X position of the top left corner
       int yPos;  // Y position of the top left corner

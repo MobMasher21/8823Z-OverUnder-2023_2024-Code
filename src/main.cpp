@@ -18,9 +18,6 @@ using namespace vex;
 using namespace evAPI;
 
 // Setup global objects ---------------------------------------------------
-controller primaryController = controller(primary); 
-controller secondaryController = controller(partner);
-AutoSelector UI = AutoSelector();
 Drive driveBase = Drive(blueGearBox);
 DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl, &driveBase);
 
@@ -65,46 +62,47 @@ void pre_auton(void) {
 
   //* Setup for auto selection UI ============================================
   // Add all the buttons
-  UI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
-  UI.addButton(AUTO_GOAL_SIDE, blue);
-  UI.addButton(AUTO_LOAD_SIDE, blue);
-  UI.addButton(AUTO_DO_NOTHING, red);
-  UI.addButton(AUTO_BASIC_SKILLS, LightSlateGray);
-  UI.addButton(AUTO_BASIC_GOAL_SIDE, Lime);
-  UI.addButton(AUTO_BASIC_LOAD_SIDE, Lime);
+  UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
+  UI.autoSelectorUI.addButton(AUTO_GOAL_SIDE, blue);
+  UI.autoSelectorUI.addButton(AUTO_LOAD_SIDE, blue);
+  UI.autoSelectorUI.addButton(AUTO_DO_NOTHING, red);
+  UI.autoSelectorUI.addButton(AUTO_BASIC_SKILLS, LightSlateGray);
+  UI.autoSelectorUI.addButton(AUTO_BASIC_GOAL_SIDE, Lime);
+  UI.autoSelectorUI.addButton(AUTO_BASIC_LOAD_SIDE, Lime);
 
   // Set all the titles
-  UI.setButtonTitle(AUTO_SKILLS_1, "Skills");
-  UI.setButtonTitle(AUTO_GOAL_SIDE, "Goal Side");
-  UI.setButtonTitle(AUTO_LOAD_SIDE, "Load Side");
-  UI.setButtonTitle(AUTO_DO_NOTHING, "DO NOTHING!");
-  UI.setButtonTitle(AUTO_BASIC_SKILLS, "Basic Skills");
-  UI.setButtonTitle(AUTO_BASIC_GOAL_SIDE, "Push in simple");
-  UI.setButtonTitle(AUTO_BASIC_LOAD_SIDE, "Descore Triball");
+  UI.autoSelectorUI.setButtonTitle(AUTO_SKILLS_1, "Skills");
+  UI.autoSelectorUI.setButtonTitle(AUTO_GOAL_SIDE, "Goal Side");
+  UI.autoSelectorUI.setButtonTitle(AUTO_LOAD_SIDE, "Load Side");
+  UI.autoSelectorUI.setButtonTitle(AUTO_DO_NOTHING, "DO NOTHING!");
+  UI.autoSelectorUI.setButtonTitle(AUTO_BASIC_SKILLS, "Basic Skills");
+  UI.autoSelectorUI.setButtonTitle(AUTO_BASIC_GOAL_SIDE, "Push in simple");
+  UI.autoSelectorUI.setButtonTitle(AUTO_BASIC_LOAD_SIDE, "Descore Triball");
 
   // Set all the descriptions
-  UI.setButtonDescription(AUTO_SKILLS_1, "Shoots all the match loads into the field, then attempts to push them into the goal.");
-  UI.setButtonDescription(AUTO_GOAL_SIDE, "Scores three triballs, including the match load, and touches the bar.");
-  UI.setButtonDescription(AUTO_LOAD_SIDE, "Scores the match load, pushes two triballs to the other side, and touches the bar.");
-  UI.setButtonDescription(AUTO_DO_NOTHING, "The robot will do nothing.");
-  UI.setButtonDescription(AUTO_BASIC_SKILLS, "Launches all the match loads into the field.");;
-  UI.setButtonDescription(AUTO_BASIC_GOAL_SIDE, "Ram backward, then go forward.");
-  UI.setButtonDescription(AUTO_BASIC_LOAD_SIDE, "Descore the triball from the match load zone.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_SKILLS_1, "Shoots all the match loads into the field, then attempts to push them into the goal.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_GOAL_SIDE, "Scores three triballs, including the match load, and touches the bar.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_LOAD_SIDE, "Scores the match load, pushes two triballs to the other side, and touches the bar.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_DO_NOTHING, "The robot will do nothing.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_BASIC_SKILLS, "Launches all the match loads into the field.");;
+  UI.autoSelectorUI.setButtonDescription(AUTO_BASIC_GOAL_SIDE, "Ram backward, then go forward.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_BASIC_LOAD_SIDE, "Descore the triball from the match load zone.");
 
   // Select all the icons
-  UI.setButtonIcon(AUTO_SKILLS_1, UI.icons.skills);
-  UI.setButtonIcon(AUTO_GOAL_SIDE, UI.icons.leftArrow);
-  UI.setButtonIcon(AUTO_LOAD_SIDE, UI.icons.rightArrow);
-  UI.setButtonIcon(AUTO_DO_NOTHING, UI.icons.exclamationMark);
-  UI.setButtonIcon(AUTO_BASIC_SKILLS, UI.icons.skills);
-  UI.setButtonIcon(AUTO_BASIC_GOAL_SIDE, UI.icons.leftArrow);
-  UI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.icons.rightArrow);
+  UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.iconTest);
+  UI.autoSelectorUI.setButtonIcon(AUTO_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
+  UI.autoSelectorUI.setButtonIcon(AUTO_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
+  UI.autoSelectorUI.setButtonIcon(AUTO_DO_NOTHING, UI.autoSelectorUI.icons.exclamationMark);
+  UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_SKILLS, UI.autoSelectorUI.icons.skills);
+  UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
+  UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
-  // Print all buttons and start thread
-  UI.setSelectedButton(AUTO_DO_NOTHING);
-  UI.setDataDisplayTime(1500);
-  UI.printButtons();
-  UI.startThread();
+  //Setup parameters for auto selector 
+  UI.autoSelectorUI.setSelectedButton(AUTO_DO_NOTHING);
+  UI.autoSelectorUI.setDataDisplayTime(1500);
+
+  //Start the threads
+  UI.startThreads();
 
   //* Setup for smart drive ==================================================
   // Setup motor settings
@@ -124,7 +122,6 @@ void pre_auton(void) {
   driveBase.setupDrivePID(1, 0, 0, 5, 5, 100);  // p, i, d, error, error time, timeout
   driveBase.setupTurnPID(1, 0, 0, 1, 5, 100);  // p, i, d, error, error time, timeout
 
-
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
   driveControl.setHandicaps(1, 1);  // main drive, turning
@@ -142,7 +139,7 @@ void autonomous(void) {
   //Times how long auto takes
   timer autoTimer;
 
-  switch (UI.getSelectedButton()) {
+  switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
       /* //Setp base parameters
       autoDrivetrain.setDriveVelocity(57, percent);

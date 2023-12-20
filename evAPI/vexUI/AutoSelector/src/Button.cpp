@@ -39,8 +39,10 @@ namespace evAPI {
     borderThickness = thickness;
   }
 
-  void Button::setButtonIcon(bool * iconArray) { // Pass in the icon array
+  void Button::setButtonIcon(bool *iconArray, int xOffset, int yOffset) { // Pass in the icon array
     buttonIcon = iconArray;
+    xIconOffset = xOffset;
+    yIconOffset = yOffset;
     hasIcon = true;
   }
 
@@ -55,40 +57,50 @@ namespace evAPI {
   }
 
   void Button::drawButton(bool border) {  // Draws the button with the option of adding the borderButton
-    Brain.Screen.setPenColor(buttonBorderColor);  //draw the background color square
-    if(border) {                                            // |
-      Brain.Screen.setPenWidth(borderThickness);            // |
-    } else {                                                // |
-      Brain.Screen.setPenWidth(0);                          // |
-    }                                                       // |
-    Brain.Screen.setFillColor(buttonColor);                 // |
-    Brain.Screen.drawRectangle(xPos, yPos, width, hight);   // \/
+    //Draw the button with the appropriate color
+    Brain.Screen.setPenColor(transparent); 
+    Brain.Screen.setFillColor(buttonColor);
+    Brain.Screen.drawRectangle(xPos, yPos, width, hight);
 
-    if(hasIcon) {
-      for(int yInc = 0; yInc < floor(hight / 2); yInc++) {
-        for(int xInc = 0; xInc < floor(width / 2); xInc++) {
-          if(buttonIcon[(yInc * 35) + xInc] == 1) {
+    //*Draw the icon if the button has one
+    if(hasIcon)
+    {
+      //Loop over every single pixel in the image
+      for(int yInc = 0; yInc < floor(hight / 2); yInc++)
+      {
+        for(int xInc = 0; xInc < floor(width / 2); xInc++)
+        {
+          //Set the tile color based on the boolean array
+          if(buttonIcon[(yInc * 35) + xInc] == 1)
+          {
             Brain.Screen.setPenColor(black);
-          } else {
+          }
+
+          else
+          {
             Brain.Screen.setPenColor(buttonColor);
           }
+
+          //Draw the pixels on the screen
           Brain.Screen.drawPixel(xPos + (xInc * 2), yPos + (yInc * 2));
           Brain.Screen.drawPixel((xPos + (xInc * 2)) + 1, yPos + (yInc * 2));
           Brain.Screen.drawPixel(xPos + (xInc * 2), (yPos + (yInc * 2)) + 1);
           Brain.Screen.drawPixel((xPos + (xInc * 2)) + 1, (yPos + (yInc * 2)) + 1);
         }
       }
+    }
 
+    //*Draw the boarder if the button is selected
+    if(border)
+    {
+      //Setup pen parameters
       Brain.Screen.setFillColor(transparent);
       Brain.Screen.setPenColor(buttonBorderColor);
-      if(border) {                                            
-        Brain.Screen.setPenWidth(borderThickness);            
-      } else {                                                
-        Brain.Screen.setPenWidth(0);                          
-      }   
-      Brain.Screen.drawRectangle(xPos, yPos, width, hight);
-
-    }
+      Brain.Screen.setPenWidth(borderThickness);
+      
+      //Draw the boarder
+      Brain.Screen.drawRectangle(xPos + xIconOffset, yPos + yIconOffset, width, hight);
+    }  
   }
 
   bool Button::pressed(int xPress, int yPress) {  // Call to tell the button the screen was pressed and tell it whereButton

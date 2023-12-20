@@ -25,10 +25,20 @@ SRC_C += $(wildcard evAPI/vexUI/AutoSelector/src/*.c)
 SRC_C += $(wildcard evAPI/vexUI/AutoSelector/src/*/*.cpp)
 SRC_C += $(wildcard evAPI/vexUI/AutoSelector/src/*/*.c)
 
-SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*.cpp)
-SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*.c)
-SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*/*.cpp)
-SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*/*.c)
+SRC_C += $(wildcard evAPI/vexUI/Common/src/*.cpp)
+SRC_C += $(wildcard evAPI/vexUI/Common/src/*.c)
+SRC_C += $(wildcard evAPI/vexUI/Common/src/*/*.cpp)
+SRC_C += $(wildcard evAPI/vexUI/Common/src/*/*.c)
+
+SRC_C += $(wildcard evAPI/vexUI/controllerUI/src/*.cpp)
+SRC_C += $(wildcard evAPI/vexUI/controllerUI/src/*.c)
+SRC_C += $(wildcard evAPI/vexUI/controllerUI/src/*/*.cpp)
+SRC_C += $(wildcard evAPI/vexUI/controllerUI/src/*/*.c)
+
+# SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*.cpp)
+# SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*.c)
+# SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*/*.cpp)
+# SRC_C += $(wildcard evAPI/vexUI/BrainDataDisplay/src/*/*.c)
 
 # Include made data for compiling the evAPI
 
@@ -42,3 +52,5 @@ SRC_H += $(wildcard evAPI/VisionTracker/include/*.h)
 
 SRC_H += $(wildcard evAPI/vexUI/AutoSelector/include/*.h)
 SRC_H += $(wildcard evAPI/vexUI/BrainDataDisplay/include/*.h)
+SRC_H += $(wildcard evAPI/vexUI/Common/include/*.h)
+SRC_H += $(wildcard evAPI/vexUI/controllerUI/include/*.h)
