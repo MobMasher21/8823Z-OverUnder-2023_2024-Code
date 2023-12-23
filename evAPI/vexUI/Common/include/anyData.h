@@ -83,6 +83,7 @@ namespace evAPI
     //Report an error if the data isn't found
     else
     {
+      dataString.data = std::string("");
       dataString.errorData = evError::Object_Property_Not_Specified;
     }
 

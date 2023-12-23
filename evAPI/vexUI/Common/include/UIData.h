@@ -57,20 +57,16 @@ namespace evAPI
     //Store the name
     label = labelIn;
 
-    //*Store the data if it is present
-    if(dataIn != nullptr)
+    //Delete data if it already exists
+    if(data == nullptr)
     {
-      //Delete data if it already exists
-      if(data == nullptr)
-      {
-        delete data;
-      }
-
-      //Create and set the data object
-      data = new anyData<T>;
-      data->setData(dataIn);
+      delete data;
     }
 
+    //Create and set the data object
+    data = new anyData<T>;
+    data->setData(dataIn);
+    
     return evError::No_Error;
   }
   

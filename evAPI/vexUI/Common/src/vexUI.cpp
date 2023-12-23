@@ -12,11 +12,8 @@ namespace evAPI
 
     bool primaryControllerInstalled;
     bool secondaryControllerInstalled;
-
-    //Initialise the screens
-    UI.primaryControllerUI.updateScreen();
-    UI.secondaryControllerUI.updateScreen();
     
+    //*Main thread loop
     while(true)
     {
       primaryControllerInstalled = primaryController.installed();

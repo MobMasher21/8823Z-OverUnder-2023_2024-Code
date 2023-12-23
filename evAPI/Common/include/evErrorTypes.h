@@ -30,6 +30,7 @@ namespace evAPI
     Incorrect_Device_In_Port,
 
     //*Software Device config errors
+    No_Data_Defined,
     Device_Already_Exists,
     Data_Already_Exists,
     Calibration_Already_Complete,
@@ -51,7 +52,7 @@ namespace evAPI
     evError errorData = evError::No_Error;
 
     //The normal data being returned
-    T data = NULL;
+    T data;
   };
 
   //Typedefs of evErrorData for various common types

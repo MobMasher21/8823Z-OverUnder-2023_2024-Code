@@ -6,6 +6,7 @@ namespace evAPI
 {
   robotMode getCompetitionStatus()
   {
+    //*Check the status of the competition, and return the proper robotMode value
     if(!Competition.isEnabled())
     {
       return robotMode::disabled;

@@ -32,8 +32,9 @@ namespace evAPI
 
     //*Get needed data and return it
     objectData = data->getData();
-    dataOut.label = label;
 
+    //Store the needed data being outputted
+    dataOut.label = label;
     dataOut.errorData = objectData.errorData;
     dataOut.data = objectData.data;
     

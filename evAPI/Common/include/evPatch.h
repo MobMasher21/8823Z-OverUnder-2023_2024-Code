@@ -14,8 +14,13 @@
 #include <string>
 #include <sstream>
 
-namespace evPatch
+namespace evAPI::evPatch
 {
+  /**
+   * @brief Converts a value to a std::string object.
+   * @param a The data to convert.
+   * @returns A std::string object containing the data.
+  */
   template <typename T> std::string to_string(const T& n)
   {
     std::ostringstream stm;

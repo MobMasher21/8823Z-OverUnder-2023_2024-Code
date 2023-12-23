@@ -3,7 +3,7 @@
 /*    Module:       main.cpp                                                  */
 /*    Author:       Cameron Barclay, Jayden Liffick, Teo Carrion              */
 /*    Created:      12/6/2023, 10:45:31 PM                                    */
-/*    Description:  All code for team 8823Z robot                             */
+/*    Description:  All code for team 8823Z robot.                            */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -52,6 +52,13 @@ int cataSpeed = 75;
 #define AUTO_BASIC_GOAL_SIDE 11
 #define AUTO_BASIC_LOAD_SIDE 15
 
+//Variables to display on the controller
+uint32_t batteryLevel = Brain.Battery.capacity();
+double batteryCurrent = Brain.Battery.current();
+
+//Setup controller UI IDs
+#define CONTROLLER_BATTERY_CAPACITY 0
+#define CONTROLLER_BATTERY_CURRENT 1
 
 /*---------------------------------------------------------------------------------*/
 /*                             Pre-Autonomous Functions                            */
@@ -89,7 +96,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonDescription(AUTO_BASIC_LOAD_SIDE, "Descore the triball from the match load zone.");
 
   // Select all the icons
-  UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.iconTest);
+  UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.skills);
   UI.autoSelectorUI.setButtonIcon(AUTO_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_DO_NOTHING, UI.autoSelectorUI.icons.exclamationMark);
@@ -100,6 +107,11 @@ void pre_auton(void) {
   //Setup parameters for auto selector 
   UI.autoSelectorUI.setSelectedButton(AUTO_DO_NOTHING);
   UI.autoSelectorUI.setDataDisplayTime(1500);
+
+  //*Setup controller UI
+  UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
+  UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CURRENT, "Battery Amps: ", batteryCurrent);
+  UI.primaryControllerUI.addData(2, "Test");
 
   //Start the threads
   UI.startThreads();
@@ -407,7 +419,10 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    vex::task::sleep(100);
+    //Update controller UI data
+    batteryLevel = Brain.Battery.capacity();
+    batteryCurrent = Brain.Battery.current();
+    vex::task::sleep(20);
   }
 }
 

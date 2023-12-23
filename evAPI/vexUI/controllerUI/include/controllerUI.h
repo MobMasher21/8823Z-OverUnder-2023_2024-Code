@@ -7,8 +7,8 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-#ifndef CONTROLLERUI_HPP
-#define CONTROLLERUI_HPP
+#ifndef CONTROLLERUI_H
+#define CONTROLLERUI_H
 
 #include <vector>
 #include <sys/types.h>
@@ -22,7 +22,7 @@ namespace evAPI
   {
     private:
       //The controller screen the UI controls
-      vex::controller::lcd *parentController;
+      vex::controller::lcd *parentController = nullptr;
 
       //Each line on the controller
       std::vector<UIData *> displayLines;
@@ -43,6 +43,7 @@ namespace evAPI
        *                       being updated.
        * @returns An evError.
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
+       *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
       */
       evError updateScreenData(bool exitIfUpdating = false);
@@ -53,6 +54,7 @@ namespace evAPI
        *                       being updated.
        * @returns An evError.
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
+       *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
       */
       evError updateScreen(bool exitIfUpdating = false);
@@ -61,6 +63,7 @@ namespace evAPI
        * @brief Scrolls down the screen by one if possible.
        * @returns An evError.
        *          Range_Limit_Reached: If there is no more room to scroll down.
+       *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: If the screen scrolled down successfully.
       */
       evError scrollDown();
@@ -69,6 +72,7 @@ namespace evAPI
        * @brief Scrolls up the screen by one if possible.
        * @returns An evError.
        *          Range_Limit_Reached: If there is no more room to scroll up.
+       *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: If the screen scrolled up successfully.
       */
       evError scrollUp();
@@ -78,16 +82,19 @@ namespace evAPI
        * @param lineNumber The ID of the line to scroll to.
        * @returns An evError.
        *          Index_Out_Of_Range: If lineNumber is an invalid ID,
-       *          Index_Out_Of_Range_Non_Critical: If scrolling to the ID would result in parts of te screen
+       *          Index_Out_Of_Range_Non_Critical: If scrolling to the ID would result in parts of the screen
        *          drawing invalid data. The screen will still be scrolled to the last possible line.
+       *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: If the screen scrolled up successfully.
       */
       evError setScreenLine(uint lineNumber);
 
       /**
-       * @returns The line number of the line at the top of the screen.
+       * @returns An evErrorUInt object containing the line number in "data", and any errors in "evErrorData".
+       *          Errors: No_Data_Defined: If there is no currently defined values to display.
+       *          No_Error: If the screen scrolled up successfully.
       */
-      uint getLineNumber();
+      evErrorUInt getLineNumber();
 
       /**
        * @brief Adds a new line to display data on the controller.
@@ -144,4 +151,4 @@ namespace evAPI
   
 } // namespace evAPI
 
-#endif // CONTROLLERUI_HPP
+#endif // CONTROLLERUI_H

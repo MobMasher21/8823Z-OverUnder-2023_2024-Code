@@ -22,6 +22,12 @@ namespace evAPI
 
   evError controllerUI::updateScreenData(bool exitIfUpdating)
   {
+    //Return if there is no data to display
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      return evError::No_Data_Defined;
+    }
+
     //Decide what to do if the screen is being updated
     if(updatingScreen)
     {
@@ -95,6 +101,12 @@ namespace evAPI
 
   evError controllerUI::updateScreen(bool exitIfUpdating)
   {
+    //Return if there is no data to display
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      return evError::No_Data_Defined;
+    }
+
     //Decide what to do if the screen is bing updated
     if(updatingScreen)
     {
@@ -166,6 +178,12 @@ namespace evAPI
 
   evError controllerUI::scrollDown()
   {
+    //Return if there is no data to display
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      return evError::No_Data_Defined;
+    }
+
     //The number of lines remaining before the final line
     long validLinesRemaining;
 
@@ -189,6 +207,12 @@ namespace evAPI
 
   evError controllerUI::scrollUp()
   {
+    //Return if there is no data to display
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      return evError::No_Data_Defined;
+    }
+
     //Exit if the line index is at the first line
     if(currentLine == 0)
     {
@@ -206,6 +230,12 @@ namespace evAPI
 
   evError controllerUI::setScreenLine(uint lineNumber)
   {
+    //Return if there is no data to display
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      return evError::No_Data_Defined;
+    }
+
     //Exit if lineNumber is an invalid index.
     if(lineNumber+1 > displayLines.size())
     {
@@ -238,9 +268,21 @@ namespace evAPI
     return evError::No_Error;
   }
 
-  uint controllerUI::getLineNumber()
+  evErrorUInt controllerUI::getLineNumber()
   {
-    return currentLine;
+    //Structure that is returned
+    evErrorUInt returnData;
+
+    //Store an error if there isn't any data associated with the class
+    if(displayLines.size() == 0 || displayLines.max_size() == 0)
+    {
+      returnData.errorData = evError::No_Data_Defined;
+    }
+
+    //Store the current line number
+    returnData.data = currentLine;
+
+    return returnData;
   }
 
   evError controllerUI::addData(uint id, const char name[20])
