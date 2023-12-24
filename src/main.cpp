@@ -111,7 +111,6 @@ void pre_auton(void) {
   //*Setup controller UI
   UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CURRENT, "Battery Amps: ", batteryCurrent);
-  UI.primaryControllerUI.addData(2, "Test");
 
   //Start the threads
   UI.startThreads();
