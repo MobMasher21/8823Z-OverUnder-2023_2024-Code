@@ -37,9 +37,9 @@ namespace evAPI {
 
   void Drive::resetRightPosition() {    //resets position of right encoder to 0
     if(!leftEncoder) {
-      leftMotor1->resetPosition();
+      rightMotor1->resetPosition();
     } else {
-      leftEncoder->resetPosition();
+      rightEncoder->resetPosition();
     }
   }
 

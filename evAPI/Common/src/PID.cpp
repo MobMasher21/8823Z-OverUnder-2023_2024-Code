@@ -74,6 +74,14 @@ namespace evAPI {
   }
 
   /**
+   * @brief Resets the timeout for the PID
+   * 
+   */
+  void PID::resetTimeout() {
+    cyclesSpentRunning = 0;
+  }
+
+  /**
    * @brief Does all the PID math
    * 
    * @param error The new error for the PID function

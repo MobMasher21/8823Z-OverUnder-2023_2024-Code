@@ -52,12 +52,13 @@ namespace evAPI {
       //*setup of all variables*
       double leftPosition;  //angle of left encoder
       double rightPosition;  //angle of right encoder
-      double averagePosition;  //average position of both encoders
+      int averagePosition;  //average position of both encoders
       int error;  // desired value - sensor value
       int desiredValue;  // angle of rotation sensor that we want
       bool isPIDRunning = true;  // is true as the PID is running
       int moveSpeed;  // the speed the motors are set to every cycle
       drivePID.setTotalError(0);
+      drivePID.resetTimeout();
 
       //*checks to see if you have encoders and then sets the desired angle of the pid*
       if(leftEncoder) {
@@ -65,13 +66,16 @@ namespace evAPI {
       } else {
         desiredValue = distance * degsPerInch;
       }
+      if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
 
       //*resets encoders*
       resetLeftPosition();
       resetRightPosition();
+      if(isDebugMode) printf("rightAngle: %f\n", getLeftPosition(degrees));
+      if(isDebugMode) printf("leftAngle: %f\n", getRightPosition(degrees));
 
       //*print debug header*
-      if(isDebugMode) printf("error, moveSpeed");
+      if(isDebugMode) printf("position, error, moveSpeed\n");
 
       //*main PID loop*
       while(isPIDRunning) {
@@ -98,6 +102,7 @@ namespace evAPI {
 
         //*print debug data*
         if(isDebugMode) {
+          printf("%i, ", averagePosition);
           printf("%i, ", error);
           printf("%i\n", moveSpeed);
         }
@@ -130,6 +135,7 @@ namespace evAPI {
       bool isPIDRunning = true;  // is true as the PID is running
       int moveSpeed;  // the speed the motors are set to every cycle
       turnPID.setTotalError(0);
+      turnPID.resetTimeout();
 
       //*checks to see if you have an inertial and then sets the desired angle of the pid*
       if(turnSensor) {

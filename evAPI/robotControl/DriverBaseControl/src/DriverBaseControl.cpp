@@ -49,14 +49,14 @@ namespace evAPI {
         switch (primaryStick) {
           case leftStick:
             leftSpeed = (vexController->Axis3.position(pct) * driveHandicap +
-                         vexController->Axis1.position(pct) * turnHandicap);
+                         vexController->Axis4.position(pct) * turnHandicap);
             rightSpeed = (vexController->Axis3.position(pct) * driveHandicap -
-                          vexController->Axis1.position(pct) * turnHandicap);
+                          vexController->Axis4.position(pct) * turnHandicap);
             break;
           case rightStick:
             leftSpeed = (vexController->Axis2.position(pct) * driveHandicap +
-                         vexController->Axis4.position(pct) * turnHandicap);
-            rightSpeed = (vexController->Axis2.position(pct) * driveHandicap -
+                         vexController->Axis1.position(pct) * turnHandicap);
+            rightSpeed = (vexController->Axis1.position(pct) * driveHandicap -
                           vexController->Axis4.position(pct) * turnHandicap);
             break;
         }
@@ -70,15 +70,15 @@ namespace evAPI {
         switch (primaryStick) {
           case leftStick:
             leftSpeed = (vexController->Axis3.position(pct) * driveHandicap +
-                         vexController->Axis4.position(pct) * turnHandicap);
+                         vexController->Axis1.position(pct) * turnHandicap);
             rightSpeed = (vexController->Axis3.position(pct) * driveHandicap -
-                          vexController->Axis4.position(pct) * turnHandicap);
+                          vexController->Axis1.position(pct) * turnHandicap);
             break;
           case rightStick:
             leftSpeed = (vexController->Axis2.position(pct) * driveHandicap +
-                         vexController->Axis1.position(pct) * turnHandicap);
+                         vexController->Axis4.position(pct) * turnHandicap);
             rightSpeed = (vexController->Axis2.position(pct) * driveHandicap -
-                          vexController->Axis1.position(pct) * turnHandicap);
+                          vexController->Axis4.position(pct) * turnHandicap);
             break;
         }
         break;

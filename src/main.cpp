@@ -23,7 +23,7 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out *wingPistons;
-motor cataMotor = motor(PORT8, redGearBox, false);
+motor cataMotor = motor(PORT8, redGearBox, true);
 motor intakeMotor = motor(PORT5, blueGearBox, false);
 
 // Controller callback function declarations ------------------------------
@@ -44,13 +44,15 @@ int intakeSpeed = 100;
 int cataSpeed = 75;
 
 //Setup Auto Button UI IDs
-#define AUTO_DO_NOTHING 4
-#define AUTO_SKILLS_1 0
-#define AUTO_GOAL_SIDE 3
-#define AUTO_LOAD_SIDE 7
-#define AUTO_BASIC_SKILLS 8
-#define AUTO_BASIC_GOAL_SIDE 11
-#define AUTO_BASIC_LOAD_SIDE 15
+enum autoOptions {
+  AUTO_DO_NOTHING = 4,
+  PID_TEST = 0,
+  AUTO_GOAL_SIDE = 3,
+  AUTO_LOAD_SIDE = 7,
+  AUTO_BASIC_SKILLS = 8,
+  AUTO_BASIC_GOAL_SIDE = 11,
+  AUTO_BASIC_LOAD_SIDE = 15
+};
 
 //Variables to display on the controller
 uint32_t batteryLevel = Brain.Battery.capacity();
@@ -69,7 +71,7 @@ void pre_auton(void) {
 
   //* Setup for auto selection UI ============================================
   // Add all the buttons
-  UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
+  UI.autoSelectorUI.addButton(PID_TEST, 0xff, 0x10, 0xa0);  //color is 0xff10a0
   UI.autoSelectorUI.addButton(AUTO_GOAL_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_LOAD_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_DO_NOTHING, red);
@@ -78,7 +80,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.addButton(AUTO_BASIC_LOAD_SIDE, Lime);
 
   // Set all the titles
-  UI.autoSelectorUI.setButtonTitle(AUTO_SKILLS_1, "Skills");
+  UI.autoSelectorUI.setButtonTitle(PID_TEST, "PID TEST");
   UI.autoSelectorUI.setButtonTitle(AUTO_GOAL_SIDE, "Goal Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_LOAD_SIDE, "Load Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_DO_NOTHING, "DO NOTHING!");
@@ -87,7 +89,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonTitle(AUTO_BASIC_LOAD_SIDE, "Descore Triball");
 
   // Set all the descriptions
-  UI.autoSelectorUI.setButtonDescription(AUTO_SKILLS_1, "Shoots all the match loads into the field, then attempts to push them into the goal.");
+  UI.autoSelectorUI.setButtonDescription(PID_TEST, "Simple movements to test PID settings");
   UI.autoSelectorUI.setButtonDescription(AUTO_GOAL_SIDE, "Scores three triballs, including the match load, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_LOAD_SIDE, "Scores the match load, pushes two triballs to the other side, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_DO_NOTHING, "The robot will do nothing.");
@@ -96,7 +98,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonDescription(AUTO_BASIC_LOAD_SIDE, "Descore the triball from the match load zone.");
 
   // Select all the icons
-  UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.skills);
+  UI.autoSelectorUI.setButtonIcon(PID_TEST, UI.autoSelectorUI.icons.skills);
   UI.autoSelectorUI.setButtonIcon(AUTO_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_DO_NOTHING, UI.autoSelectorUI.icons.exclamationMark);
@@ -105,7 +107,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector 
-  UI.autoSelectorUI.setSelectedButton(AUTO_DO_NOTHING);
+  UI.autoSelectorUI.setSelectedButton(PID_TEST);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -116,22 +118,25 @@ void pre_auton(void) {
   UI.startThreads();
 
   //* Setup for smart drive ==================================================
+  driveBase.setDebugState(true);
   // Setup motor settings
   driveBase.leftPortSetup(7, 9, 16);
   driveBase.rightPortSetup(1, 4, 14);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
+  driveBase.geartrainSetup(3.25, 36, 60);
   
   // Setup inertial sensor settings
   driveBase.setupInertialSensor(17);
+  driveBase.calibrateInertial();
 
   // Set default speeds
-  driveBase.setDriveSpeed(20);
-  driveBase.setTurnSpeed(20);
+  driveBase.setDriveSpeed(100);
+  driveBase.setTurnSpeed(100);
 
   // Setup PID
-  driveBase.setupDrivePID(1, 0, 0, 5, 5, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupTurnPID(1, 0, 0, 1, 5, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupDrivePID(.22, .040, .5, 5, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupTurnPID(.6, 10, 0, 2, 2, 100);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
@@ -151,65 +156,12 @@ void autonomous(void) {
   timer autoTimer;
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
-    case AUTO_SKILLS_1:
-      /* //Setp base parameters
-      autoDrivetrain.setDriveVelocity(57, percent);
-      autoDrivetrain.setTurnVelocity(8, percent);
-      autoDrivetrain.setTurnThreshold(2);
-      autoDrivetrain.setTurnConstant(.5);
-
-      //Spin the catapult motor for 50 seconds
-      cataMotor.spin(forward, 95, percent);
-      wait(50, sec);
-      //wait(1, sec);
-      cataMotor.stop(coast);
-
-      //Drive to center of Bar
-      autoDrivetrain.driveFor(reverse, 5, inches);
-      autoDrivetrain.turnFor(left, 19, deg);
-      autoDrivetrain.driveFor(reverse, 59, inches);
-      autoDrivetrain.turnFor(right, 40, deg);
-
-      //Drive over the bar
-      autoDrivetrain.drive(reverse);
-      wait(1500, msec);
-      autoDrivetrain.stop(brake);
-
-      //Realign
-      autoDrivetrain.turnToHeading(23, deg);
-
-      //Ram triballs
-      wingPistons.set(true);
-      autoDrivetrain.setDriveVelocity(100, percent);
-      autoDrivetrain.drive(reverse);
-      this_thread::sleep_for(500);
-
-      while(autoDrivetrain.velocity(pct) > 5)
-      {
-        this_thread::sleep_for(10);
-      }
-
-      autoDrivetrain.setDriveVelocity(57, percent);
-      autoDrivetrain.driveFor(forward, 20, inches);
-      wingPistons.set(false);
-
-      //Ram again
-      autoDrivetrain.turnFor(left, 10, deg);
-      wingPistons.set(true);
-      autoDrivetrain.setDriveVelocity(100, percent);
-      autoDrivetrain.drive(reverse);
-      this_thread::sleep_for(500);
-
-      while(autoDrivetrain.velocity(pct) > 5)
-      {
-        this_thread::sleep_for(10);
-      }
-
-      autoDrivetrain.setDriveVelocity(57, percent);
-      autoDrivetrain.driveFor(forward, 20, inches);
-      wingPistons.set(false); */
+    case PID_TEST:
+      //.driveForward(24);
+      //driveBase.driveBackward(24);
+      driveBase.turnToHeading(90);
+      driveBase.turnToHeading(0);
       break;
-
     case AUTO_GOAL_SIDE:
       /* //Set speeds
       autoDrivetrain.setDriveVelocity(57, percent);

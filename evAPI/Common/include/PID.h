@@ -51,6 +51,12 @@ namespace evAPI {
        * @return false The PID is still running
        */
       bool isSettled();
+
+      /**
+       * @brief Resets the timeout for the PID
+       * 
+       */
+      void resetTimeout();
   
       /**
        * @brief Does all the PID math

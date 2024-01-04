@@ -10,6 +10,7 @@ namespace evAPI {
     gearOutput = gearOUT;
     degsPerInch = ((360 / (wheelSize * M_PI)) * (gearOutput / gearInput));   
     // ^^ finds the amount of encoder degrees in one inch of movement
+    if(isDebugMode) printf("dpi: %f\n", degsPerInch);
   }
   
   /*----- motor ports and reverses -----*/
