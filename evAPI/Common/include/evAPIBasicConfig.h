@@ -6,10 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/v5.h"
-#include "../include/v5_vcs.h"
+#include "v5.h"
+#include "v5_vcs.h"
 
 using namespace vex;
+
 extern brain Brain;
 extern controller primaryController;
 extern controller secondaryController;

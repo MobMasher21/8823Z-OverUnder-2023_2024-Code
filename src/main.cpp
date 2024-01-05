@@ -194,7 +194,6 @@ void autonomous(void) {
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(28);
 
-     
       //Align with goal and ram in first two triballs
       driveBase.turnToHeading(270);
       break;

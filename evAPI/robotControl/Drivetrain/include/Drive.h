@@ -50,14 +50,14 @@ namespace evAPI {
       void rightPortSetup(int port1, int port2);    //right motor port setup for 4 motor drive
       void rightPortSetup(int port1, int port2, int port3);    //right motor port setup for 6 motor drive
       void rightPortSetup(int port1, int port2, int port3, int port4);    //right motor port setup for 8 motor drive
-      void leftReverseSetup(int reverse1);    //left motor reverse setup for 2 motor drive
-      void leftReverseSetup(int reverse1, int reverse2);    //left motor reverse setup for 4 motor drive
-      void leftReverseSetup(int reverse1, int reverse2, int reverse3);    //left motor reverse setup for 6 motor drive
-      void leftReverseSetup(int reverse1, int reverse2, int reverse3, int reverse4);    //left motor reverse setup for 8 motor drive
-      void rightReverseSetup(int reverse1);    //right motor reverse setup for 2 motor drive
-      void rightReverseSetup(int reverse1, int reverse2);    //right motor reverse setup for 4 motor drive
-      void rightReverseSetup(int reverse1, int reverse2, int reverse3);    //right motor reverse setup for 6 motor drive
-      void rightReverseSetup(int reverse1, int reverse2, int reverse3, int reverse4);    //right motor reverse setup for 8 motor drive
+      void leftReverseSetup(bool reverse1);    //left motor reverse setup for 2 motor drive
+      void leftReverseSetup(bool reverse1, bool reverse2);    //left motor reverse setup for 4 motor drive
+      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3);    //left motor reverse setup for 6 motor drive
+      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);    //left motor reverse setup for 8 motor drive
+      void rightReverseSetup(bool reverse1);    //right motor reverse setup for 2 motor drive
+      void rightReverseSetup(bool reverse1, bool reverse2);    //right motor reverse setup for 4 motor drive
+      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3);    //right motor reverse setup for 6 motor drive
+      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);    //right motor reverse setup for 8 motor drive
 
       /*----- encoder setup -----*/
       void leftEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for left encoder
@@ -96,6 +96,8 @@ namespace evAPI {
        * @returns True if the base motors are moving.
       */
       bool isMoving();
+
+      bool getBaseSpeed(turnType side);
   
     private:
       /************ motors ************/

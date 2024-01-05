@@ -66,44 +66,44 @@ namespace evAPI {
     rightMotor4 = new motor(smartPortLookupTable[port4], currentGear);
   }
   
-  void Drive::leftReverseSetup(int reverse1) {    //left motor reverse setup for 2 motor drive
+  void Drive::leftReverseSetup(bool reverse1) {    //left motor reverse setup for 2 motor drive
     leftMotor1->setReversed(reverse1);
   }
   
-  void Drive::leftReverseSetup(int reverse1, int reverse2) {    //left motor reverse setup for 4 motor drive
+  void Drive::leftReverseSetup(bool reverse1, bool reverse2) {    //left motor reverse setup for 4 motor drive
     leftMotor1->setReversed(reverse1);
     leftMotor2->setReversed(reverse2);
   }
   
-  void Drive::leftReverseSetup(int reverse1, int reverse2, int reverse3) {    //left motor reverse setup for 6 motor drive
+  void Drive::leftReverseSetup(bool reverse1, bool reverse2, bool reverse3) {    //left motor reverse setup for 6 motor drive
     leftMotor1->setReversed(reverse1);
     leftMotor2->setReversed(reverse2);
     leftMotor3->setReversed(reverse3);
   }
   
-  void Drive::leftReverseSetup(int reverse1, int reverse2, int reverse3, int reverse4) {    //left motor reverse setup for 8 motor drive
+  void Drive::leftReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4) {    //left motor reverse setup for 8 motor drive
     leftMotor1->setReversed(reverse1);
     leftMotor2->setReversed(reverse2);
     leftMotor3->setReversed(reverse3);
     leftMotor4->setReversed(reverse4);
   }
   
-  void Drive::rightReverseSetup(int reverse1) {    //right motor reverse setup for 2 motor drive
+  void Drive::rightReverseSetup(bool reverse1) {    //right motor reverse setup for 2 motor drive
     rightMotor1->setReversed(reverse1);
   }
   
-  void Drive::rightReverseSetup(int reverse1, int reverse2) {    //right motor reverse setup for 4 motor drive
+  void Drive::rightReverseSetup(bool reverse1, bool reverse2) {    //right motor reverse setup for 4 motor drive
     rightMotor1->setReversed(reverse1);
     rightMotor2->setReversed(reverse2);
   }
   
-  void Drive::rightReverseSetup(int reverse1, int reverse2, int reverse3) {    //right motor reverse setup for 6 motor drive
+  void Drive::rightReverseSetup(bool reverse1, bool reverse2, bool reverse3) {    //right motor reverse setup for 6 motor drive
     rightMotor1->setReversed(reverse1);
     rightMotor2->setReversed(reverse2);
     rightMotor3->setReversed(reverse3);
   }
   
-  void Drive::rightReverseSetup(int reverse1, int reverse2, int reverse3, int reverse4) {    //right motor reverse setup for 8 motor drive
+  void Drive::rightReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4) {    //right motor reverse setup for 8 motor drive
     rightMotor1->setReversed(reverse1);
     rightMotor2->setReversed(reverse2);
     rightMotor3->setReversed(reverse3);
