@@ -30,3 +30,8 @@ $(BUILD)/$(PROJECTLIB).a: $(OBJ)
 clean:
 	$(info clean project)
 	$(Q)$(CLEAN)
+
+# Print variables
+print:
+	$(ECHO) Current Directory: $(CURDIR)
+	$(ECHO) "$(SRC_C)"

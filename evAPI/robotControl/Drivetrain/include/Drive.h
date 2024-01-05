@@ -20,6 +20,7 @@
  * TODO: write drive to point for odometry
  * TODO: write path finding for odometry
  * TODO: integrate vision tracking
+ * TODO: Add functions to get the current state of the drive base, like its velocity
  * 
 */
 
@@ -89,6 +90,12 @@ namespace evAPI {
       void turnToHeading(int angle, int speed);  //enter an angle and speed to turn
       void turnToHeading(int angle);  //enter an angle to turn
   
+      /************ Sensors ************/
+      /*----- movement -----*/
+      /**
+       * @returns True if the base motors are moving.
+      */
+      bool isMoving();
   
     private:
       /************ motors ************/
