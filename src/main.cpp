@@ -329,8 +329,7 @@ void autonomous(void) {
       this_thread::sleep_for(500);
       driveBase.turnToHeading(115);
       wingPistons->set(false);
-      //driveBase.turnToHeading(); //!Unknown value
-      //autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg);
+      driveBase.turnToHeading(325); //!VALUE NEEDS TO BE CONFIRMED
       break;
 
     //*TEST AUTOS
