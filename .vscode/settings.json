@@ -91,5 +91,9 @@
 			"bold": false,
 			"italic": false
 		}
-	]
+	],
+	"files.associations": {
+		"*.py": "python",
+		"thread": "cpp"
+	}
 }

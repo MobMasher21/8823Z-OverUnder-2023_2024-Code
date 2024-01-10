@@ -167,7 +167,10 @@ void autonomous(void) {
   timer autoTimer;
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
-    
+    case AUTO_SKILLS_1:
+      cataMotor.spin(fwd, 96, percent);
+      break;
+
     case AUTO_GOAL_SIDE:
       //Set speeds
       driveBase.setDriveSpeed(100);
@@ -252,12 +255,11 @@ void autonomous(void) {
       break;
 
     case AUTO_LOAD_SIDE:
-      /* //Set drive base parameters
-      autoDrivetrain.setDriveVelocity(50, percent);
-      autoDrivetrain.setTurnVelocity(6, percent);
-      autoDrivetrain.setTurnThreshold(2);
-      autoDrivetrain.setTurnConstant(.5);
-     
+      //!UNTESTED
+      //Set drive base parameters
+      driveBase.setDriveSpeed(100);
+      driveBase.setTurnSpeed(80);
+
       //Drop intake and grab first ball
       cataMotor.spin(fwd, 80, pct);
       intakeMotor.spin(fwd, 100, pct);
@@ -266,37 +268,37 @@ void autonomous(void) {
       intakeMotor.stop();
 
       //Put the match load triball into te goal
-      autoDrivetrain.driveFor(55, inches);
-      autoDrivetrain.turnToHeading(275, deg);
+      driveBase.driveForward(55);
+      driveBase.turnToHeading(275);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
-      autoDrivetrain.driveFor(8, inches);
-      autoDrivetrain.driveFor(-5, inches);
+      driveBase.driveForward(8);
+      driveBase.driveBackward(5);
 
       //Drive to triball in match load zone
-      autoDrivetrain.turnToHeading(185, deg);
+      driveBase.turnToHeading(185);
       intakeMotor.stop();
-      autoDrivetrain.driveFor(30, inches);
-      autoDrivetrain.turnToHeading(95, deg);
-      autoDrivetrain.driveFor(-35, inches);
-      autoDrivetrain.turnToHeading(140, deg);
+      driveBase.driveForward(30);
+      driveBase.turnToHeading(95);
+      driveBase.driveBackward(35);
+      driveBase.turnToHeading(140);
 
-      //Remove the triball from teh load side
-      autoDrivetrain.driveFor(4, inches);
-      wingPistons.set(true);
-      autoDrivetrain.driveFor(20, inches);
-      autoDrivetrain.turnToHeading(40, deg);
+      //Remove the triball from the load side
+      driveBase.driveForward(4);
+      wingPistons->set(true);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(40);
       vex::task::sleep(500);
-      autoDrivetrain.turnToHeading(115, deg);
-      wingPistons.set(false);
+      driveBase.turnToHeading(115);
+      wingPistons->set(false);
 
       //Push the triballs onto the other side and touch the bar
-      autoDrivetrain.setDriveVelocity(30, pct);
-      autoDrivetrain.driveFor(12, inches);
-      autoDrivetrain.turnToHeading(105, deg);
+      driveBase.setDriveSpeed(30);
+      driveBase.driveForward(12);
+      driveBase.turnToHeading(105);
       intakeMotor.spin(fwd, 100, pct);
-      autoDrivetrain.driveFor(34, inches);
-      intakeMotor.spin(reverse, 100, pct); */
+      driveBase.driveForward(34);
+      intakeMotor.spin(reverse, 100, pct);
       break;
 
     //*Basic skills auto the spins the catapult
@@ -306,39 +308,44 @@ void autonomous(void) {
 
     //*Scores the prelaod triball in the goal
     case AUTO_BASIC_GOAL_SIDE:
-      /* autoDrivetrain.setDriveVelocity(100, pct);
-      autoDrivetrain.driveFor(directionType::rev, 42, distanceUnits::in);
-      autoDrivetrain.driveFor(directionType::fwd, 12, distanceUnits::in); */
+      //!UNTESTED
+      driveBase.setDriveSpeed(100);
+      driveBase.driveBackward(42);
+      driveBase.driveForward(12);
       break;
 
     //*Descores the triball in the match load zone 
     case AUTO_BASIC_LOAD_SIDE:
-      /* autoDrivetrain.setDriveVelocity(20, percent);
-      autoDrivetrain.setTurnVelocity(5, percent);
-      autoDrivetrain.setTurnThreshold(1);
+      //!UNTESTED
+      //Set speeds
+      driveBase.setDriveSpeed(100);
+      driveBase.setTurnSpeed(75);
 
-      autoDrivetrain.driveFor(directionType::fwd, 14, distanceUnits::in);
-      wingPistons.set(true);
-      autoDrivetrain.driveFor(20, inches);
-      autoDrivetrain.turnToHeading(40, deg);
-      vex::task::sleep(500);
-      autoDrivetrain.turnToHeading(115, deg);
-      wingPistons.set(false);
-      autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg); */
+      //Descore the triball
+      driveBase.driveForward(14);
+      wingPistons->set(true);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(40);
+      this_thread::sleep_for(500);
+      driveBase.turnToHeading(115);
+      wingPistons->set(false);
+      //driveBase.turnToHeading(); //!Unknown value
+      //autoDrivetrain.turnFor(turnType::left, 150, rotationUnits::deg);
+      break;
+
+    //*TEST AUTOS
+    case AUTO_TEST_PID:
+      driveBase.driveForward(48);
+      this_thread::sleep_for(3000);
+      driveBase.driveBackward(48);
+
+      //driveBase.turnToHeading(90);
+      //driveBase.turnToHeading(0);
       break;
 
     //*Do nothing auto
     case AUTO_DO_NOTHING:
       //!DO NOTHING HERE
-      break;
-
-    //*TEST AUTOS
-    case AUTO_TEST_PID:
-      driveBase.driveForward(47.5);
-      this_thread::sleep_for(3000);
-      driveBase.driveBackward(47.5);
-      //driveBase.turnToHeading(90);
-      //driveBase.turnToHeading(0);
       break;
 
     //*Default auto that runs if an unknown ID is selected
