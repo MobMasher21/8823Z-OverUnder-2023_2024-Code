@@ -7,7 +7,7 @@ namespace evAPI
     return leftMotor1->isSpinning() || rightMotor1->isSpinning();
   }
 
-  bool Drive::getBaseSpeed(turnType side)
+  double Drive::getBaseSpeed(turnType side)
   {
     double wheelVelocity;
 
@@ -21,7 +21,9 @@ namespace evAPI
       wheelVelocity = rightMotor1->velocity(pct);
     }
 
-    //TODO: Add code to return the wheel speed, not the motor speed
+    //TODO: Fix this crap
+    //Convert the motor velocity to the wheel velocity
+    //wheelVelocity *= (gearInput / gearOutput)/*  * (2 * M_PI * wheelSize) */;
 
     return wheelVelocity;
   }

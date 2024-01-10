@@ -1,8 +1,8 @@
 #ifndef __DRIVE_H__
 #define __DRIVE_H__
 
-#include "../../../Common/include/evAPIBasicConfig.h"
-#include "../../../Common/include/evNamespace.h"
+//#include "../../../Common/include/evAPIBasicConfig.h"
+//#include "../../../Common/include/evNamespace.h"
 #include "../../../Common/include/generalFunctions.h"
 #include "../../../Common/include/PID.h"
 
@@ -97,7 +97,13 @@ namespace evAPI {
       */
       bool isMoving();
 
-      bool getBaseSpeed(turnType side);
+      /**
+       * @brief Gets the wheel speed of teh specified side.
+       * @param side The side to get the wheel speed from.
+       * @returns The speed of the wheel.
+       * @warning Doesn't fully function yet.
+      */
+      double getBaseSpeed(turnType side);
   
     private:
       /************ motors ************/

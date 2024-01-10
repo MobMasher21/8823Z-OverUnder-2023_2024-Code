@@ -10,7 +10,6 @@
 //$ To keep things clean, declare functions at the top and write what they do at the bottom
 
 // Include library files
-#include "vex.h"
 #include "../evAPI/evAPIFiles.h"
 
 // Select namespaces ------------------------------------------------------
@@ -25,6 +24,8 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 digital_out *wingPistons;
 motor cataMotor = motor(PORT8, redGearBox, true);
 motor intakeMotor = motor(PORT5, blueGearBox, true);
+
+inertial Inertial = inertial(PORT17);
 
 // Controller callback function declarations ------------------------------
 void tglWings( void );  // Toggles the state of the wing pistons
@@ -170,7 +171,7 @@ void autonomous(void) {
     case AUTO_GOAL_SIDE:
       //Set speeds
       driveBase.setDriveSpeed(100);
-      driveBase.setTurnSpeed(70);
+      driveBase.setTurnSpeed(95);
 
       //Drop intake and grab first ball
       cataMotor.spin(fwd, 80, pct);
@@ -189,48 +190,65 @@ void autonomous(void) {
       intakeMotor.stop();
 
       //Aim and grab second ball
-      //autoDrivetrain.setDriveVelocity(30, pct);
       driveBase.turnToHeading(306);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(28);
 
       //Align with goal and ram in first two triballs
       driveBase.turnToHeading(270);
-      break;
-      //autoDrivetrain.setDriveVelocity(100, pct);
-      wingPistons->set(true);
-      driveBase.driveBackward(19);
       intakeMotor.stop();
-      driveBase.driveBackward(19);
-      driveBase.driveForward(6);
-      wingPistons->set(false);
-      //Turn to face the goal and drop 3rd triball
-      driveBase.turnToHeading(90);
-      intakeMotor.spin(reverse, 100, pct);
-      vex::task::sleep(750);
+      wingPistons->set(true);
 
       //Start to push in final triball
-      driveBase.spinBase(100, 100);
+      driveBase.spinBase(-100, -100);
 
       //Lets the robot get up to speed
       vex::task::sleep(500);
 
       //Runs the motors until it has runs into the goal and can't move
-      while (driveBase.isMoving()) {
+      while(driveBase.getBaseSpeed(left) > 20) {
         vex::task::sleep(5);
       }
 
-      //Turn to face bar
-      driveBase.driveBackward(6);
-      intakeMotor.stop();
-      // autoDrivetrain.turnToHeading(90, deg);
-      // autoDrivetrain.turnToHeading(180, deg);
+      vex::task::sleep(200);
+      driveBase.stopRobot();
 
-      //Drive to bar
-      // autoDrivetrain.driveFor(35, inches);
-      // autoDrivetrain.turnFor(right, 54, deg);
-      // autoDrivetrain.driveFor(24.5, inches);
-      // autoDrivetrain.driveFor(3, inches, 10, velocityUnits::pct);
+      //Turn to face bar
+      wingPistons->set(false);
+      driveBase.driveForward(8);
+      driveBase.turnToHeading(90);
+
+      //Place the triball in the intake into the goal
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(500);
+      driveBase.spinBase(100, 100);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while(driveBase.getBaseSpeed(left) > 20) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(350);
+      intakeMotor.stop();
+      driveBase.stopRobot();
+
+      //Drive away from the goal
+      driveBase.driveBackward(8);
+
+      //Drive to the bar and touch int
+      driveBase.setTurnSpeed(100);
+      driveBase.turnToHeading(213);
+      intakeMotor.spin(fwd, 100, pct);
+      driveBase.spinBase(100, 100);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while(driveBase.getBaseSpeed(left) > 20) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(500);
+      intakeMotor.stop();
+      driveBase.stopRobot();
       break;
 
     case AUTO_LOAD_SIDE:

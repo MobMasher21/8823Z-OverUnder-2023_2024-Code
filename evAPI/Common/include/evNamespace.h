@@ -1,7 +1,7 @@
 #ifndef __EVNAMESPACE_H__
 #define __EVNAMESPACE_H__ 
 
-#include "../../../evAPI/Common/include/evAPIBasicConfig.h"
+#include "../evAPI/Common/include/evAPIBasicConfig.h"
 
 //Format YYYYMMDD
 #define EVAPI_VERSION 20230805
@@ -93,9 +93,9 @@ namespace evAPI {
     vex::PORT16, vex::PORT17, vex::PORT18, vex::PORT19, vex::PORT20, vex::PORT21
   };
 
-  const gearSetting redGearBox = ratio36_1;
-  const gearSetting greenGearBox = ratio18_1;
-  const gearSetting blueGearBox = ratio6_1;
+  const vex::gearSetting redGearBox = vex::ratio36_1;
+  const vex::gearSetting greenGearBox = vex::ratio18_1;
+  const vex::gearSetting blueGearBox = vex::ratio6_1;
 
 }
 

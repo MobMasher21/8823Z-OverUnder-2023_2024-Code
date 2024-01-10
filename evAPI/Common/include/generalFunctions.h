@@ -37,7 +37,6 @@ namespace evAPI
   */
   template <typename T> inline T toRadians(T deg)
   { return deg * DEG_TO_RAD; }
-  //#define radians(deg) ((deg)*DEG_TO_RAD)
 
   /**
    * @brief Converts an input from radians to degrees.
@@ -46,7 +45,6 @@ namespace evAPI
   */
   template <typename T> inline T toDegrees(T rad)
   { return rad * RAD_TO_DEG; }
-  //#define degrees(rad) ((rad)*RAD_TO_DEG)
 
   /**
    * @brief Calculates the square of a number: the number multiplied by itself.
