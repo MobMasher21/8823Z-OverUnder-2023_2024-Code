@@ -118,7 +118,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_GOAL_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -146,8 +146,8 @@ void pre_auton(void) {
   driveBase.setTurnSpeed(100);
 
   // Setup PID
-  driveBase.setupDrivePID(.12, .050, .5, 5, 2, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupTurnPID(.6, 10, 0, 2, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupDrivePID(.12, .050, .5, 12, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupTurnPID(.6, 10, 0, 5, 2, 100);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
@@ -255,7 +255,6 @@ void autonomous(void) {
       break;
 
     case AUTO_LOAD_SIDE:
-      //!UNTESTED
       //Set drive base parameters
       driveBase.setDriveSpeed(100);
       driveBase.setTurnSpeed(80);
@@ -267,38 +266,48 @@ void autonomous(void) {
       cataMotor.stop(coast);
       intakeMotor.stop();
 
-      //Put the match load triball into te goal
-      driveBase.driveForward(55);
-      driveBase.turnToHeading(275);
+      //Put the match load triball into the goal
+      driveBase.driveForward(46);
+      driveBase.turnToHeading(270);
       intakeMotor.spin(reverse, 100, pct);
       vex::task::sleep(750);
-      driveBase.driveForward(8);
-      driveBase.driveBackward(5);
+      driveBase.spinBase(70, 70);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(500);
+      driveBase.stopRobot();
+      driveBase.driveBackward(8);
 
       //Drive to triball in match load zone
       driveBase.turnToHeading(185);
       intakeMotor.stop();
       driveBase.driveForward(30);
-      driveBase.turnToHeading(95);
-      driveBase.driveBackward(35);
-      driveBase.turnToHeading(140);
+      driveBase.turnToHeading(90);
+      driveBase.driveBackward(23);
+      driveBase.turnToHeading(143);
 
       //Remove the triball from the load side
-      driveBase.driveForward(4);
       wingPistons->set(true);
-      driveBase.driveForward(20);
+      driveBase.driveForward(18);
+      driveBase.setTurnSpeed(40);
       driveBase.turnToHeading(40);
       vex::task::sleep(500);
-      driveBase.turnToHeading(115);
+      driveBase.turnToHeading(120);
       wingPistons->set(false);
+      driveBase.setTurnSpeed(100);
+
+      //!NEEDS FIXING
 
       //Push the triballs onto the other side and touch the bar
-      driveBase.setDriveSpeed(30);
-      driveBase.driveForward(12);
-      driveBase.turnToHeading(105);
-      intakeMotor.spin(fwd, 100, pct);
-      driveBase.driveForward(34);
+      driveBase.driveForward(14);
+      driveBase.turnToHeading(90);
       intakeMotor.spin(reverse, 100, pct);
+      driveBase.driveForward(30);
+      intakeMotor.stop();
       break;
 
     //*Basic skills auto the spins the catapult
