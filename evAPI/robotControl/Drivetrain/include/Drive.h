@@ -39,7 +39,8 @@ namespace evAPI {
       /*********** setup ***********/
       /*----- Base Setup -----*/
       void geartrainSetup(float diameter, int gearIN, int gearOUT);  //used for setting up wheel size and gear ratio
-  
+      void setStoppingMode(brakeType mode); //Sets the stopping mode for the robot
+
       /*----- motor ports and reverses -----*/
       void setGearbox(gearSetting driveGear);    //sets gearbox for all motors
       void leftPortSetup(int port1);    //left motor port setup for 2 motor drive
@@ -110,18 +111,18 @@ namespace evAPI {
       /*----- left motors -----*/
       void spinLeftMotors(int speed);  //spins all motors on the left side
       void stopLeftMotors(brakeType type);  //stop all motors on the left side
-      motor * leftMotor1;  //used in 2, 4 (front), 6 (front), 8 (front) motor drive
-      motor * leftMotor2;  //used in 4 (back), 6 (middle), 8 (front middle) motor drive
-      motor * leftMotor3;  //used in 6 (back), 8 (back middle) motor drive
-      motor * leftMotor4;  //used in 8 (back) motor drive
+      motor * leftMotor1 = nullptr;  //used in 2, 4 (front), 6 (front), 8 (front) motor drive
+      motor * leftMotor2 = nullptr;  //used in 4 (back), 6 (middle), 8 (front middle) motor drive
+      motor * leftMotor3 = nullptr;  //used in 6 (back), 8 (back middle) motor drive
+      motor * leftMotor4 = nullptr;  //used in 8 (back) motor drive
   
       /*----- right motors -----*/
       void spinRightMotors(int speed);  //spins all motors on the right side
       void stopRightMotors(brakeType type);  //stop all motors on the right side
-      motor * rightMotor1;  //used in 2, 4 (front), 6 (front), 8 (front) motor drive
-      motor * rightMotor2;  //used in 4 (back), 6 (middle), 8 (front middle) motor drive
-      motor * rightMotor3;  //used in 6 (back), 8 (back middle) motor drive
-      motor * rightMotor4;  //used in 8 (back) motor drive
+      motor * rightMotor1 = nullptr;  //used in 2, 4 (front), 6 (front), 8 (front) motor drive
+      motor * rightMotor2 = nullptr;  //used in 4 (back), 6 (middle), 8 (front middle) motor drive
+      motor * rightMotor3 = nullptr;  //used in 6 (back), 8 (back middle) motor drive
+      motor * rightMotor4 = nullptr;  //used in 8 (back) motor drive
 
       /****** encoders ******/
       double getLeftPosition(rotationUnits units);  //get the position of the left side on motor or rotation sensor

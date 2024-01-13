@@ -22,8 +22,9 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out *wingPistons;
-motor cataMotor = motor(PORT8, redGearBox, true);
-motor intakeMotor = motor(PORT5, blueGearBox, true);
+motor puncherMotor = motor(PORT1, redGearBox, true);
+motor intakeMotor = motor(PORT2, blueGearBox, false);
+rotation puncherEncoder= rotation(PORT10, false);
 
 inertial Inertial = inertial(PORT17);
 
@@ -31,11 +32,11 @@ inertial Inertial = inertial(PORT17);
 void tglWings( void );  // Toggles the state of the wing pistons
 
 // Setup controller button names ------------------------------------------
-#define CATA_FIRE_BUTTON ButtonR2
-#define CATA_SET_BUTTON ButtonA
-#define CATA_STOP_BUTTON ButtonX
-#define CATA_SPEED_INC ButtonUp
-#define CATA_SPEED_DEC ButtonDown
+#define PUNCHER_FIRE_BUTTON ButtonR2
+#define PUNCHER_SET_BUTTON ButtonA
+#define PUNCHER_STOP_BUTTON ButtonX
+#define PUNCHER_SPEED_INC ButtonUp
+#define PUNCHER_SPEED_DEC ButtonDown
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
 #define WINGS_BUTTON ButtonR1
@@ -131,8 +132,8 @@ void pre_auton(void) {
   //* Setup for smart drive ==================================================
   driveBase.setDebugState(true);
   // Setup motor settings
-  driveBase.leftPortSetup(7, 9, 16);
-  driveBase.rightPortSetup(1, 4, 14);
+  driveBase.leftPortSetup(18, 19, 20);
+  driveBase.rightPortSetup(11, 12, 13);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
@@ -145,7 +146,11 @@ void pre_auton(void) {
   driveBase.setDriveSpeed(100);
   driveBase.setTurnSpeed(100);
 
+  //Set stopping mode
+  driveBase.setStoppingMode(brake);
+
   // Setup PID
+  //!NEEDS RETUNING
   driveBase.setupDrivePID(.12, .050, .5, 12, 2, 100);  // p, i, d, error, error time, timeout
   driveBase.setupTurnPID(.6, 10, 0, 5, 2, 100);  // p, i, d, error, error time, timeout
 
@@ -168,7 +173,7 @@ void autonomous(void) {
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
-      cataMotor.spin(fwd, 96, percent);
+      puncherMotor.spin(fwd, 96, percent);
       break;
 
     case AUTO_GOAL_SIDE:
@@ -177,10 +182,10 @@ void autonomous(void) {
       driveBase.setTurnSpeed(95);
 
       //Drop intake and grab first ball
-      cataMotor.spin(fwd, 80, pct);
+      puncherMotor.spin(fwd, 80, pct);
       intakeMotor.spin(fwd, 100, pct);
       vex::task::sleep(750);
-      cataMotor.stop(coast);
+      puncherMotor.stop(coast);
       intakeMotor.stop();
 
       //First drive move before dropping match load ball
@@ -260,10 +265,10 @@ void autonomous(void) {
       driveBase.setTurnSpeed(80);
 
       //Drop intake and grab first ball
-      cataMotor.spin(fwd, 80, pct);
+      puncherMotor.spin(fwd, 80, pct);
       intakeMotor.spin(fwd, 100, pct);
       vex::task::sleep(750);
-      cataMotor.stop(coast);
+      puncherMotor.stop(coast);
       intakeMotor.stop();
 
       //Put the match load triball into the goal
@@ -312,7 +317,7 @@ void autonomous(void) {
 
     //*Basic skills auto the spins the catapult
     case AUTO_BASIC_SKILLS:
-      cataMotor.spin(fwd, 96, percent);
+      puncherMotor.spin(fwd, 96, percent);
       break;
 
     //*Scores the prelaod triball in the goal
@@ -388,12 +393,12 @@ void usercontrol(void) {
     }
 
     //* Control the catapult code -------------------------
-    if(primaryController.CATA_FIRE_BUTTON.pressing()) {
-      cataMotor.spin(fwd, cataSpeed, pct);
-    } else if(primaryController.CATA_STOP_BUTTON.pressing()) {
-      cataMotor.stop(coast);
+    if(primaryController.PUNCHER_FIRE_BUTTON.pressing()) {
+      puncherMotor.spin(fwd, cataSpeed, pct);
+    } else if(primaryController.PUNCHER_STOP_BUTTON.pressing()) {
+      puncherMotor.stop(coast);
     } else {
-      cataMotor.stop(hold);
+      puncherMotor.stop(hold);
     }
 
     //========================================================================

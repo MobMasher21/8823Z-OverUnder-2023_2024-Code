@@ -12,6 +12,51 @@ namespace evAPI {
     // ^^ finds the amount of encoder degrees in one inch of movement
     if(isDebugMode) printf("dpi: %f\n", degsPerInch);
   }
+
+  void Drive::setStoppingMode(brakeType mode)
+  {
+    //Left motors
+    if(leftMotor1 != nullptr)
+    {
+      leftMotor1->setStopping(mode);
+    }
+
+    if(leftMotor2 != nullptr)
+    {
+      leftMotor2->setStopping(mode);
+    }
+
+    if(leftMotor3 != nullptr)
+    {
+      leftMotor3->setStopping(mode);
+    }
+
+    if(leftMotor4 != nullptr)
+    {
+      leftMotor4->setStopping(mode);
+    }
+
+    //Right motors
+    if(rightMotor1 != nullptr)
+    {
+      rightMotor1->setStopping(mode);
+    }
+
+    if(rightMotor2 != nullptr)
+    {
+      rightMotor2->setStopping(mode);
+    }
+
+    if(rightMotor3 != nullptr)
+    {
+      rightMotor3->setStopping(mode);
+    }
+
+    if(rightMotor4 != nullptr)
+    {
+      rightMotor4->setStopping(mode);
+    }
+  }
   
   /*----- motor ports and reverses -----*/
   void Drive::setGearbox(gearSetting driveGear) {    //sets gearbox for all motors
