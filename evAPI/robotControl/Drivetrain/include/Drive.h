@@ -39,7 +39,12 @@ namespace evAPI {
       /*********** setup ***********/
       /*----- Base Setup -----*/
       void geartrainSetup(float diameter, int gearIN, int gearOUT);  //used for setting up wheel size and gear ratio
-      void setStoppingMode(brakeType mode); //Sets the stopping mode for the robot
+     
+     /**
+      * @brief Sets the stopping mode for the base.
+      * @param mode The stopping mode.
+     */
+      void setStoppingMode(brakeType mode);
 
       /*----- motor ports and reverses -----*/
       void setGearbox(gearSetting driveGear);    //sets gearbox for all motors

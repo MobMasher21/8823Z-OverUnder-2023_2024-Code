@@ -20,11 +20,11 @@ namespace evAPI {
    * @param driveCap Percent power of the drive stick
    * @param turnCap Percent power of the turn stick
    */
-  void DriverBaseControl::setHandicaps(int driveCap, int turnCap) {
+  void DriverBaseControl::setHandicaps(double driveCap, double turnCap) {
     driveHandicap = driveCap;
     turnHandicap = turnCap;
   }
-  void DriverBaseControl::setHandicaps(int driveCap) {
+  void DriverBaseControl::setHandicaps(double driveCap) {
     driveHandicap = driveCap;
   }
 

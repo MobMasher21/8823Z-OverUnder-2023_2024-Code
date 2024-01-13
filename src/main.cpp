@@ -23,7 +23,7 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out *wingPistons;
 motor puncherMotor = motor(PORT1, redGearBox, true);
-motor intakeMotor = motor(PORT2, blueGearBox, false);
+motor intakeMotor = motor(PORT3, blueGearBox, false);
 rotation puncherEncoder= rotation(PORT10, false);
 
 inertial Inertial = inertial(PORT17);
@@ -156,7 +156,7 @@ void pre_auton(void) {
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
-  driveControl.setHandicaps(1, 1);  // main drive, turning
+  driveControl.setHandicaps(1, 0.6);  // main drive, turning
 
   //* Setup controller callbacks =============================================
   primaryController.WINGS_BUTTON.pressed(tglWings);

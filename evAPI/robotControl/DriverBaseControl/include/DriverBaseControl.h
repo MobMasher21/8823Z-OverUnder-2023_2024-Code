@@ -25,8 +25,8 @@ namespace evAPI {
        * @param driveCap Percent power of the drive stick
        * @param turnCap Percent power of the turn stick
        */
-      void setHandicaps(int driveCap, int turnCap);
-      void setHandicaps(int driveCap);
+      void setHandicaps(double driveCap, double turnCap);
+      void setHandicaps(double driveCap);
 
       /**
        * @brief Set the primary stick for drive types that need it
