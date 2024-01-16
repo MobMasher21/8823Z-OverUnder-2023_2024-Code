@@ -192,6 +192,16 @@ namespace evAPI {
     turnTimeToStop = timeToStop;    
   }
 
+  void Drive::setupDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+    driftPID.setConstants(kp, ki, kd);
+    driftPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    driftP = kp;
+    driftI = ki;
+    driftD = kd;
+    driftMaxStopError = maxStopError;
+    driftTimeToStop = timeToStop;    
+  }
+
   /*----- inertial setup -----*/
   void Drive::setupInertialSensor(int port) {  //sets the port of the inertial sensor
     turnSensor = new inertial(smartPortLookupTable[port]);

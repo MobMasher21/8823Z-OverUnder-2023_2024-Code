@@ -54,10 +54,13 @@ namespace evAPI {
       double rightPosition;  //angle of right encoder
       int averagePosition;  //average position of both encoders
       int error;  // desired value - sensor value
+      int driftError;  // difference between left - right
       int desiredValue;  // angle of rotation sensor that we want
       bool isPIDRunning = true;  // is true as the PID is running
       int moveSpeed;  // the speed the motors are set to every cycle
+      int driftPower;  // output of the drift PID
       drivePID.setTotalError(0);
+      driftPID.setTotalError(0);
       drivePID.resetTimeout();
 
       //*checks to see if you have encoders and then sets the desired angle of the pid*
@@ -83,19 +86,21 @@ namespace evAPI {
         leftPosition = getLeftPosition(degrees);
         rightPosition = getRightPosition(degrees);
         averagePosition = (leftPosition + rightPosition) / 2; 
+        driftError = leftPosition - rightPosition;
 
         //*calculate error for this cycle*
         error =  desiredValue - averagePosition;
 
         //*adding all tunning values*
         moveSpeed = drivePID.compute(error);
+        driftPower = driftPID.compute(driftError);
 
         //*speed cap
         if(moveSpeed > speed) moveSpeed = speed;
         if(moveSpeed < -speed) moveSpeed = -speed;
 
         //*setting motor speeds*
-        spinBase(moveSpeed, moveSpeed);
+        spinBase(moveSpeed - driftPower, moveSpeed + driftPower);
 
         //*stopping code*
         if(drivePID.isSettled()) {isPIDRunning = false;}

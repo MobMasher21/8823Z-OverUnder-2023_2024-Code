@@ -72,6 +72,21 @@ double batteryCurrent = Brain.Battery.current();
 #define CONTROLLER_BATTERY_CAPACITY 0
 #define CONTROLLER_BATTERY_CURRENT 1
 
+//Puncher control
+enum puncherMode
+{
+  PUNCHER_LAUNCH = 0,
+  PUNCHER_BLOCK = 1
+};
+
+const double puncherAngleLaunch = 30;
+const double puncherAngleBlock = 46;
+double puncherAngle;
+double cataStartAngle;
+#define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
+int puncherSpeed = 75;
+puncherMode puncherLaunchMode = PUNCHER_LAUNCH;
+
 /*---------------------------------------------------------------------------------*/
 /*                             Pre-Autonomous Functions                            */
 /*---------------------------------------------------------------------------------*/
@@ -153,6 +168,7 @@ void pre_auton(void) {
   //!NEEDS RETUNING
   driveBase.setupDrivePID(.12, .050, .5, 12, 2, 100);  // p, i, d, error, error time, timeout
   driveBase.setupTurnPID(.6, 10, 0, 5, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupDriftPID(1, 0, 0, 0, 0, 0);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
@@ -376,6 +392,8 @@ void autonomous(void) {
 /*                                 User Control Task                               */
 /*---------------------------------------------------------------------------------*/
 void usercontrol(void) {
+  double puncherSpeedOld = 0;
+
   // User control code here, inside the loop
   while (1) {
     //=========== All drivercontrol code goes between the lines ==============
@@ -393,13 +411,30 @@ void usercontrol(void) {
     }
 
     //* Control the catapult code -------------------------
-    if(primaryController.PUNCHER_FIRE_BUTTON.pressing()) {
-      puncherMotor.spin(fwd, cataSpeed, pct);
-    } else if(primaryController.PUNCHER_STOP_BUTTON.pressing()) {
-      puncherMotor.stop(coast);
-    } else {
-      puncherMotor.stop(hold);
+    if (puncherSpeed != puncherSpeedOld) {
+        printf("Speed: %i\n", puncherSpeed);
+        
+        puncherSpeedOld = puncherSpeed;
     }
+        
+    if (!primaryController.PUNCHER_STOP_BUTTON.pressing()) {
+      if (primaryController.PUNCHER_FIRE_BUTTON.pressing() || CRNT_PUNCHER_ANGL < puncherAngle) {
+          puncherMotor.spin(fwd, cataSpeed, pct);
+      } else {
+          puncherMotor.stop(hold);
+      }
+
+      if (puncherLaunchMode == PUNCHER_LAUNCH) {
+          puncherAngle = puncherAngleLaunch;
+      } else {
+          puncherAngle = puncherAngleBlock;
+      }
+    } else {
+      puncherMotor.stop(coast);
+    }
+        
+    //Print out the angle of the catapult
+    printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
 
     //========================================================================
 

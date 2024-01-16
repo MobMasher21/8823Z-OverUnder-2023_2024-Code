@@ -73,6 +73,7 @@ namespace evAPI {
       /*----- pid setup -----*/
       void setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
       void setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+      void setupDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
 
       /*----- inertial setup -----*/
       void setupInertialSensor(int port);  //sets the port of the inertial sensor
@@ -158,6 +159,7 @@ namespace evAPI {
       /****** drive variables ******/
       PID turnPID;
       PID drivePID;
+      PID driftPID;
       int driveSpeed;
       int turnSpeed;
 
@@ -172,6 +174,12 @@ namespace evAPI {
       double turnD;
       int turnMaxStopError;  //max amount of degrees to be considered "there"
       int turnTimeToStop;  //how many pid cycles of being "there" till it stops
+
+      double driftP;
+      double driftI;
+      double driftD;
+      int driftMaxStopError;  //max amount of degrees to be considered "there"
+      int driftTimeToStop;  //how many pid cycles of being "there" till it stops
 
       /****** formulas ******/
       leftAndRight findDir(int startingAngle, int endingAngle);  //finds the direction that is faster
