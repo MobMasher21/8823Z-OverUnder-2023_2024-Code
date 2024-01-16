@@ -97,6 +97,9 @@
 	],
 	"files.associations": {
 		"*.py": "python",
-		"thread": "cpp"
+		"thread": "cpp",
+		"iosfwd": "cpp",
+		"sstream": "cpp",
+		"ostream": "cpp"
 	}
 }

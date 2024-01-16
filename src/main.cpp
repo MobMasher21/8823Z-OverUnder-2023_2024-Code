@@ -29,21 +29,26 @@ rotation puncherEncoder= rotation(PORT10, false);
 inertial Inertial = inertial(PORT17);
 
 // Controller callback function declarations ------------------------------
-void tglWings( void );  // Toggles the state of the wing pistons
+void tglWings(void);  // Toggles the state of the wing pistons
+void puncherSpeedIncrement(void); //Increments the speed of the puncher by 5
+void puncherSpeedDecrement(void); //Decrements the speed of the puncher by 5
+void puncherManualToggle(void);   //Enables manual control of the puncher
+void puncherModeToggle(void);     //Toggles the mode of the puncher
 
 // Setup controller button names ------------------------------------------
 #define PUNCHER_FIRE_BUTTON ButtonR2
-#define PUNCHER_SET_BUTTON ButtonA
+#define PUNCHER_MODE_BUTTON ButtonA
 #define PUNCHER_STOP_BUTTON ButtonX
+#define PUNCHER_MANUAL_BUTTON ButtonY
 #define PUNCHER_SPEED_INC ButtonUp
 #define PUNCHER_SPEED_DEC ButtonDown
+
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
 #define WINGS_BUTTON ButtonR1
 
 // Speed and handicap variables -------------------------------------------
 int intakeSpeed = 100;
-int cataSpeed = 75;
 
 //Setup Auto Button UI IDs
 enum autoOptions {
@@ -66,11 +71,12 @@ enum autoOptions {
 
 //Variables to display on the controller
 uint32_t batteryLevel = Brain.Battery.capacity();
-double batteryCurrent = Brain.Battery.current();
+std::string puncherModeText = "Block";
 
 //Setup controller UI IDs
 #define CONTROLLER_BATTERY_CAPACITY 0
-#define CONTROLLER_BATTERY_CURRENT 1
+#define PUNCHER_SPEED_DISPLAY 1
+#define PUNCHER_MODE_TEXT 2
 
 //Puncher control
 enum puncherMode
@@ -79,13 +85,14 @@ enum puncherMode
   PUNCHER_BLOCK = 1
 };
 
-const double puncherAngleLaunch = 30;
-const double puncherAngleBlock = 46;
+const double puncherAngleLaunch = 290;
+const double puncherAngleBlock = 240;
 double puncherAngle;
 double cataStartAngle;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
 int puncherSpeed = 75;
-puncherMode puncherLaunchMode = PUNCHER_LAUNCH;
+puncherMode puncherLaunchMode = PUNCHER_BLOCK;
+bool puncherAutoPrimeEnabled = true;
 
 /*---------------------------------------------------------------------------------*/
 /*                             Pre-Autonomous Functions                            */
@@ -139,7 +146,8 @@ void pre_auton(void) {
 
   //*Setup controller UI
   UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
-  UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CURRENT, "Battery Amps: ", batteryCurrent);
+  UI.primaryControllerUI.addData(PUNCHER_SPEED_DISPLAY, "Puncher Speed: ", puncherSpeed);
+  UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
 
   //Start the threads
   UI.startThreads();
@@ -176,6 +184,13 @@ void pre_auton(void) {
 
   //* Setup controller callbacks =============================================
   primaryController.WINGS_BUTTON.pressed(tglWings);
+  primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
+  primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
+  primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
+  primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
+
+  //catapult
+  puncherEncoder.resetPosition();
 }
 
 
@@ -392,7 +407,7 @@ void autonomous(void) {
 /*                                 User Control Task                               */
 /*---------------------------------------------------------------------------------*/
 void usercontrol(void) {
-  double puncherSpeedOld = 0;
+  int puncherSpeedOld = -5;
 
   // User control code here, inside the loop
   while (1) {
@@ -411,28 +426,41 @@ void usercontrol(void) {
     }
 
     //* Control the catapult code -------------------------
-    if (puncherSpeed != puncherSpeedOld) {
-        printf("Speed: %i\n", puncherSpeed);
-        
-        puncherSpeedOld = puncherSpeed;
+    if(puncherSpeed != puncherSpeedOld)
+    {
+      printf("Speed: %i\n", puncherSpeed);
+      puncherSpeedOld = puncherSpeed;
     }
-        
-    if (!primaryController.PUNCHER_STOP_BUTTON.pressing()) {
-      if (primaryController.PUNCHER_FIRE_BUTTON.pressing() || CRNT_PUNCHER_ANGL < puncherAngle) {
-          puncherMotor.spin(fwd, cataSpeed, pct);
-      } else {
-          puncherMotor.stop(hold);
-      }
 
-      if (puncherLaunchMode == PUNCHER_LAUNCH) {
-          puncherAngle = puncherAngleLaunch;
-      } else {
-          puncherAngle = puncherAngleBlock;
-      }
-    } else {
+    //Motor control from either the user or robot
+    if(primaryController.PUNCHER_STOP_BUTTON.pressing())
+    {
       puncherMotor.stop(coast);
     }
-        
+
+    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
+            || (puncherAutoPrimeEnabled && (CRNT_PUNCHER_ANGL < puncherAngle))
+    )
+    {
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+    }
+
+    else
+    {
+      puncherMotor.stop(hold);
+    }
+
+    //Control the target angle
+    if(puncherLaunchMode == PUNCHER_LAUNCH)
+    {
+      puncherAngle = puncherAngleLaunch;
+    }
+    
+    else
+    {
+      puncherAngle = puncherAngleBlock;
+    }
+
     //Print out the angle of the catapult
     printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
 
@@ -457,12 +485,74 @@ int main() {
   while (true) {
     //Update controller UI data
     batteryLevel = Brain.Battery.capacity();
-    batteryCurrent = Brain.Battery.current();
+
+    if(puncherAutoPrimeEnabled)
+    {
+      if(puncherLaunchMode == PUNCHER_LAUNCH)
+      {
+        puncherModeText = "Launch";
+      }
+
+      else
+      {
+        puncherModeText = "Block";
+      }
+    }
+
+    else
+    {
+      puncherModeText = "Manual";
+    }
+
     vex::task::sleep(20);
   }
 }
 
-// Controller callback definitions
-void tglWings( void ) {  // Toggles the state of the wing pistons
+//*Controller callback definitions
+void tglWings(void) {  // Toggles the state of the wing pistons
   wingPistons->set(!wingPistons->value());
+}
+
+void puncherSpeedIncrement(void)
+{
+  if(puncherSpeed < 100)
+  {
+    puncherSpeed += 5;
+  }
+
+  else
+  {
+    puncherSpeed = 100;
+  }
+}
+
+void puncherSpeedDecrement(void)
+{
+  if(puncherSpeed > 0)
+  {
+    puncherSpeed -= 5;
+  }
+
+  else
+  {
+    puncherSpeed = 0;
+  }
+}
+
+void puncherManualToggle(void)
+{
+  puncherAutoPrimeEnabled = !puncherAutoPrimeEnabled;
+}
+
+void puncherModeToggle(void)
+{
+  if(puncherLaunchMode == PUNCHER_BLOCK)
+  {
+    puncherLaunchMode = PUNCHER_LAUNCH;
+  }
+
+  else
+  {
+    puncherLaunchMode = PUNCHER_BLOCK;
+  }
 }
