@@ -86,7 +86,7 @@ enum puncherMode
 };
 
 const double puncherAngleLaunch = 290;
-const double puncherAngleBlock = 240;
+const double puncherAngleBlock = 230;
 double puncherAngle;
 double cataStartAngle;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
