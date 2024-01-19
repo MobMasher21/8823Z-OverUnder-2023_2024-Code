@@ -55,6 +55,7 @@ enum autoOptions {
   //*General
   //Page 1
   AUTO_SKILLS_1 = 0,
+  FOUR_BALL_GOAL_SIDE = 1,
   AUTO_DO_NOTHING = 4,
   AUTO_GOAL_SIDE = 3,
   AUTO_LOAD_SIDE = 7,
@@ -87,10 +88,10 @@ enum puncherMode
 };
 
 const double puncherAngleLaunch = 290;
-const double puncherAngleBlock = 230;
+const double puncherAngleBlock = 235;
 double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
-int puncherSpeed = 75;
+int puncherSpeed = 100;
 puncherMode puncherLaunchMode = PUNCHER_BLOCK;
 bool puncherAutoPrimeEnabled = true;
 
@@ -104,6 +105,7 @@ void pre_auton(void) {
   //* Setup for auto selection UI ============================================
   // Add all the buttons
   UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
+  UI.autoSelectorUI.addButton(FOUR_BALL_GOAL_SIDE, cyan);
   UI.autoSelectorUI.addButton(AUTO_GOAL_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_LOAD_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_DO_NOTHING, red);
@@ -133,6 +135,7 @@ void pre_auton(void) {
 
   // Select all the icons
   UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.skills);
+  UI.autoSelectorUI.setButtonIcon(FOUR_BALL_GOAL_SIDE, UI.autoSelectorUI.icons.number4);
   UI.autoSelectorUI.setButtonIcon(AUTO_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_DO_NOTHING, UI.autoSelectorUI.icons.exclamationMark);
@@ -213,6 +216,78 @@ void autonomous(void) {
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
       puncherMotor.spin(fwd, 96, percent);
+      break;
+
+    case FOUR_BALL_GOAL_SIDE:
+      //Set speeds
+      driveBase.setDriveSpeed(100);
+      driveBase.setTurnSpeed(95);
+
+      //Drop intake and grab first ball
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+      //this_thread::sleep_for(800);
+      while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+      {
+        this_thread::sleep_for(5);
+      }
+      puncherMotor.stop(hold);
+      intakeMotor.spin(fwd, 100, pct);
+      vex::task::sleep(500);
+      intakeMotor.stop();
+
+      //First drive move before dropping match load ball
+      driveBase.driveForward(40);
+      driveBase.turnToHeading(63);
+
+      //Drop match load ball
+      intakeMotor.spin(reverse, 100, pct);
+      vex::task::sleep(450);
+      intakeMotor.stop();
+
+      //Aim and grab second ball
+      driveBase.turnToHeading(306);
+      intakeMotor.spin(fwd, 100, pct);
+      driveBase.driveForward(27);
+
+      //Align with goal and ram in first two triballs
+      driveBase.turnToHeading(270);
+      this_thread::sleep_for(400);
+      intakeMotor.stop();
+
+      //Change tuning values to allow the robot to move smoothly
+      driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
+      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
+
+      driveBase.driveBackward(12);
+      driveBase.driveForward(8);
+      driveBase.turnToHeading(90);
+      wingPistons->set(true);
+      intakeMotor.spin(reverse, 100, percent);
+      vex::task::sleep(400);
+
+      //Push triballs into goal
+      driveBase.spinBase(100, 100);
+      vex::task::sleep(200);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 50) && (driveBase.getBaseSpeed(right) > 50)) {
+        vex::task::sleep(5);
+      }
+
+      intakeMotor.stop();
+      vex::task::sleep(200);
+      driveBase.stopRobot();
+      driveBase.driveBackward(20);
+
+      //grab ball 4
+      wingPistons->set(false);
+      driveBase.turnToHeading(180);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(270);
+      intakeMotor.spin(fwd, 100, pct);
+      driveBase.driveForward(22);
+      driveBase.turnToHeading(290);
+
       break;
 
     case AUTO_GOAL_SIDE:
