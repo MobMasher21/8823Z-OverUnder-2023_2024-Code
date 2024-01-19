@@ -74,9 +74,10 @@ uint32_t batteryLevel = Brain.Battery.capacity();
 std::string puncherModeText = "Block";
 
 //Setup controller UI IDs
-#define CONTROLLER_BATTERY_CAPACITY 0
-#define PUNCHER_SPEED_DISPLAY 1
-#define PUNCHER_MODE_TEXT 2
+#define CONTROLLER_BATTERY_CAPACITY 1
+#define PUNCHER_SPEED_DISPLAY 2
+#define PUNCHER_MODE_TEXT 3
+#define INERTIAL_CALIBRATING_TEXT 0
 
 //Puncher control
 enum puncherMode
@@ -87,8 +88,7 @@ enum puncherMode
 
 const double puncherAngleLaunch = 290;
 const double puncherAngleBlock = 230;
-double puncherAngle;
-double cataStartAngle;
+double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
 int puncherSpeed = 75;
 puncherMode puncherLaunchMode = PUNCHER_BLOCK;
@@ -141,13 +141,14 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_GOAL_SIDE);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
   UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(PUNCHER_SPEED_DISPLAY, "Puncher Speed: ", puncherSpeed);
   UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
+  UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
 
   //Start the threads
   UI.startThreads();
@@ -173,10 +174,9 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  //!NEEDS RETUNING
-  driveBase.setupDrivePID(.12, .050, .5, 12, 2, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupTurnPID(.6, 10, 0, 5, 2, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupDriftPID(1, 0, 0, 0, 0, 0);  // p, i, d, error, error time, timeout
+  driveBase.setupDrivePID(0.12, 0.07, 0.05, 7, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupTurnPID(0.6, 1, 0.125, 3, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
@@ -189,8 +189,16 @@ void pre_auton(void) {
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
   primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
 
-  //catapult
+  //*Catapult
   puncherEncoder.resetPosition();
+
+  //*Display calibrating information
+  UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATING_TEXT);
+  while(Inertial.isCalibrating())
+  {
+    this_thread::sleep_for(5);
+  }
+  UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
 }
 
 
@@ -213,10 +221,15 @@ void autonomous(void) {
       driveBase.setTurnSpeed(95);
 
       //Drop intake and grab first ball
-      puncherMotor.spin(fwd, 80, pct);
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+      //this_thread::sleep_for(800);
+      while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+      {
+        this_thread::sleep_for(5);
+      }
+      puncherMotor.stop(hold);
       intakeMotor.spin(fwd, 100, pct);
-      vex::task::sleep(750);
-      puncherMotor.stop(coast);
+      vex::task::sleep(500);
       intakeMotor.stop();
 
       //First drive move before dropping match load ball
@@ -225,125 +238,116 @@ void autonomous(void) {
 
       //Drop match load ball
       intakeMotor.spin(reverse, 100, pct);
-      vex::task::sleep(750);
+      vex::task::sleep(450);
       intakeMotor.stop();
 
       //Aim and grab second ball
       driveBase.turnToHeading(306);
       intakeMotor.spin(fwd, 100, pct);
-      driveBase.driveForward(28);
+      driveBase.driveForward(27);
 
       //Align with goal and ram in first two triballs
       driveBase.turnToHeading(270);
+      this_thread::sleep_for(400);
       intakeMotor.stop();
-      wingPistons->set(true);
 
-      //Start to push in final triball
-      driveBase.spinBase(-100, -100);
+      //Change tuning values to allow the robot to move smoothly
+      driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
+      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
 
-      //Lets the robot get up to speed
-      vex::task::sleep(500);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while(driveBase.getBaseSpeed(left) > 20) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(200);
-      driveBase.stopRobot();
-
-      //Turn to face bar
-      wingPistons->set(false);
+      driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
+      wingPistons->set(true);
+      intakeMotor.spin(reverse, 100, percent);
+      vex::task::sleep(400);
 
-      //Place the triball in the intake into the goal
-      intakeMotor.spin(reverse, 100, pct);
-      vex::task::sleep(500);
+      //Push triballs into goal
       driveBase.spinBase(100, 100);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while(driveBase.getBaseSpeed(left) > 20) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(350);
-      intakeMotor.stop();
-      driveBase.stopRobot();
-
-      //Drive away from the goal
-      driveBase.driveBackward(8);
-
-      //Drive to the bar and touch int
-      driveBase.setTurnSpeed(100);
-      driveBase.turnToHeading(213);
-      intakeMotor.spin(fwd, 100, pct);
-      driveBase.spinBase(100, 100);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while(driveBase.getBaseSpeed(left) > 20) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(500);
-      intakeMotor.stop();
-      driveBase.stopRobot();
-      break;
-
-    case AUTO_LOAD_SIDE:
-      //Set drive base parameters
-      driveBase.setDriveSpeed(100);
-      driveBase.setTurnSpeed(80);
-
-      //Drop intake and grab first ball
-      puncherMotor.spin(fwd, 80, pct);
-      intakeMotor.spin(fwd, 100, pct);
-      vex::task::sleep(750);
-      puncherMotor.stop(coast);
-      intakeMotor.stop();
-
-      //Put the match load triball into the goal
-      driveBase.driveForward(46);
-      driveBase.turnToHeading(270);
-      intakeMotor.spin(reverse, 100, pct);
-      vex::task::sleep(750);
-      driveBase.spinBase(70, 70);
+      vex::task::sleep(200);
 
       //Runs the motors until it has runs into the goal and can't move
       while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
         vex::task::sleep(5);
       }
 
-      vex::task::sleep(500);
-      driveBase.stopRobot();
-      driveBase.driveBackward(8);
-
-      //Drive to triball in match load zone
-      driveBase.turnToHeading(185);
       intakeMotor.stop();
-      driveBase.driveForward(30);
+      vex::task::sleep(200);
+      driveBase.stopRobot();
+      driveBase.driveBackward(20);
+
+      //Go touch the bar
+      wingPistons->set(false);
+      driveBase.turnToHeading(180);
+      driveBase.driveForward(29);
+      driveBase.turnToHeading(270);
+      wingPistons->set(true);
+      driveBase.driveForward(22);
+      driveBase.turnToHeading(290);
+
+      break;
+
+    case AUTO_LOAD_SIDE:
+      //Set drive base parameters
+      driveBase.setDriveSpeed(100);
+      driveBase.setTurnSpeed(100);
+
+      //Drop intake and grab first ball
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+      this_thread::sleep_for(770);
+      intakeMotor.spin(fwd, 100, pct);
+      puncherMotor.stop(hold);
+      vex::task::sleep(200);
+      intakeMotor.stop();
+
+      //Put the match load triball in front of the goal
+      driveBase.driveForward(49);
+      driveBase.turnToHeading(270);
+      intakeMotor.spin(reverse, 100, pct);
+      this_thread::sleep_for(200);
+      intakeMotor.stop();
+
+      //Push triballs into goal
+      driveBase.spinBase(100, 100);
+      vex::task::sleep(100);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(200);
+      driveBase.stopRobot();
+      driveBase.driveBackward(20);
+
+      //Change tuning values to allow the robot to move smoothly
+      driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
+      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
+
+      //Drive to match load triball
+      driveBase.turnToHeading(185);
+      driveBase.driveForward(28);
       driveBase.turnToHeading(90);
       driveBase.driveBackward(23);
       driveBase.turnToHeading(143);
 
-      //Remove the triball from the load side
+      //Puh the triball out
       wingPistons->set(true);
-      driveBase.driveForward(18);
-      driveBase.setTurnSpeed(40);
-      driveBase.turnToHeading(40);
-      vex::task::sleep(500);
-      driveBase.turnToHeading(120);
+      driveBase.driveForward(15);
+      driveBase.turnToHeading(70);
       wingPistons->set(false);
-      driveBase.setTurnSpeed(100);
 
-      //!NEEDS FIXING
-
-      //Push the triballs onto the other side and touch the bar
-      driveBase.driveForward(14);
-      driveBase.turnToHeading(90);
-      intakeMotor.spin(reverse, 100, pct);
-      driveBase.driveForward(30);
+      //Push triballs to other side
+      driveBase.turnToHeading(125);
+      intakeMotor.spin(reverse, 100, percent);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(85);
+      driveBase.driveForward(21);
+      driveBase.driveBackward(3);
+      driveBase.turnToHeading(120);
+      wingPistons->set(true);
       intakeMotor.stop();
+
       break;
 
     //*Basic skills auto the spins the catapult
@@ -379,12 +383,13 @@ void autonomous(void) {
 
     //*TEST AUTOS
     case AUTO_TEST_PID:
-      driveBase.driveForward(48);
-      this_thread::sleep_for(3000);
-      driveBase.driveBackward(48);
+      // driveBase.driveForward(39.5);
+      // this_thread::sleep_for(3000);
+      // driveBase.driveBackward(39.5);
 
-      //driveBase.turnToHeading(90);
-      //driveBase.turnToHeading(0);
+      driveBase.turnToHeading(90);
+      this_thread::sleep_for(500);
+      driveBase.turnToHeading(0);
       break;
 
     //*Do nothing auto
@@ -407,6 +412,7 @@ void autonomous(void) {
 /*                                 User Control Task                               */
 /*---------------------------------------------------------------------------------*/
 void usercontrol(void) {
+  double puncherAngle;
   int puncherSpeedOld = -5;
 
   // User control code here, inside the loop

@@ -234,10 +234,15 @@ namespace evAPI {
           turnError = startAngle - endAngle;
         } else if(startAngle - endAngle > 180) {
           turnError = (startAngle - endAngle) - 360;
+        } else {
+          turnError = 180;
         }
       } else if(((startAngle + 360) - endAngle) < 180) {
         turnError = (startAngle + 360) - endAngle;
-      }  
+      } else {
+        turnError = 180;
+      }
+      
     } else if(direction == RIGHT) {
     
       //===============================RIGHT
@@ -246,9 +251,13 @@ namespace evAPI {
           turnError = endAngle - startAngle;
         } else if(endAngle - startAngle > 180) {
           turnError = (endAngle - startAngle) - 360;
+        } else {
+          turnError = 180;
         }
       } else if(((endAngle + 360) - startAngle) < 180) {
         turnError = (endAngle + 360) - startAngle;
+      } else {
+        turnError = 180;
       }
       //===============================
     }
