@@ -88,7 +88,7 @@ enum puncherMode
 };
 
 const double puncherAngleLaunch = 290;
-const double puncherAngleBlock = 235;
+const double puncherAngleBlock = 240;
 double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
 int puncherSpeed = 100;
@@ -116,6 +116,7 @@ void pre_auton(void) {
 
   // Set all the titles
   UI.autoSelectorUI.setButtonTitle(AUTO_SKILLS_1, "Skills Auto");
+  UI.autoSelectorUI.setButtonTitle(FOUR_BALL_GOAL_SIDE, "Four Ball Goal");
   UI.autoSelectorUI.setButtonTitle(AUTO_GOAL_SIDE, "Goal Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_LOAD_SIDE, "Load Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_DO_NOTHING, "DO NOTHING!");
@@ -126,6 +127,7 @@ void pre_auton(void) {
 
   // Set all the descriptions
   UI.autoSelectorUI.setButtonDescription(AUTO_SKILLS_1, "Shoots all the match loads into the field, then attempts to push them into the goal.");
+  UI.autoSelectorUI.setButtonDescription(FOUR_BALL_GOAL_SIDE, "Runs on goal side. Scores the colored ball and 3 green ones.");
   UI.autoSelectorUI.setButtonDescription(AUTO_GOAL_SIDE, "Scores three triballs, including the match load, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_LOAD_SIDE, "Scores the match load, pushes two triballs to the other side, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_DO_NOTHING, "The robot will do nothing.");
@@ -177,8 +179,8 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.12, 0.07, 0.05, 7, 2, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupTurnPID(0.6, 1, 0.125, 3, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);  // p, i, d, error, error time, timeout
+  driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);  // p, i, d, error, error time, timeout
   driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
@@ -258,6 +260,7 @@ void autonomous(void) {
       driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
       driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
 
+      intakeMotor.spin(fwd, 20, pct);
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
@@ -267,17 +270,17 @@ void autonomous(void) {
 
       //Push triballs into goal
       driveBase.spinBase(100, 100);
-      vex::task::sleep(200);
+      vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 50) && (driveBase.getBaseSpeed(right) > 50)) {
+      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
         vex::task::sleep(5);
       }
 
       intakeMotor.stop();
       vex::task::sleep(200);
       driveBase.stopRobot();
-      driveBase.driveBackward(20);
+      driveBase.driveBackward(12);
 
       //grab ball 4
       wingPistons->set(false);
@@ -286,7 +289,25 @@ void autonomous(void) {
       driveBase.turnToHeading(270);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(22);
-      driveBase.turnToHeading(290);
+
+      //score ball 4
+      driveBase.driveBackward(12);
+      driveBase.turnToHeading(60);
+      intakeMotor.spin(reverse, 100, pct);
+      puncherMotor.spin(fwd, 20, pct);
+
+      driveBase.spinBase(100, 100);
+      vex::task::sleep(600);
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
+        vex::task::sleep(5);
+      }
+      intakeMotor.stop(coast);
+      driveBase.stopRobot();
+      puncherMotor.stop(hold);
+
+      //leave the goal
+      driveBase.driveBackward(24);
 
       break;
 
@@ -330,6 +351,7 @@ void autonomous(void) {
       driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
       driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
 
+      intakeMotor.spin(fwd, 20, pct);
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
@@ -339,26 +361,26 @@ void autonomous(void) {
 
       //Push triballs into goal
       driveBase.spinBase(100, 100);
-      vex::task::sleep(200);
+      vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
+      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
         vex::task::sleep(5);
       }
 
       intakeMotor.stop();
       vex::task::sleep(200);
       driveBase.stopRobot();
-      driveBase.driveBackward(20);
+      driveBase.driveBackward(28);
 
       //Go touch the bar
       wingPistons->set(false);
-      driveBase.turnToHeading(180);
-      driveBase.driveForward(29);
-      driveBase.turnToHeading(270);
+      driveBase.turnToHeading(210);
+      intakeMotor.spin(fwd, 100, pct);
+      driveBase.driveForward(35);
       wingPistons->set(true);
-      driveBase.driveForward(22);
-      driveBase.turnToHeading(290);
+      driveBase.setTurnSpeed(20);
+      driveBase.turnToHeading(155);
 
       break;
 
