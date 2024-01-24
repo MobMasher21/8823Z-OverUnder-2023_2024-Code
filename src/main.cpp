@@ -22,11 +22,11 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out *wingPistons;
-motor puncherMotor = motor(PORT1, redGearBox, true);
-motor intakeMotor = motor(PORT3, blueGearBox, false);
-rotation puncherEncoder= rotation(PORT10, false);
+motor puncherMotor = motor(PORT10, redGearBox, true);
+motor intakeMotor = motor(PORT9, blueGearBox, false);
+rotation puncherEncoder = rotation(PORT7, false);
 
-inertial Inertial = inertial(PORT17);
+inertial Inertial = inertial(PORT6);
 
 // Controller callback function declarations ------------------------------
 void tglWings(void);  // Toggles the state of the wing pistons
@@ -87,7 +87,7 @@ enum puncherMode
   PUNCHER_BLOCK = 1
 };
 
-const double puncherAngleLaunch = 290;
+const double puncherAngleLaunch = 285;
 const double puncherAngleBlock = 240;
 double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
@@ -161,8 +161,8 @@ void pre_auton(void) {
   //* Setup for smart drive ==================================================
   driveBase.setDebugState(true);
   // Setup motor settings
-  driveBase.leftPortSetup(18, 19, 20);
-  driveBase.rightPortSetup(11, 12, 13);
+  driveBase.leftPortSetup(11, 12, 13);
+  driveBase.rightPortSetup(18, 19, 20);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
