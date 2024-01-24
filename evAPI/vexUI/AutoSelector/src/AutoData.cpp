@@ -103,4 +103,14 @@ namespace evAPI {
     }
     return(printedStuff);
   }
+
+  std::string AutoData::getTitle()
+  {
+    return std::string(title);
+  }
+
+  std::string AutoData::getDescription()
+  {
+    return std::string(description);
+  }
 } // namespace evAPI

@@ -58,7 +58,7 @@ namespace evAPI
     label = labelIn;
 
     //Delete data if it already exists
-    if(data == nullptr)
+    if(data != nullptr)
     {
       delete data;
     }

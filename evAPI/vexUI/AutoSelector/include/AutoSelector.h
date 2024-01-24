@@ -8,6 +8,7 @@
 #include "pageArrowsIcons.h"
 #include "iconArrays.h"
 #include "AutoData.h"
+#include <string>
 
 #define MAX_BUTTON_COUNT 64
 
@@ -16,6 +17,7 @@ namespace evAPI {
     public:
       AutoSelector();  // Constructor to set up page turning buttons
       int getSelectedButton();  // Returns the selectedButton
+      std::string getSelectedButtonTitle(); //Returns title of the selected button
       void setSelectedButton(int button);  // Sets the currently selected button
       void setSelectedPage(int page);  // Sets the currently selected page
       

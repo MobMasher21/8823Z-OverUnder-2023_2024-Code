@@ -22,6 +22,16 @@ namespace evAPI {
     return(selectedButton);
   }
 
+  std::string AutoSelector::getSelectedButtonTitle()
+  {
+    if(dataList[selectedButton] == nullptr)
+    {
+      return std::string("");
+    }
+
+    return dataList[selectedButton]->getTitle();
+  }
+
   void AutoSelector::setSelectedButton(int button) {  // Sets the currently selected button
     selectedButton = button;
   }

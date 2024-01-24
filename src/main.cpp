@@ -73,12 +73,18 @@ enum autoOptions {
 //Variables to display on the controller
 uint32_t batteryLevel = Brain.Battery.capacity();
 std::string puncherModeText = "Block";
+std::string selectedAutoName = "";
 
 //Setup controller UI IDs
-#define CONTROLLER_BATTERY_CAPACITY 1
-#define PUNCHER_SPEED_DISPLAY 2
-#define PUNCHER_MODE_TEXT 3
-#define INERTIAL_CALIBRATING_TEXT 0
+enum controllerOptions
+{
+  INERTIAL_CALIBRATING_TEXT = 0,
+  CONTROLLER_BATTERY_CAPACITY = 1,
+  PUNCHER_SPEED_DISPLAY = 2,
+  PUNCHER_MODE_TEXT = 3,
+  AUTO_MODE_LABEL = 4,
+  AUTO_MODE_TEXT = 5
+};
 
 //Puncher control
 enum puncherMode
@@ -150,10 +156,13 @@ void pre_auton(void) {
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
+  UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
   UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(PUNCHER_SPEED_DISPLAY, "Puncher Speed: ", puncherSpeed);
   UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
-  UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
+  UI.primaryControllerUI.addData(AUTO_MODE_LABEL, "Selected Auto:");
+  UI.primaryControllerUI.addData(AUTO_MODE_TEXT, "", selectedAutoName);
+  UI.primaryControllerUI.addData(6, "");
 
   //Start the threads
   UI.startThreads();
@@ -586,9 +595,10 @@ int main() {
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
-    //Update controller UI data
+    //*Update controller UI data
     batteryLevel = Brain.Battery.capacity();
 
+    //Update catapult mode text
     if(puncherAutoPrimeEnabled)
     {
       if(puncherLaunchMode == PUNCHER_LAUNCH)
@@ -605,6 +615,20 @@ int main() {
     else
     {
       puncherModeText = "Manual";
+    }
+
+    //Update auto name
+    selectedAutoName = UI.autoSelectorUI.getSelectedButtonTitle();
+
+    //Show Match UI or Auto UI on controller
+    if(getCompetitionStatus() == robotMode::autonomousControl)
+    {
+      UI.primaryControllerUI.setScreenLine(AUTO_MODE_LABEL);
+    }
+
+    else
+    {
+      UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
     }
 
     vex::task::sleep(20);
