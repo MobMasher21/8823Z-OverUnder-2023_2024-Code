@@ -17,8 +17,8 @@ namespace evAPI {
   }
   
   void Drive::printAllEncoderData() {  //prints all 3 encoder values to the terminal
-    printf("%f, ", getLeftPosition(degrees));
-    printf("%f, ", getRightPosition(degrees));
+    printf("%f, ", getLeftDrivePosition(degrees));
+    printf("%f, ", getRightDrivePosition(degrees));
     printf("%f\n", getBackPosition(degrees));
   }
   
@@ -72,10 +72,10 @@ namespace evAPI {
       if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
 
       //*resets encoders*
-      resetLeftPosition();
-      resetRightPosition();
-      if(isDebugMode) printf("rightAngle: %f\n", getLeftPosition(degrees));
-      if(isDebugMode) printf("leftAngle: %f\n", getRightPosition(degrees));
+      resetLeftDrivePosition();
+      resetRightDrivePosition();
+      if(isDebugMode) printf("rightAngle: %f\n", getLeftDrivePosition(degrees));
+      if(isDebugMode) printf("leftAngle: %f\n", getRightDrivePosition(degrees));
 
       //*print debug header*
       if(isDebugMode) printf("position, error, moveSpeed\n");
@@ -83,8 +83,8 @@ namespace evAPI {
       //*main PID loop*
       while(isPIDRunning) {
         //*get encoder positions*
-        leftPosition = getLeftPosition(degrees);
-        rightPosition = getRightPosition(degrees);
+        leftPosition = getLeftDrivePosition(degrees);
+        rightPosition = getRightDrivePosition(degrees);
         averagePosition = (leftPosition + rightPosition) / 2; 
         driftError = leftPosition - rightPosition;
 

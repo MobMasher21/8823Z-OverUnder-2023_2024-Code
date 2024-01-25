@@ -26,7 +26,7 @@ motor puncherMotor = motor(PORT10, redGearBox, true);
 motor intakeMotor = motor(PORT9, blueGearBox, false);
 rotation puncherEncoder = rotation(PORT7, false);
 
-inertial Inertial = inertial(PORT6);
+//inertial Inertial = inertial(PORT6);
 
 // Controller callback function declarations ------------------------------
 void tglWings(void);  // Toggles the state of the wing pistons
@@ -83,7 +83,9 @@ enum controllerOptions
   PUNCHER_SPEED_DISPLAY = 2,
   PUNCHER_MODE_TEXT = 3,
   AUTO_MODE_LABEL = 4,
-  AUTO_MODE_TEXT = 5
+  AUTO_MODE_TEXT = 5,
+  AUTO_MODE_SPACER_1 = 6,
+  AUTO_MODE_SPACER_2 = 7
 };
 
 //Puncher control
@@ -162,7 +164,8 @@ void pre_auton(void) {
   UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
   UI.primaryControllerUI.addData(AUTO_MODE_LABEL, "Selected Auto:");
   UI.primaryControllerUI.addData(AUTO_MODE_TEXT, "", selectedAutoName);
-  UI.primaryControllerUI.addData(6, "");
+  UI.primaryControllerUI.addData(AUTO_MODE_SPACER_1, "");
+  UI.primaryControllerUI.addData(AUTO_MODE_SPACER_2, "");
 
   //Start the threads
   UI.startThreads();
@@ -177,7 +180,7 @@ void pre_auton(void) {
   driveBase.geartrainSetup(3.25, 36, 60);
   
   // Setup inertial sensor settings
-  driveBase.setupInertialSensor(17);
+  driveBase.setupInertialSensor(6);
   driveBase.calibrateInertial();
 
   // Set default speeds
@@ -208,7 +211,7 @@ void pre_auton(void) {
 
   //*Display calibrating information
   UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATING_TEXT);
-  while(Inertial.isCalibrating())
+  while(driveBase.isInertialCalibrating())
   {
     this_thread::sleep_for(5);
   }
@@ -521,6 +524,8 @@ void usercontrol(void) {
   double puncherAngle;
   int puncherSpeedOld = -5;
 
+  UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
+
   // User control code here, inside the loop
   while (1) {
     //=========== All drivercontrol code goes between the lines ==============
@@ -593,6 +598,8 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
+  UI.primaryControllerUI.setScreenLine(AUTO_MODE_LABEL);
+
   // Prevent main from exiting with an infinite loop.
   while (true) {
     //*Update controller UI data
@@ -619,17 +626,6 @@ int main() {
 
     //Update auto name
     selectedAutoName = UI.autoSelectorUI.getSelectedButtonTitle();
-
-    //Show Match UI or Auto UI on controller
-    if(getCompetitionStatus() == robotMode::autonomousControl)
-    {
-      UI.primaryControllerUI.setScreenLine(AUTO_MODE_LABEL);
-    }
-
-    else
-    {
-      UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
-    }
 
     vex::task::sleep(20);
   }

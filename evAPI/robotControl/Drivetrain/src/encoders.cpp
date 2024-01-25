@@ -3,19 +3,57 @@
 namespace evAPI {
   //======================================== private =============================================
   /****** encoders ******/
-  double Drive::getLeftPosition(rotationUnits units) {    //get the position of the left side on motor or rotation sensor
+  void Drive::leftFullReset() {  //resets all position data about left encoder
+    leftDrivePositionOffset = 0;
+    leftOdoPositionOffset = 0;
     if(!leftEncoder) {
-      return(leftMotor1->position(units));
+      leftMotor1->resetPosition();
     } else {
-      return(leftEncoder->position(units));
+      leftEncoder->resetPosition();
     }
   }
 
-  double Drive::getRightPosition(rotationUnits units) {    //get the position of the right side on motor or rotation sensor
+  void Drive::rightFullReset() {  //resets all position data about right encoder
+    rightDrivePositionOffset = 0;
+    rightOdoPositionOffset = 0;
     if(!rightEncoder) {
-      return(rightMotor1->position(units));
+      rightMotor1->resetPosition();
     } else {
-      return(rightEncoder->position(units));
+      rightEncoder->resetPosition();
+    }
+  }
+
+  //======================================== private =============================================
+  /****** encoders ******/
+  double Drive::getLeftDrivePosition(rotationUnits units) {  //get the position of the left side on motor or rotation sensor for drive actions
+    if(!leftEncoder) {
+      return(leftMotor1->position(units) - leftDrivePositionOffset);
+    } else {
+      return(leftEncoder->position(units) - leftDrivePositionOffset);
+    }
+  }
+
+  double Drive::getLeftOdoPosition(rotationUnits units) {  //get the position of the left side on motor or rotation sensor for odo actions
+    if(!leftEncoder) {
+      return(leftMotor1->position(units) - leftOdoPositionOffset);
+    } else {
+      return(leftEncoder->position(units) - leftOdoPositionOffset);
+    }
+  }
+
+  double Drive::getRightDrivePosition(rotationUnits units) {  //get the position of the right side on motor or rotation sensor for drive actions
+    if(!rightEncoder) {
+      return(rightMotor1->position(units) - rightDrivePositionOffset);
+    } else {
+      return(rightEncoder->position(units) - rightDrivePositionOffset);
+    }
+  }
+
+  double Drive::getRightOdoPosition(rotationUnits units) {  //get the position of the right side on motor or rotation sensor for odo actions
+    if(!rightEncoder) {
+      return(rightMotor1->position(units) - rightOdoPositionOffset);
+    } else {
+      return(rightEncoder->position(units) - rightOdoPositionOffset);
     }
   }
 
@@ -27,19 +65,35 @@ namespace evAPI {
     }
   }
 
-  void Drive::resetLeftPosition() {    //resets position of left encoder to 0
+  void Drive::resetLeftDrivePosition() {    //resets position of left encoder to 0 for drive actions
     if(!leftEncoder) {
-      leftMotor1->resetPosition();
+      leftDrivePositionOffset = leftMotor1->position(deg);
     } else {
-      leftEncoder->resetPosition();
+      leftDrivePositionOffset = leftEncoder->position(deg);
     }
   }
 
-  void Drive::resetRightPosition() {    //resets position of right encoder to 0
+  void Drive::resetLeftOdoPosition() {    //resets position of left encoder to 0 for odo actions
     if(!leftEncoder) {
-      rightMotor1->resetPosition();
+      leftOdoPositionOffset = leftMotor1->position(deg);
     } else {
-      rightEncoder->resetPosition();
+      leftOdoPositionOffset = leftEncoder->position(deg);
+    }
+  }
+
+  void Drive::resetRightDrivePosition() {    //resets position of right encoder to 0 for drive actions
+    if(!leftEncoder) {
+      rightDrivePositionOffset = rightMotor1->position(deg);
+    } else {
+      rightDrivePositionOffset = rightEncoder->position(deg);
+    }
+  }
+
+  void Drive::resetRightOdoPosition() {    //resets position of right encoder to 0 for odo actions
+    if(!leftEncoder) {
+      rightOdoPositionOffset = rightMotor1->position(deg);
+    } else {
+      rightOdoPositionOffset = rightEncoder->position(deg);
     }
   }
 
