@@ -19,14 +19,13 @@ using namespace evAPI;
 // Setup global objects ---------------------------------------------------
 Drive driveBase = Drive(blueGearBox);
 DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl, &driveBase);
+vexUI UI;
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
 digital_out *wingPistons;
 motor puncherMotor = motor(PORT10, redGearBox, true);
 motor intakeMotor = motor(PORT9, blueGearBox, false);
 rotation puncherEncoder = rotation(PORT7, false);
-
-//inertial Inertial = inertial(PORT6);
 
 // Controller callback function declarations ------------------------------
 void tglWings(void);  // Toggles the state of the wing pistons
@@ -78,14 +77,20 @@ std::string selectedAutoName = "";
 //Setup controller UI IDs
 enum controllerOptions
 {
-  INERTIAL_CALIBRATING_TEXT = 0,
-  CONTROLLER_BATTERY_CAPACITY = 1,
-  PUNCHER_SPEED_DISPLAY = 2,
-  PUNCHER_MODE_TEXT = 3,
-  AUTO_MODE_LABEL = 4,
-  AUTO_MODE_TEXT = 5,
-  AUTO_MODE_SPACER_1 = 6,
-  AUTO_MODE_SPACER_2 = 7
+  //Match Screen
+  MATCH_SCREEN = 0,
+  PUNCHER_SPEED_DISPLAY,
+  PUNCHER_MODE_TEXT,
+
+  //Disabled / Auto Screen
+  DISABLED_AUTO_SCREEN = 3,
+  AUTO_MODE_LABEL,
+  AUTO_MODE_TEXT,
+
+  //Inertial Calibration Screen
+  INERTIAL_CALIBRATE_SCREEN = 6,
+  INERTIAL_CALIBRATING_TEXT
+
 };
 
 //Puncher control
@@ -154,24 +159,30 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_GOAL_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_SKILLS_1);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
-  UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
-  UI.primaryControllerUI.addData(CONTROLLER_BATTERY_CAPACITY, "Battery: ", batteryLevel);
+  //Driver Control Screen
+  UI.primaryControllerUI.addData(MATCH_SCREEN, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(PUNCHER_SPEED_DISPLAY, "Puncher Speed: ", puncherSpeed);
   UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
+
+  //Disabled Screen
+  UI.primaryControllerUI.addData(DISABLED_AUTO_SCREEN, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(AUTO_MODE_LABEL, "Selected Auto:");
   UI.primaryControllerUI.addData(AUTO_MODE_TEXT, "", selectedAutoName);
-  UI.primaryControllerUI.addData(AUTO_MODE_SPACER_1, "");
-  UI.primaryControllerUI.addData(AUTO_MODE_SPACER_2, "");
+
+  //Calibrating Inertial Screen
+  UI.primaryControllerUI.addData(INERTIAL_CALIBRATE_SCREEN, "Battery: ", batteryLevel);
+  UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
 
   //Start the threads
   UI.startThreads();
 
   //* Setup for smart drive ==================================================
   driveBase.setDebugState(true);
+
   // Setup motor settings
   driveBase.leftPortSetup(11, 12, 13);
   driveBase.rightPortSetup(18, 19, 20);
@@ -210,12 +221,11 @@ void pre_auton(void) {
   puncherEncoder.resetPosition();
 
   //*Display calibrating information
-  UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATING_TEXT);
+  UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
   while(driveBase.isInertialCalibrating())
   {
     this_thread::sleep_for(5);
   }
-  UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
 }
 
 
@@ -229,7 +239,76 @@ void autonomous(void) {
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
-      puncherMotor.spin(fwd, 96, percent);
+      //Turn to proper heading
+      driveBase.setDriveHeading(133);
+      driveBase.turnToHeading(112);
+      driveBase.stopRobot(hold);
+      this_thread::sleep_for(500);
+
+      //Launch triballs for 40 seconds
+      puncherMotor.spin(fwd, 80, percent);
+      this_thread::sleep_for(40000);
+      puncherMotor.stop(coast);
+
+      //Drive to other side of the field
+      driveBase.driveBackward(5);
+      driveBase.turnToHeading(250);
+      driveBase.driveForward(16);
+      driveBase.turnToHeading(270);
+      driveBase.driveForward(70);
+      driveBase.turnToHeading(0);
+
+      //Spin the intake to prevent triballs from getting stuck
+      intakeMotor.spin(reverse, 100, percent);
+
+      //Drive to first push point
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(85);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(0);
+      driveBase.driveForward(10);
+      driveBase.turnToHeading(300);
+
+      //First push
+      wingPistons->set(true);
+      driveBase.spinBase(100, 100);
+      vex::task::sleep(800);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 10) && (driveBase.getBaseSpeed(right) > 10)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(200);
+      driveBase.stopRobot();
+      
+      //Drive to second push point
+      wingPistons->set(false);
+      driveBase.driveBackward(45);
+      driveBase.driveForward(8);
+      driveBase.turnToHeading(0);
+      driveBase.driveForward(40);
+      driveBase.turnToHeading(235);
+
+      //Second push
+      wingPistons->set(true);
+      driveBase.spinBase(100, 100);
+      vex::task::sleep(800);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(200);
+      driveBase.stopRobot();
+
+      //Move Back from goal
+      wingPistons->set(false);
+      driveBase.driveBackward(35);
+
+      intakeMotor.stop();
+
       break;
 
     case FOUR_BALL_GOAL_SIDE:
@@ -461,7 +540,7 @@ void autonomous(void) {
 
     //*Basic skills auto the spins the catapult
     case AUTO_BASIC_SKILLS:
-      puncherMotor.spin(fwd, 96, percent);
+      puncherMotor.spin(fwd, 80, percent);
       break;
 
     //*Scores the prelaod triball in the goal
@@ -524,7 +603,7 @@ void usercontrol(void) {
   double puncherAngle;
   int puncherSpeedOld = -5;
 
-  UI.primaryControllerUI.setScreenLine(CONTROLLER_BATTERY_CAPACITY);
+  UI.primaryControllerUI.setScreenLine(MATCH_SCREEN);
 
   // User control code here, inside the loop
   while (1) {
@@ -598,7 +677,7 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-  UI.primaryControllerUI.setScreenLine(AUTO_MODE_LABEL);
+  UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {

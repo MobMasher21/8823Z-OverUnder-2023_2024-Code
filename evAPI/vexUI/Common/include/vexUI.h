@@ -54,7 +54,7 @@ namespace evAPI
 
   };
 
-  extern vexUI UI;
+  //extern vexUI UI;
   
 } // namespace evAPI
 

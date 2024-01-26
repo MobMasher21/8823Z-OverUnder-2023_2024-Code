@@ -2,45 +2,50 @@
 
 namespace evAPI
 {
-  vexUI UI = vexUI();
+  //vexUI UI = vexUI();
 
-  int controllerThread()
+  int controllerThread(void *UIClass)
   {
+    //Get the thread input and store it as a copy of the UI
+    vexUI *UI = (vexUI*)UIClass;
+
     //Stores if the controllers were previously installed
     bool prevPrimaryControllerInstalled = false;
     bool prevSecondaryControllerInstalled = false;
 
-    bool primaryControllerInstalled;
-    bool secondaryControllerInstalled;
+    bool primaryControllerInstalled = false;
+    bool secondaryControllerInstalled = false;
     
     //*Main thread loop
     while(true)
     {
+      //Get current conenction status of controllers
       primaryControllerInstalled = primaryController.installed();
       secondaryControllerInstalled = secondaryController.installed();
 
-      //*Update the controller screens if they were just connected
+      //*Primary Controller
       if(primaryControllerInstalled && !prevPrimaryControllerInstalled)
       {
-        UI.primaryControllerUI.updateScreen();
+        UI->primaryControllerUI.updateScreen();
       }
 
+      else if(primaryControllerInstalled)
+      {
+        UI->primaryControllerUI.updateScreenData();
+      }
+
+      //*Secondary Controller
       if(secondaryControllerInstalled && !prevSecondaryControllerInstalled)
       {
-        UI.secondaryControllerUI.updateScreen();
+        UI->secondaryControllerUI.updateScreen();
       }
 
-      //*Update the screen data on the controllers if they are currently connected
-      if(primaryControllerInstalled)
+      else if(secondaryControllerInstalled)
       {
-        UI.primaryControllerUI.updateScreenData();
+        UI->secondaryControllerUI.updateScreenData();
       }
 
-      if(secondaryControllerInstalled)
-      {
-        UI.secondaryControllerUI.updateScreenData();
-      }
-
+      //Store current connection status of controllers
       prevPrimaryControllerInstalled = primaryControllerInstalled;
       prevSecondaryControllerInstalled = secondaryControllerInstalled;
 
@@ -66,9 +71,9 @@ namespace evAPI
       return evError::Data_Already_Exists;
     }
 
-    controllerUIThread = new thread(controllerThread);
+    controllerUIThread = new thread(controllerThread, this);
 
-    UI.autoSelectorUI.startThread();
+    autoSelectorUI.startThread();
 
     return evError::No_Error;
   }
