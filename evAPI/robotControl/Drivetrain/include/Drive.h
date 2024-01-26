@@ -1,10 +1,9 @@
 #ifndef __DRIVE_H__
 #define __DRIVE_H__
 
-//#include "../../../Common/include/evAPIBasicConfig.h"
-//#include "../../../Common/include/evNamespace.h"
 #include "../../../Common/include/generalFunctions.h"
 #include "../../../Common/include/PID.h"
+#include "SmartEncoder.h"
 
 /**
  * ! Remember to keep code well documented
@@ -23,6 +22,9 @@
  * TODO: Add functions to get the current state of the drive base, like its velocity
  * 
 */
+
+#define DRIVE_TRACKER 0
+#define ODO_TRACKER 1
 
 namespace evAPI {
   class Drive {
@@ -133,26 +135,19 @@ namespace evAPI {
       motor * rightMotor4 = nullptr;  //used in 8 (back) motor drive
 
       /****** encoders ******/
-      double getLeftDrivePosition(rotationUnits units);  //get the position of the left side on motor or rotation sensor for drive actions
-      double getLeftOdoPosition(rotationUnits units);  //get the position of the left side on motor or rotation sensor for odo actions
-      double getRightDrivePosition(rotationUnits units);  //get the position of the right side on motor or rotation sensor for drive actions
-      double getRightOdoPosition(rotationUnits units);  //get the position of the right side on motor or rotation sensor for odo actions
       double getBackPosition(rotationUnits units);  //get the position of the back side on motor or rotation sensor
-
-      void resetLeftDrivePosition();  //resets position of left encoder to 0 for drive actions
-      void resetLeftOdoPosition();  //resets position of left encoder to 0 for odo actions
-      void resetRightDrivePosition();  //resets position of right encoder to 0 for drive actions
-      void resetRightOdoPosition();  //resets position of right encoder to 0 for odo actions
       void resetBackPosition();  //resets position of back encoder to 0
 
       rotation * leftEncoder;  //pointer to left encoder object
       rotation * rightEncoder;  //pointer to right encoder object
       rotation * backEncoder;  //pointer to back encoder object
-
-      double leftDrivePositionOffset;  //offset for position of left drive actions
-      double leftOdoPositionOffset;  //offset for position of left odo actions
-      double rightDrivePositionOffset;  //offset for position of right drive actions
-      double rightOdoPositionOffset;  //offset for position of right odo actions
+      SmartEncoder * leftTracker;  //multi tracker for left side
+      SmartEncoder * rightTracker;  //multi tracker for right Side
+      
+      int leftDriveTracker;  //ID for left drive tracker
+      int leftOdoTracker;  //ID for left odo tracker
+      int rightDriveTracker;  //ID for left drive tracker
+      int rightOdoTracker;  //ID for left odo tracker
 
       double leftEncoderDegsPerInch;  //degrees per inch of wheel on left encoder
       double rightEncoderDegsPerInch;  //degrees per inch of wheel on right encoder

@@ -66,12 +66,18 @@ namespace evAPI {
   void Drive::leftPortSetup(int port1) {    //left motor port setup for 2 motor drive
     leftMotor1 = new motor(smartPortLookupTable[port1], currentGear);
     baseMotorCount = 2;
+    leftTracker = new SmartEncoder(leftMotor1);
+    leftDriveTracker = leftTracker->newTracker();  //creates drive tracker
+    leftOdoTracker = leftTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::leftPortSetup(int port1, int port2) {    //left motor port setup for 4 motor drive
     leftMotor1 = new motor(smartPortLookupTable[port1], currentGear);
     leftMotor2 = new motor(smartPortLookupTable[port2], currentGear);
     baseMotorCount = 4;
+    leftTracker = new SmartEncoder(leftMotor1);
+    leftDriveTracker = leftTracker->newTracker();  //creates drive tracker
+    leftOdoTracker = leftTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::leftPortSetup(int port1, int port2, int port3) {    //left motor port setup for 6 motor drive
@@ -79,6 +85,9 @@ namespace evAPI {
     leftMotor2 = new motor(smartPortLookupTable[port2], currentGear);
     leftMotor3 = new motor(smartPortLookupTable[port3], currentGear);
     baseMotorCount = 6;
+    leftTracker = new SmartEncoder(leftMotor1);
+    leftDriveTracker = leftTracker->newTracker();  //creates drive tracker
+    leftOdoTracker = leftTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::leftPortSetup(int port1, int port2, int port3, int port4) {    //left motor port setup for 8 motor drive
@@ -87,21 +96,33 @@ namespace evAPI {
     leftMotor3 = new motor(smartPortLookupTable[port3], currentGear);
     leftMotor4 = new motor(smartPortLookupTable[port4], currentGear);
     baseMotorCount = 8;
+    leftTracker = new SmartEncoder(leftMotor1);
+    leftDriveTracker = leftTracker->newTracker();  //creates drive tracker
+    leftOdoTracker = leftTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::rightPortSetup(int port1) {    //right motor port setup for 2 motor drive
     rightMotor1 = new motor(smartPortLookupTable[port1], currentGear);
+    rightTracker = new SmartEncoder(rightMotor1);
+    rightDriveTracker = rightTracker->newTracker();  //creates drive tracker
+    rightOdoTracker = rightTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::rightPortSetup(int port1, int port2) {    //right motor port setup for 4 motor drive
     rightMotor1 = new motor(smartPortLookupTable[port1], currentGear);
     rightMotor2 = new motor(smartPortLookupTable[port2], currentGear);
+    rightTracker = new SmartEncoder(rightMotor1);
+    rightDriveTracker = rightTracker->newTracker();  //creates drive tracker
+    rightOdoTracker = rightTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::rightPortSetup(int port1, int port2, int port3) {    //right motor port setup for 6 motor drive
     rightMotor1 = new motor(smartPortLookupTable[port1], currentGear);
     rightMotor2 = new motor(smartPortLookupTable[port2], currentGear);
     rightMotor3 = new motor(smartPortLookupTable[port3], currentGear);
+    rightTracker = new SmartEncoder(rightMotor1);
+    rightDriveTracker = rightTracker->newTracker();  //creates drive tracker
+    rightOdoTracker = rightTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::rightPortSetup(int port1, int port2, int port3, int port4) {    //right motor port setup for 8 motor drive
@@ -109,6 +130,9 @@ namespace evAPI {
     rightMotor2 = new motor(smartPortLookupTable[port2], currentGear);
     rightMotor3 = new motor(smartPortLookupTable[port3], currentGear);
     rightMotor4 = new motor(smartPortLookupTable[port4], currentGear);
+    rightTracker = new SmartEncoder(rightMotor1);
+    rightDriveTracker = rightTracker->newTracker();  //creates drive tracker
+    rightOdoTracker = rightTracker->newTracker();  //creates odo tracker
   }
   
   void Drive::leftReverseSetup(bool reverse1) {    //left motor reverse setup for 2 motor drive
@@ -159,11 +183,13 @@ namespace evAPI {
   void Drive::leftEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for left encoder
     leftEncoder = new rotation(smartPortLookupTable[port], reverse);
     leftEncoderDegsPerInch = (360 / (wheelSize * M_PI));
+    leftTracker->setEncoderRotation(leftEncoder);
   }
 
   void Drive::rightEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for right encoder
     rightEncoder = new rotation(smartPortLookupTable[port], reverse);
     rightEncoderDegsPerInch = (360 / (wheelSize * M_PI));
+    rightTracker->setEncoderRotation(rightEncoder);
   }
 
   void Drive::backEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for back encoder
