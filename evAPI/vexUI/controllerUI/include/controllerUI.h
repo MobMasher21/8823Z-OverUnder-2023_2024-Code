@@ -45,6 +45,8 @@ namespace evAPI
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
        *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
+       * @warning This function is called by the UI thread. DO NOT RUN UNLESS YOU KNOW WHAT YOU 
+       *          ARE DOING!
       */
       evError updateScreenData(bool exitIfUpdating = false);
 
@@ -56,6 +58,8 @@ namespace evAPI
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
        *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
+       * @warning This function is called by the UI thread. DO NOT RUN UNLESS YOU KNOW WHAT YOU 
+       *          ARE DOING!
       */
       evError updateScreen(bool exitIfUpdating = false);
 
@@ -82,7 +86,6 @@ namespace evAPI
        * @param lineNumber The ID of the line to scroll to.
        * @returns An evError.
        *          Index_Out_Of_Range: If lineNumber is an invalid ID,
-       *          Index_Out_Of_Range_Non_Critical: If scrolling to the ID would result in parts of the screen
        *          drawing invalid data. The screen will still be scrolled to the last possible line.
        *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: If the screen scrolled up successfully.

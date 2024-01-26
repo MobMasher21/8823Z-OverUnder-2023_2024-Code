@@ -185,7 +185,7 @@ namespace evAPI
     }
 
     //The number of lines remaining before the final line
-    long validLinesRemaining;
+    uint validLinesRemaining;
 
     //Get the amount of lines remaining
     validLinesRemaining = displayLines.size() - currentLine - 3;
@@ -242,7 +242,7 @@ namespace evAPI
       return evError::Index_Out_Of_Range;
     }
 
-    //The number of lines remaining before the final line
+    /* //The number of lines remaining before the final line
     uint validLinesRemaining;
 
     //Get the amount of lines remaining
@@ -257,7 +257,7 @@ namespace evAPI
       //Refresh the controller screen
       updateScreen();
       return evError::Index_Out_Of_Range_Non_Critical;
-    }
+    } */
 
     //Set the line index to the line number
     currentLine = lineNumber;
