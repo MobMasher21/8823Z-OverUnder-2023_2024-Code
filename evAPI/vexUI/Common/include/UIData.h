@@ -43,6 +43,10 @@ namespace evAPI
       */
       template<typename T> evError setData(const char *labelIn, T *dataIn);
 
+      /**
+       * @brief Retuns a UIDataReturn structure. It contains the label, data, evError, and a 
+       *        hasChanged flag.
+      */
       UIDataReturn getData();
   };
 

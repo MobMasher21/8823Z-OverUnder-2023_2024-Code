@@ -2,8 +2,6 @@
 
 namespace evAPI
 {
-  //vexUI UI = vexUI();
-
   int controllerThread(void *UIClass)
   {
     //Get the thread input and store it as a copy of the UI
@@ -24,25 +22,35 @@ namespace evAPI
       secondaryControllerInstalled = secondaryController.installed();
 
       //*Primary Controller
-      if(primaryControllerInstalled && !prevPrimaryControllerInstalled)
+      if(primaryControllerInstalled)
       {
-        UI->primaryControllerUI.updateScreen();
-      }
+        //Update the screen data if the controller is still connected
+        if(prevPrimaryControllerInstalled)
+        {
+          UI->primaryControllerUI.updateScreenData();
+        }
 
-      else if(primaryControllerInstalled)
-      {
-        UI->primaryControllerUI.updateScreenData();
+        //Update the entire screen if the controller just reconnected
+        else
+        {
+          UI->primaryControllerUI.updateScreen();
+        }
       }
 
       //*Secondary Controller
-      if(secondaryControllerInstalled && !prevSecondaryControllerInstalled)
+      if(secondaryControllerInstalled)
       {
-        UI->secondaryControllerUI.updateScreen();
-      }
+        //Update the screen data if the controller is still connected
+        if(prevSecondaryControllerInstalled)
+        {
+          UI->secondaryControllerUI.updateScreenData();
+        }
 
-      else if(secondaryControllerInstalled)
-      {
-        UI->secondaryControllerUI.updateScreenData();
+        //Update the entire screen if the controller just reconnected
+        else
+        {
+          UI->secondaryControllerUI.updateScreen();
+        }
       }
 
       //Store current connection status of controllers

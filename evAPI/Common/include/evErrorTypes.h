@@ -59,6 +59,7 @@ namespace evAPI
   typedef evErrorData<unsigned int> evErrorUInt;
   typedef evErrorData<float> evErrorFloat;
   typedef evErrorData<double> evErrorDouble;
+  typedef evErrorData<std::string> evErrorString;
 
 } // namespace evAPI
 

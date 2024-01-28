@@ -26,7 +26,7 @@ namespace evAPI
     public:
       virtual ~anyDataCore() = default;
       virtual evError setData(void *newData) = 0;
-      virtual evErrorData<std::string> getData() = 0;
+      virtual evErrorString getData() = 0;
   };
 
   /**
@@ -50,7 +50,7 @@ namespace evAPI
        * @returns An evErrorData object containing a std::string. If the data isn't null, the string will 
        * containing the data from setData(). If it is, the error will be Object_Property_Not_Specified.
       */
-      evErrorData<std::string> getData();
+      evErrorString getData();
   };
   
   template<typename T> evError anyData<T>::setData(void *newData)
@@ -70,9 +70,9 @@ namespace evAPI
     return evError::No_Error;
   }
 
-  template<typename T> evErrorData<std::string> anyData<T>::getData()
+  template<typename T> evErrorString anyData<T>::getData()
   {
-    evErrorData<std::string> dataString;
+    evErrorString dataString;
 
     //Get data if data exists
     if(data != nullptr)

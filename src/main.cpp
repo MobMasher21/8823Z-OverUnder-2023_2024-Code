@@ -159,7 +159,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_SKILLS_1);
+  UI.autoSelectorUI.setSelectedButton(FOUR_BALL_GOAL_SIDE);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -604,6 +604,9 @@ void usercontrol(void) {
   int puncherSpeedOld = -5;
 
   UI.primaryControllerUI.setScreenLine(MATCH_SCREEN);
+
+  //Make sure the stopping mode for the base is correct
+  driveBase.setStoppingMode(brake);
 
   // User control code here, inside the loop
   while (1) {
