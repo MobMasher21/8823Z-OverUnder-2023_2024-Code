@@ -250,6 +250,9 @@ void autonomous(void) {
       this_thread::sleep_for(40000);
       puncherMotor.stop(coast);
 
+      //Reset the heading after launching
+      driveBase.setDriveHeading(112);
+
       //Drive to other side of the field
       driveBase.driveBackward(5);
       driveBase.turnToHeading(250);
