@@ -100,6 +100,10 @@ namespace evAPI {
       void driveBackward(double distance);  //enter a distance to go backward
       void turnToHeading(int angle, int speed);  //enter an angle and speed to turn
       void turnToHeading(int angle);  //enter an angle to turn
+
+      /*----- odo tracking -----*/
+      void odoThreadCall();  // command only called by odo thread loop
+      void startOdoThread();  // starts the odo thread
   
       /************ Sensors ************/
       /*----- movement -----*/
@@ -164,6 +168,10 @@ namespace evAPI {
       float gearInput;  //stores the input value of the gear ratio
       float gearOutput;  //stores the output value of the gear ratio
       float degsPerInch;  //store the calculated degrees per inch.
+
+      /****** odo stuff ******/
+      thread * odoThread;  // thread used for odo tracking
+      odoMath odoTracker;  // object that runs odo math
   
       /****** drive variables ******/
       PID turnPID;
@@ -195,5 +203,7 @@ namespace evAPI {
       int turnError(leftAndRight direction, int startAngle, int endAngle);  //finds the error of a turn
   };
 }
+
+Drive* threadReference;
 
 #endif // __DRIVE_H__

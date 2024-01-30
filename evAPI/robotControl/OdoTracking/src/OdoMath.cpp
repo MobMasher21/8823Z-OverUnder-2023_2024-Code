@@ -13,6 +13,28 @@ void OdoMath::runMath(int travalDistance, int robotHeading, int headingChage, le
   int dirMod;  // direction modifier for left and right arcs
   if(arcDirection == LEFT) dirMod = 1;
   if(arcDirection == RIGHT) dirMod = -1;
+
+  int dStart = previousHeading;  // Heading of the robot before the turn
+  int dWorking = previousHeading * dirMod;  // Sets the start heading to be the correct sign for right or left turn 
+  int dTurn = headingChage;  // The angle of the turn arc
+  int lArc = travalDistance;  // Length of the arc
+
+  double tStart = (dStart - 90) * (M_PI / 180)  // Starting angle along arc circle
+  double tArc = dWorking * (M_PI / 180);  // Overall angle of the arc
+  double tTan = dStart * (M_PI / 180);  // Angle of the tanget line of the starting point
+  double tSec = .5 * tArc;  // Angle of the secant line relative to the tanget lin on th eturning arc of the circle
+  double tTurn = (M_PI / 2) - (tSec + tStart);  // Angle of the secant line relative to the x-axis
+  
+  double r = lArc / tArc;  // Radius of the turn arc
+  double rWorking = dirMod * r;  // Sets the radius to be the correct sign for the right or left turn
+
+  double lSec = 2 * rWorking * sin(tArc / 2);  // Lenght of the secant line
+  double lXDis = lSec * cos(tTurn);  // Length of the x vector
+  double lYDis = lSec * sin(tTurn);  // Length of the y vector
+
+  previousHeading = robotHeading;
+  xPositoin += lXDis;
+  yPosition += lYDis;
   
 }
 

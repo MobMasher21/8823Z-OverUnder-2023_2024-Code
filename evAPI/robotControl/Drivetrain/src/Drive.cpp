@@ -4,11 +4,12 @@ namespace evAPI {
   //======================================== public =============================================
   /****** constructors ******/
   Drive::Drive( void ) {
-  
+    threadReference = this;
   }
   
   Drive::Drive(gearSetting driveGear) {
     currentGear = driveGear;
+    threadReference = this;
   }
 
   /****** debug ******/
