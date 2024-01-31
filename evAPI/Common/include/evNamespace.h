@@ -81,6 +81,30 @@ namespace evAPI {
     rightStick = 1
   };
 
+  enum class controllerButtons
+  {
+    L1 = 0,
+    L2,
+    R1,
+    R2,
+    A,
+    B,
+    X,
+    Y,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+  };
+
+  enum class buttonStatus
+  {
+    Pressed = 0,
+    Released,
+    Hold_Press,
+    Hold_Release
+  };
+
   enum leftAndRight //Used for turning functions
   {
     LEFT = 0,

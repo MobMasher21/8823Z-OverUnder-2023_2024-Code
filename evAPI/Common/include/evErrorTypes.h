@@ -39,7 +39,9 @@ namespace evAPI
     Object_Property_Not_Specified,
     Range_Limit_Reached,
     Index_Out_Of_Range,
-    Object_State_Is_Changing
+    Object_State_Is_Changing,
+
+    Unknown_Error
   };
 
   /**

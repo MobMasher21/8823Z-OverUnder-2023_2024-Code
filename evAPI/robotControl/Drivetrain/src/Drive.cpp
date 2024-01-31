@@ -1,6 +1,8 @@
 #include "../../../robotControl/Drivetrain/include/Drive.h"
 
 namespace evAPI {
+  Drive* threadReference;
+
   //======================================== public =============================================
   /****** constructors ******/
   Drive::Drive( void ) {

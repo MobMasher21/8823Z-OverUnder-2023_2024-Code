@@ -2,6 +2,8 @@
 #define __GENERALFUNCTIONS_H__
 
 #include "evNamespace.h"
+#include "evErrorTypes.h"
+#include <string>
 
 //https://www.arduino.cc/reference/en/
 
@@ -81,6 +83,28 @@ namespace evAPI
    * @returns True if te robot is connected to competition controller.
   */
   bool isConnectToField();
+
+  /**
+   * @brief Returns a reference to a controller depending on the input type.
+   * @param type The type of controller to get.
+   * @returns A reference to a controller.
+  */
+  controller& typeToController(controllerType type);
+
+  /**
+   * @brief Returns the state of a button on a controller.
+   * @param type The controller the desired button is on.
+   * @param targetButton The button to check.
+   * @returns The status of the button.
+  */
+  buttonStatus getButtonStatus(controllerType type, controllerButtons targetButton);
+
+  /**
+   * @brief Converts an evError into a std::string.
+   * @param error The error to convert.
+   * @returns a std::string containing the error.
+  */
+  std::string evErrorToString(evError error);
 }
 
 #endif // __GENERALFUNCTIONS_H__

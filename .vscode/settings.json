@@ -9,6 +9,7 @@
 		"AUTOSELECTOR",
 		"CONTROLLERUI",
 		"Cornsilk",
+		"CRNT",
 		"Degs",
 		"DESCORE",
 		"Descores",
@@ -23,8 +24,11 @@
 		"GENERALFUNCTIONS",
 		"ICONARAYS",
 		"INTK",
+		"Jayden",
+		"Liffick",
 		"mecanum",
 		"nonavailable",
+		"ODOMATH",
 		"odometry",
 		"omniwheels",
 		"prelaod",
@@ -34,10 +38,7 @@
 		"UIDATA",
 		"usercontrol",
 		"VEXPRIVATEREBUILD",
-		"VEXUI",
-		"Jayden",
-		"Liffick",
-		"CRNT"
+		"VEXUI"
 	],
 	"better-comments.tags": [
 		{

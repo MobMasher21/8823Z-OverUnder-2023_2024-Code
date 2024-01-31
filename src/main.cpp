@@ -22,13 +22,19 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 vexUI UI;
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
-digital_out *wingPistons;
 motor puncherMotor = motor(PORT10, redGearBox, true);
 motor intakeMotor = motor(PORT9, blueGearBox, false);
 rotation puncherEncoder = rotation(PORT7, false);
+digital_out *frontLeftWing;
+digital_out *frontRightWing;
+digital_out *backLeftWing;
+digital_out *backRightWing;
 
 // Controller callback function declarations ------------------------------
-void tglWings(void);  // Toggles the state of the wing pistons
+void controlFrontWings(bool left, bool right); //Control the front wings
+void controlBackWings(bool left, bool right); //Control the back wings
+void toggleFrontWings(); //Toggle the status of the front wings
+void toggleBackWings(); //Toggle the status of the front wings
 void puncherSpeedIncrement(void); //Increments the speed of the puncher by 5
 void puncherSpeedDecrement(void); //Decrements the speed of the puncher by 5
 void puncherManualToggle(void);   //Enables manual control of the puncher
@@ -39,12 +45,14 @@ void puncherModeToggle(void);     //Toggles the mode of the puncher
 #define PUNCHER_MODE_BUTTON ButtonA
 #define PUNCHER_STOP_BUTTON ButtonX
 #define PUNCHER_MANUAL_BUTTON ButtonY
-#define PUNCHER_SPEED_INC ButtonUp
-#define PUNCHER_SPEED_DEC ButtonDown
+#define PUNCHER_SPEED_INC ButtonLeft
+#define PUNCHER_SPEED_DEC ButtonRight
 
 #define INTK_IN_BUTTON ButtonL1
 #define INTK_OUT_BUTTON ButtonL2
-#define WINGS_BUTTON ButtonR1
+#define FRONT_WINGS_BUTTON ButtonR1
+#define BACK_LEFT_WINGS_BUTTON ButtonDown
+#define BACK_RIGHT_WINGS_BUTTON ButtonB
 
 // Speed and handicap variables -------------------------------------------
 int intakeSpeed = 100;
@@ -113,7 +121,10 @@ bool puncherAutoPrimeEnabled = true;
 /*---------------------------------------------------------------------------------*/
 void pre_auton(void) {
   //* Set object pointers ====================================================
-  wingPistons = new digital_out(Brain.ThreeWirePort.A);
+  frontLeftWing  = new digital_out(Brain.ThreeWirePort.A);
+  frontRightWing = new digital_out(Brain.ThreeWirePort.B);
+  backLeftWing   = new digital_out(Brain.ThreeWirePort.C);
+  backRightWing  = new digital_out(Brain.ThreeWirePort.D);
 
   //* Setup for auto selection UI ============================================
   // Add all the buttons
@@ -211,7 +222,9 @@ void pre_auton(void) {
   driveControl.setHandicaps(1, 0.6);  // main drive, turning
 
   //* Setup controller callbacks =============================================
-  primaryController.WINGS_BUTTON.pressed(tglWings);
+  primaryController.FRONT_WINGS_BUTTON.pressed(toggleFrontWings);
+  primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackWings);
+  //primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleFrontWings);
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
@@ -273,7 +286,7 @@ void autonomous(void) {
       driveBase.turnToHeading(300);
 
       //First push
-      wingPistons->set(true);
+      controlFrontWings(true, true);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
@@ -286,7 +299,7 @@ void autonomous(void) {
       driveBase.stopRobot();
       
       //Drive to second push point
-      wingPistons->set(false);
+      controlFrontWings(false, false);
       driveBase.driveBackward(45);
       driveBase.driveForward(8);
       driveBase.turnToHeading(0);
@@ -294,7 +307,7 @@ void autonomous(void) {
       driveBase.turnToHeading(235);
 
       //Second push
-      wingPistons->set(true);
+      controlFrontWings(true, true);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
@@ -307,7 +320,7 @@ void autonomous(void) {
       driveBase.stopRobot();
 
       //Move Back from goal
-      wingPistons->set(false);
+      controlFrontWings(false, false);
       driveBase.driveBackward(35);
 
       intakeMotor.stop();
@@ -358,7 +371,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      wingPistons->set(true);
+      controlFrontWings(false, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -377,7 +390,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
 
       //grab ball 4
-      wingPistons->set(false);
+      controlFrontWings(false, false);
       driveBase.turnToHeading(180);
       driveBase.driveForward(20);
       driveBase.turnToHeading(270);
@@ -449,7 +462,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      wingPistons->set(true);
+      controlFrontWings(false, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -468,11 +481,11 @@ void autonomous(void) {
       driveBase.driveBackward(28);
 
       //Go touch the bar
-      wingPistons->set(false);
+      controlFrontWings(false, false);
       driveBase.turnToHeading(210);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(35);
-      wingPistons->set(true);
+      controlFrontWings(true, false);
       driveBase.setTurnSpeed(20);
       driveBase.turnToHeading(155);
 
@@ -523,10 +536,10 @@ void autonomous(void) {
       driveBase.turnToHeading(143);
 
       //Puh the triball out
-      wingPistons->set(true);
+      //wingPistons->set(true);
       driveBase.driveForward(15);
       driveBase.turnToHeading(70);
-      wingPistons->set(false);
+      //wingPistons->set(false);
 
       //Push triballs to other side
       driveBase.turnToHeading(125);
@@ -536,7 +549,7 @@ void autonomous(void) {
       driveBase.driveForward(21);
       driveBase.driveBackward(3);
       driveBase.turnToHeading(120);
-      wingPistons->set(true);
+      //wingPistons->set(true);
       intakeMotor.stop();
 
       break;
@@ -563,12 +576,12 @@ void autonomous(void) {
 
       //Descore the triball
       driveBase.driveForward(14);
-      wingPistons->set(true);
+      //wingPistons->set(true);
       driveBase.driveForward(20);
       driveBase.turnToHeading(40);
       this_thread::sleep_for(500);
       driveBase.turnToHeading(115);
-      wingPistons->set(false);
+      //wingPistons->set(false);
       driveBase.turnToHeading(325); //!VALUE NEEDS TO BE CONFIRMED
       break;
 
@@ -717,8 +730,30 @@ int main() {
 }
 
 //*Controller callback definitions
-void tglWings(void) {  // Toggles the state of the wing pistons
-  wingPistons->set(!wingPistons->value());
+void controlFrontWings(bool left, bool right)
+{
+  frontLeftWing->set(left);
+  frontRightWing->set(right);
+}
+
+void controlBackWings(bool left, bool right)
+{
+  backLeftWing->set(left);
+  backRightWing->set(right);
+}
+
+void toggleFrontWings()
+{
+  bool newWingStatus = !frontLeftWing->value();
+  frontLeftWing->set(newWingStatus);
+  frontRightWing->set(newWingStatus);
+}
+
+void toggleBackWings()
+{
+  bool newWingStatus = !backLeftWing->value();
+  backLeftWing->set(newWingStatus);
+  backRightWing->set(newWingStatus);
 }
 
 void puncherSpeedIncrement(void)

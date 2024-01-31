@@ -3,6 +3,7 @@
 
 #include "../../../Common/include/generalFunctions.h"
 #include "../../../Common/include/PID.h"
+#include "../../OdoTracking/include/OdoMath.h"
 #include "SmartEncoder.h"
 
 /**
@@ -171,7 +172,7 @@ namespace evAPI {
 
       /****** odo stuff ******/
       thread * odoThread;  // thread used for odo tracking
-      odoMath odoTracker;  // object that runs odo math
+      OdoMath odoTracker;  // object that runs odo math
   
       /****** drive variables ******/
       PID turnPID;
@@ -203,7 +204,5 @@ namespace evAPI {
       int turnError(leftAndRight direction, int startAngle, int endAngle);  //finds the error of a turn
   };
 }
-
-Drive* threadReference;
 
 #endif // __DRIVE_H__
