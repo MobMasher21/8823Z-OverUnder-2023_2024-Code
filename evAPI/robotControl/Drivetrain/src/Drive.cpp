@@ -22,7 +22,6 @@ namespace evAPI {
   void Drive::printAllEncoderData() {  //prints all 3 encoder values to the terminal
     printf("drive action (l, r): %f, %f\n", leftTracker->readTrackerPosition(leftDriveTracker), rightTracker->readTrackerPosition(rightDriveTracker));
     printf("odo action (l, r): %f, %f\n", leftTracker->readTrackerPosition(leftOdoTracker), rightTracker->readTrackerPosition(rightOdoTracker));
-    printf("back encoder: %f\n", getBackPosition(degrees));
   }
   
   /************ movement ************/  
@@ -49,6 +48,10 @@ namespace evAPI {
 
     void Drive::setTurnSpeed(int speed) {  //sets the drive speed for when one is not entered
       turnSpeed = speed;
+    }
+
+    void Drive::setDrvieBaseWidth(int width) {  //sets the distance between the two wheels for arc turns
+      driveBaseWidth = width
     }
 
     void Drive::driveForward(double distance, int speed) {  //enter a distance and speed to go forward
@@ -196,6 +199,35 @@ namespace evAPI {
 
     void Drive::turnToHeading(int angle) {  //enter an angle to turn
       turnToHeading(angle, turnSpeed);
+    }
+
+    void Drive::arcTurn(double radius, leftAndRight direction, int angle, int speed) {  // turns in an arc
+      //*setup of all variables*
+      double leftPosition;  //angle of left encoder
+      double rightPosition;  //angle of right encoder
+      int error;  // desired value - sensor value
+      int driftError;  // difference between left - right
+      int desiredValue;  // angle of rotation sensor that we want
+      int outterDistance;  // length of the outter arc of the turn
+      int innerDistance;  // length of the inner arc of the turn
+      double wheelPowerRatio;  // ratio of length between outer and inner wheel
+      bool isPIDRunning = true;  // is true as the PID is running
+      int moveSpeed;  // the speed the motors are set to every cycle
+      int driftPower;  // output of the drift PID
+      arcPID.setTotalError(0);
+      arcDriftPID.setTotalError(0);
+      arcPID.resetTimeout();
+
+      outterDistance = ((radius + (driveBaseWidth / 2)) * 2) * M_PI
+      innerDistance = ((radius - (driveBaseWidth / 2)) * 2) * M_PI
+      wheelPowerRatio = innerDistance / outterDistance;
+      
+      if(direction == LEFT) {
+        
+      } else if(direction == RIGHT) {
+
+      }
+
     }
 
   

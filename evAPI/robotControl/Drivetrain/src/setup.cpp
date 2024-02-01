@@ -13,47 +13,38 @@ namespace evAPI {
     if(isDebugMode) printf("dpi: %f\n", degsPerInch);
   }
 
-  void Drive::setStoppingMode(brakeType mode)
-  {
+  void Drive::setStoppingMode(brakeType mode) {
     //Left motors
-    if(leftMotor1 != nullptr)
-    {
+    if(leftMotor1 != nullptr) {
       leftMotor1->setStopping(mode);
     }
 
-    if(leftMotor2 != nullptr)
-    {
+    if(leftMotor2 != nullptr) {
       leftMotor2->setStopping(mode);
     }
 
-    if(leftMotor3 != nullptr)
-    {
+    if(leftMotor3 != nullptr) {
       leftMotor3->setStopping(mode);
     }
 
-    if(leftMotor4 != nullptr)
-    {
+    if(leftMotor4 != nullptr) {
       leftMotor4->setStopping(mode);
     }
 
     //Right motors
-    if(rightMotor1 != nullptr)
-    {
+    if(rightMotor1 != nullptr) {
       rightMotor1->setStopping(mode);
     }
 
-    if(rightMotor2 != nullptr)
-    {
+    if(rightMotor2 != nullptr) {
       rightMotor2->setStopping(mode);
     }
 
-    if(rightMotor3 != nullptr)
-    {
+    if(rightMotor3 != nullptr) {
       rightMotor3->setStopping(mode);
     }
 
-    if(rightMotor4 != nullptr)
-    {
+    if(rightMotor4 != nullptr) {
       rightMotor4->setStopping(mode);
     }
   }
@@ -192,11 +183,6 @@ namespace evAPI {
     rightTracker->setEncoderRotation(rightEncoder);
   }
 
-  void Drive::backEncoderSetup(int port, double wheelSize, bool reverse) {    //setup values for back encoder
-    backEncoder = new rotation(smartPortLookupTable[port], reverse);
-    backEncoderDegsPerInch = (360 / (wheelSize * M_PI));
-  }
-
   /*----- pid setup -----*/
   void Drive::setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
     drivePID.setConstants(kp, ki, kd);
@@ -226,6 +212,26 @@ namespace evAPI {
     driftD = kd;
     driftMaxStopError = maxStopError;
     driftTimeToStop = timeToStop;    
+  }
+
+  void Drive::setupArcPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+    arcPID.setConstants(kp, ki, kd);
+    arcPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    arcP = kp;
+    arcI = ki;
+    arcD = kd;
+    arcMaxStopError = maxStopError;
+    arcTimeToStop = timeToStop;    
+  }
+
+  void Drive::setupArcDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+    arcDriftPID.setConstants(kp, ki, kd);
+    arcDriftPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    arcDriftP = kp;
+    arcDriftI = ki;
+    arcDriftD = kd;
+    arcDriftMaxStopError = maxStopError;
+    arcDriftTimeToStop = timeToStop;    
   }
 
   /*----- inertial setup -----*/

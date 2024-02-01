@@ -14,8 +14,8 @@
  * //TODO: write pid for driving
  * //TODO: write pid for turning
  * //TODO: write setup code of inertial sensor
- * TODO: write drift contorl for driving
- * TODO: write automatic controller Configuration for driver control
+ * //TODO: write drift contorl for driving
+ * //TODO: write automatic controller Configuration for driver control
  * TODO: write odometry position tracking
  * TODO: write drive to point for odometry
  * TODO: write path finding for odometry
@@ -71,7 +71,6 @@ namespace evAPI {
       /*----- encoder setup -----*/
       void leftEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for left encoder
       void rightEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for right encoder
-      void backEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for back encoder
       void leftFullReset();  //resets all position data about left encoder
       void rightFullReset();  //resets all position data about right encoder
 
@@ -79,6 +78,8 @@ namespace evAPI {
       void setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
       void setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
       void setupDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+      void setupArcPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+      void setupArcDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
 
       /*----- inertial setup -----*/
       void setupInertialSensor(int port);  //sets the port of the inertial sensor
@@ -95,12 +96,17 @@ namespace evAPI {
       /*----- automatic -----*/
       void setDriveSpeed(int speed);  //sets the drive speed for when one is not entered
       void setTurnSpeed(int speed);  //sets the drive speed for when one is not entered
+      void setDrvieBaseWidth(int width);  //sets the distance between the two wheels for arc turns
+
       void driveForward(double distance, int speed);  //enter a distance and speed to go forward
       void driveForward(double distance);  //enter a distance to go forward
       void driveBackward(double distance, int speed);  //enter a distance and speed to go backward
       void driveBackward(double distance);  //enter a distance to go backward
+
       void turnToHeading(int angle, int speed);  //enter an angle and speed to turn
       void turnToHeading(int angle);  //enter an angle to turn
+
+      void arcTurn(double radius, leftAndRight direction, int angle, int speed);  // turns in an arc
 
       /*----- odo tracking -----*/
       void odoThreadCall();  // command only called by odo thread loop
@@ -140,12 +146,8 @@ namespace evAPI {
       motor * rightMotor4 = nullptr;  //used in 8 (back) motor drive
 
       /****** encoders ******/
-      double getBackPosition(rotationUnits units);  //get the position of the back side on motor or rotation sensor
-      void resetBackPosition();  //resets position of back encoder to 0
-
       rotation * leftEncoder;  //pointer to left encoder object
       rotation * rightEncoder;  //pointer to right encoder object
-      rotation * backEncoder;  //pointer to back encoder object
       SmartEncoder * leftTracker;  //multi tracker for left side
       SmartEncoder * rightTracker;  //multi tracker for right Side
       
@@ -156,7 +158,6 @@ namespace evAPI {
 
       double leftEncoderDegsPerInch;  //degrees per inch of wheel on left encoder
       double rightEncoderDegsPerInch;  //degrees per inch of wheel on right encoder
-      double backEncoderDegsPerInch;  //degrees per inch of wheel on back encoder
 
       /****** inertial sensor ******/
       inertial * turnSensor;  //pointer to the inertial sensor 
@@ -178,8 +179,11 @@ namespace evAPI {
       PID turnPID;
       PID drivePID;
       PID driftPID;
+      PID arcPID;
+      PID arcDriftPID;
       int driveSpeed;
       int turnSpeed;
+      int driveBaseWidth
 
       double driveP;
       double driveI;
@@ -198,6 +202,18 @@ namespace evAPI {
       double driftD;
       int driftMaxStopError;  //max amount of degrees to be considered "there"
       int driftTimeToStop;  //how many pid cycles of being "there" till it stops
+
+      double arcP;
+      double arcI;
+      double arcD;
+      int arcMaxStopError;  //max amount of degrees to be considered "there"
+      int arcTimeToStop;  //how many pid cycles of being "there" till it stops
+
+      double arcDriftP;
+      double arcDriftI;
+      double arcDriftD;
+      int arcDriftMaxStopError;  //max amount of degrees to be considered "there"
+      int arcDriftTimeToStop;  //how many pid cycles of being "there" till it stops
 
       /****** formulas ******/
       leftAndRight findDir(int startingAngle, int endingAngle);  //finds the direction that is faster
