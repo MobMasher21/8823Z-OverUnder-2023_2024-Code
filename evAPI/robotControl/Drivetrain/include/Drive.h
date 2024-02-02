@@ -183,7 +183,7 @@ namespace evAPI {
       PID arcDriftPID;
       int driveSpeed;
       int turnSpeed;
-      int driveBaseWidth
+      int driveBaseWidth;  //distance between the two wheels from center
 
       double driveP;
       double driveI;

@@ -51,7 +51,7 @@ namespace evAPI {
     }
 
     void Drive::setDrvieBaseWidth(int width) {  //sets the distance between the two wheels for arc turns
-      driveBaseWidth = width
+      driveBaseWidth = width;
     }
 
     void Drive::driveForward(double distance, int speed) {  //enter a distance and speed to go forward
@@ -208,7 +208,7 @@ namespace evAPI {
       int error;  // desired value - sensor value
       int driftError;  // difference between left - right
       int desiredValue;  // angle of rotation sensor that we want
-      int outterDistance;  // length of the outter arc of the turn
+      int outerDistance;  // length of the outer arc of the turn
       int innerDistance;  // length of the inner arc of the turn
       double wheelPowerRatio;  // ratio of length between outer and inner wheel
       bool isPIDRunning = true;  // is true as the PID is running
@@ -218,9 +218,9 @@ namespace evAPI {
       arcDriftPID.setTotalError(0);
       arcPID.resetTimeout();
 
-      outterDistance = ((radius + (driveBaseWidth / 2)) * 2) * M_PI
-      innerDistance = ((radius - (driveBaseWidth / 2)) * 2) * M_PI
-      wheelPowerRatio = innerDistance / outterDistance;
+      outerDistance = ((radius + (driveBaseWidth / 2)) * 2) * M_PI;
+      innerDistance = ((radius - (driveBaseWidth / 2)) * 2) * M_PI;
+      wheelPowerRatio = innerDistance / outerDistance;
       
       if(direction == LEFT) {
         
