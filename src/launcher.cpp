@@ -11,6 +11,7 @@
 #include "../evAPI/Common/include/generalFunctions.h"
 #include "launcher.h"
 
+//Structure that stores pointers to critical data needed by the thread
 struct launcherThreadData
 {
   launcher *launcherObject;
@@ -23,20 +24,92 @@ int launcherThread(void *launcherDataRaw)
   //Convert the input data back into a launcher object
   launcherThreadData *launcherData = (launcherThreadData*)launcherDataRaw;
   launcher *Launcher = launcherData->launcherObject;
-  //std::vector<double> *criticalAngles = launcherData->criticalAngles;
-  //std::vector<launcher::controllerMappingData> *controllerMappings = launcherData->controllerMappings;
+  std::vector<double> *criticalAngles = launcherData->criticalAngles;
+  std::vector<launcher::controllerMappingData> *controllerMappings = launcherData->controllerMappings;
+
+  //Overrides all automatic motor control
+  bool controllerOverride = false;
 
   //*Main thread loop
   while(true)
   {
-    //*Check controller buttons
-    /* for (size_t i = 0; i < count; i++)
+    auto launcherController = Launcher->getControllerType();
+
+    //Run functions attached to controller buttons
+    if(launcherController.errorData == evAPI::evError::No_Error)
     {
+      //*Check controller buttons
+      for(size_t i = 0; i < controllerMappings->size(); i++)
+      {
+        //Get the current button state
+        evAPI::buttonStatus buttonMode;
+        buttonMode = evAPI::getButtonStatus(launcherController.data, controllerMappings->at(i).controllerButton);
 
-    } */
+        //Check if the button is in the right state
+        if(buttonMode == controllerMappings->at(i).buttonState)
+        {
+          evAPI::evErrorUInt selectedCriticalAngleID;
 
-    //*Run auto code if manual control is disabled
-    if(!Launcher->manualControlEnabled())
+          //*Run button action code
+          switch(controllerMappings->at(i).launcherAction)
+          {
+            case launcher::CONTROLLER_LAUNCH:
+              Launcher->spinLauncher();
+              controllerOverride = true;
+              break;
+
+            case launcher::CONTROLLER_STOP:
+              Launcher->stopLauncher();
+              controllerOverride = true;
+              break;
+          
+            case launcher::CONTROLLER_FORCE_RELEASE:
+              Launcher->releaseLauncher();
+              controllerOverride = true;
+              break;
+
+            case launcher::CONTROLLER_SET_CRITICAL:
+              Launcher->selectCriticalAngle(controllerMappings->at(i).otherData);
+              break;
+
+            case launcher::CONTROLLER_INCREMENT_CRITICAL:
+              //Get the selected critical angle
+              selectedCriticalAngleID = Launcher->getCriticalAngleID();
+
+              //*Increment the selected critical angle by 1
+              if(selectedCriticalAngleID.errorData == evAPI::evError::No_Error)
+              {
+                //Roll back to 0 if the critical angle is at the final value
+                if(selectedCriticalAngleID.data == criticalAngles->size()-1)
+                {
+                  Launcher->selectCriticalAngle(0);
+                }
+
+                else
+                {
+                  Launcher->selectCriticalAngle(selectedCriticalAngleID.data+1);
+                }
+              }
+              break;
+
+            case launcher::CONTROLLER_TOGGLE_MANUAL:
+              if(Launcher->manualControlEnabled())
+              {
+                Launcher->setManualControl(false);
+              }
+
+              else
+              {
+                Launcher->setManualControl(true);
+              }
+              break;
+          }
+        }
+      }
+    }
+
+    //*Run auto code if manual control and control override are disabled
+    if(!Launcher->manualControlEnabled() && !controllerOverride)
     {
       //Get the data from the sensor
       evAPI::evErrorDouble sensorAngle = Launcher->getSensorAngle();
@@ -78,7 +151,10 @@ int launcherThread(void *launcherDataRaw)
       }
     }
 
-    this_thread::sleep_for(15);
+    this_thread::sleep_for(10);
+
+    //Reset control override
+    controllerOverride = false;
   }
 
   return 0;
@@ -101,15 +177,19 @@ launcher::~launcher()
 
 evAPI::evError launcher::addSensor(vex::rotation &sensor)
 {
+  //Get the status of the port the sensor is connected to
+  evAPI::evError portStatus = evAPI::isCorrectDeviceInPort(sensor.index(), sensor.type());
+
   //Exit if the rotation sensor isn't detected
-  if(!sensor.installed())
+  if(portStatus != evAPI::evError::No_Error)
   {
-    return evAPI::evError::No_Device_In_Port;
+    return portStatus;
   }
 
   //Map the sensor pointer to the rotation sensor object
   launcherSensor = &sensor;
 
+  //Reset the angle of the sensor
   launcherSensor->resetPosition();
 
   return evAPI::evError::No_Error;
@@ -146,7 +226,7 @@ evAPI::evError launcher::startThread()
     return evAPI::evError::Data_Already_Exists;
   }
 
-  launcherThreadData launcherData;
+  static launcherThreadData launcherData;
   launcherData.launcherObject = this;
   launcherData.criticalAngles = &this->criticalAngles;
   launcherData.controllerMappings = &this->controllerMappings;
@@ -294,6 +374,22 @@ evAPI::evError launcher::pairController(vex::controllerType type)
   controllerPaired = true;
 
   return evAPI::evError::No_Error;
+}
+
+evAPI::evErrorData<controllerType> launcher::getControllerType()
+{
+  evAPI::evErrorData<controllerType> returnValue;
+
+  //Return if there isn't a controller paired with the object
+  if(!controllerPaired)
+  {
+    returnValue.errorData = evAPI::evError::No_Device_Defined;
+    return returnValue;
+  }
+
+  returnValue.data = mappedController;
+
+  return returnValue;
 }
 
 evAPI::evError launcher::mapButton(evAPI::controllerButtons button, evAPI::buttonStatus state, 

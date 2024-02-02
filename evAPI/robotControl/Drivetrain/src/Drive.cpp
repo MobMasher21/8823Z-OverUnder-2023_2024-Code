@@ -50,7 +50,7 @@ namespace evAPI {
       turnSpeed = speed;
     }
 
-    void Drive::setDrvieBaseWidth(int width) {  //sets the distance between the two wheels for arc turns
+    void Drive::setDriveBaseWidth(int width) {  //sets the distance between the two wheels for arc turns
       driveBaseWidth = width;
     }
 

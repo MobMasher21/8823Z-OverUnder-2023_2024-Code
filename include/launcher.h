@@ -36,7 +36,8 @@ class launcher
      * @brief Adds a rotation sensor. Allows the launcher to automatically set its position
      *        after firing.
      * @param sensor A rotation sensor object.
-     * @returns An evError. No_Device_In_Port if the device isn't detected.
+     * @returns An evError. No_Device_In_Port if there aren't any devices in the port.
+     *          Incorrect_Device_In_Port if the device in the port isn't a rotation sensor.
      *          No_Error if there aren't any errors.
      * @warning The launcher should be set to a predictable state when this function is called.
      *          If the launcher is set inconstantly, the launcher won't be able to consistently move
@@ -158,10 +159,22 @@ class launcher
 
     enum launcherActions
     {
+      //Activates the launcher.
       CONTROLLER_LAUNCH = 0,
+
+      //Stops the launcher.
+      CONTROLLER_STOP,
+
+      //Force releases the launcher, also disabling automatic mode.
       CONTROLLER_FORCE_RELEASE,
+
+      //Selects the critical angle ID from the optional "data" argument.
       CONTROLLER_SET_CRITICAL,
-      CONTROLLER_CHANGE_CRITICAL,
+
+      //Increments the selected critical angle ID by 1.
+      CONTROLLER_INCREMENT_CRITICAL,
+
+      //Toggles manual mode.
       CONTROLLER_TOGGLE_MANUAL
     };
 
@@ -173,6 +186,14 @@ class launcher
      *          No_Error if there aren't any errors.
     */
     evAPI::evError pairController(vex::controllerType type);
+    
+    /**
+     * @brief Gets the type of controller paired to the launcher, if there is one.
+     * @returns An evErrorData object with vex::controllerType as the data.
+     *          No_Device_Defined if there isn't a controller connected with the launcher
+     *          No_Error if there aren't any errors.
+    */
+    evAPI::evErrorData<controllerType> getControllerType();
 
     /**
      * @brief Maps the button on a controller to an action for the launcher.

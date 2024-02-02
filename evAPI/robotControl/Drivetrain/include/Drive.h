@@ -96,7 +96,7 @@ namespace evAPI {
       /*----- automatic -----*/
       void setDriveSpeed(int speed);  //sets the drive speed for when one is not entered
       void setTurnSpeed(int speed);  //sets the drive speed for when one is not entered
-      void setDrvieBaseWidth(int width);  //sets the distance between the two wheels for arc turns
+      void setDriveBaseWidth(int width);  //sets the distance between the two wheels for arc turns
 
       void driveForward(double distance, int speed);  //enter a distance and speed to go forward
       void driveForward(double distance);  //enter a distance to go forward
@@ -183,7 +183,7 @@ namespace evAPI {
       PID arcDriftPID;
       int driveSpeed;
       int turnSpeed;
-      int driveBaseWidth;  //distance between the two wheels from center
+      int driveBaseWidth;  //distance between the two wheels from center;
 
       double driveP;
       double driveI;

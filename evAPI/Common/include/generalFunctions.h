@@ -105,6 +105,17 @@ namespace evAPI
    * @returns a std::string containing the error.
   */
   std::string evErrorToString(evError error);
+
+  /**
+   * @brief Check if the device in a port is the correct one.
+   * @param port The port to check.
+   * @param type The device type.
+   * @returns An evError regarding the device in the port.
+   *             Incorrect_Device_In_Port if the device type doesn't match what is in the port.
+   *             No_Device_In_Port if there isn't anything in the port.
+   *             No_Error if the device type matches what is in the port.
+  */
+  evError isCorrectDeviceInPort(int32_t port, V5_DeviceType type);
 }
 
 #endif // __GENERALFUNCTIONS_H__

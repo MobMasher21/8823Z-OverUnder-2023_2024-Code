@@ -215,4 +215,23 @@ namespace evAPI
 
     return errorString;
   }
+
+  evError isCorrectDeviceInPort(int32_t port, V5_DeviceType type)
+  {
+    //Get the current device in the port
+    vex::device Port = vex::device(port);
+
+    //Return true if "type" matches the type in the port
+    if(Port.type() == type)
+    {
+      return evError::No_Error;
+    }
+
+    else if(Port.type() == kDeviceTypeNoSensor)
+    {
+      return evError::No_Device_In_Port;
+    }
+
+    return evError::Incorrect_Device_In_Port;
+  }
 }
