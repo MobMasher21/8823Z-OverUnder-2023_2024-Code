@@ -50,7 +50,7 @@ namespace evAPI {
       turnSpeed = speed;
     }
 
-    void Drive::setDriveBaseWidth(int width) {  //sets the distance between the two wheels for arc turns
+    void Drive::setDriveBaseWidth(double width) {  //sets the distance between the two wheels for arc turns
       driveBaseWidth = width;
     }
 
@@ -202,11 +202,16 @@ namespace evAPI {
     }
 
     void Drive::arcTurn(double radius, leftAndRight direction, int angle, int speed) {  // turns in an arc
+      //! I HAVE NO FUCKING IDEA IF THIS WORKS OR NOT BECAUSE I WROTE THIS AT 11 O'CLOCK AT NIGHT I HAVE A BIG ASS
+      //! HEADACHE AND IM HOPPED UP ON PAIN KILLERS SO I WISH LUCK TO WHOEVER ON OUR TEAM IS STUCK WITH THE JOB OF FINDING OUT
+      //! WHAT THE HELL IS GOING ON BELOW HERE
+      //!
+      //! BEST OF LUCK, CAMERON
       //*setup of all variables*
       double leftPosition;  //angle of left encoder
       double rightPosition;  //angle of right encoder
       int error;  // desired value - sensor value
-      int driftError;  // difference between left - right
+      int driftError;  // difference between wheel power ratio - current power ratio (1000x for math purposes)
       int desiredValue;  // angle of rotation sensor that we want
       int outerDistance;  // length of the outer arc of the turn
       int innerDistance;  // length of the inner arc of the turn
@@ -218,16 +223,107 @@ namespace evAPI {
       arcDriftPID.setTotalError(0);
       arcPID.resetTimeout();
 
-      outerDistance = ((radius + (driveBaseWidth / 2)) * 2) * M_PI;
-      innerDistance = ((radius - (driveBaseWidth / 2)) * 2) * M_PI;
+      outerDistance = (((radius + (driveBaseWidth / 2)) * 2) * M_PI) * (angle / 360);  // inches of outer arc
+      innerDistance = (((radius - (driveBaseWidth / 2)) * 2) * M_PI) * (angle / 360);  // inches of inner arc
       wheelPowerRatio = innerDistance / outerDistance;
       
-      if(direction == LEFT) {
+      //*resets encoders*
+      leftTracker->resetTrackerPosition(leftDriveTracker);
+      rightTracker->resetTrackerPosition(rightDriveTracker);
+      if(isDebugMode) printf("rightAngle: %f\n", leftTracker->readTrackerPosition(leftDriveTracker));
+      if(isDebugMode) printf("leftAngle: %f\n", rightTracker->readTrackerPosition(rightDriveTracker));
         
+      //*print debug header*
+      if(isDebugMode) printf("position, error, moveSpeed\n");
+      
+      if(direction == LEFT) {
+        if(rightEncoder) {
+          desiredValue = outerDistance * rightEncoderDegsPerInch;
+        } else {
+          desiredValue = outerDistance * degsPerInch;
+        }
+        if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
+        if(isDebugMode) printf("wheelPowerRatio = %f\n", wheelPowerRatio);
+
+        //*main PID loop*
+        while(isPIDRunning) {
+          //*get encoder positions*
+          leftPosition = leftTracker->readTrackerPosition(leftDriveTracker);
+          rightPosition = rightTracker->readTrackerPosition(rightDriveTracker);
+
+          //*calculate error for this cycle*
+          error =  desiredValue - rightPosition;
+          driftError = (wheelPowerRatio - (leftPosition / rightPosition)) * 1000;  // desired ratio - current ratio
+
+          //*adding all tunning values*
+          moveSpeed = arcPID.compute(error);
+          driftPower = arcDriftPID.compute(driftError);
+
+          //*speed cap
+          if(moveSpeed > speed) moveSpeed = speed;
+          if(moveSpeed < -speed) moveSpeed = -speed;
+
+          //*setting motor speeds*
+          spinBase((moveSpeed * wheelPowerRatio) + (driftPower / 1000), moveSpeed); // outer wheel always moves at same speed and inner wheel changes to adapt
+
+          //*stopping code*
+          if(drivePID.isSettled()) {isPIDRunning = false;}
+
+          //*print debug data*
+          if(isDebugMode) {
+            printf("%i, ", (int)floor(leftPosition));
+            printf("%i, ", error);
+            printf("%i\n", moveSpeed);
+          }
+
+          //*wait to avoid overloading*
+          vex::task::sleep(20);
+        }
       } else if(direction == RIGHT) {
+        if(leftEncoder) {
+          desiredValue = outerDistance * leftEncoderDegsPerInch;
+        } else {
+          desiredValue = outerDistance * degsPerInch;
+        }
+        if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
+        if(isDebugMode) printf("wheelPowerRatio = %f\n", wheelPowerRatio);
 
+        //*main PID loop*
+        while(isPIDRunning) {
+          //*get encoder positions*
+          leftPosition = leftTracker->readTrackerPosition(leftDriveTracker);
+          rightPosition = rightTracker->readTrackerPosition(rightDriveTracker);
+
+          //*calculate error for this cycle*
+          error =  desiredValue - leftPosition;
+          driftError = (wheelPowerRatio - (rightPosition / leftPosition)) * 1000; // desired ratio - current ratio
+
+          //*adding all tunning values*
+          moveSpeed = arcPID.compute(error);
+          driftPower = arcDriftPID.compute(driftError);
+
+          //*speed cap
+          if(moveSpeed > speed) moveSpeed = speed;
+          if(moveSpeed < -speed) moveSpeed = -speed;
+
+          //*setting motor speeds*
+          spinBase(moveSpeed, (moveSpeed * wheelPowerRatio) + (driftPower / 1000));  // outer wheel always moves at same speed and inner wheel changes to adapt
+
+          //*stopping code*
+          if(drivePID.isSettled()) {isPIDRunning = false;}
+
+          //*print debug data*
+          if(isDebugMode) {
+            printf("%i, ", (int)floor(rightPosition));
+            printf("%i, ", error);
+            printf("%i\n", moveSpeed);
+          }
+
+          //*wait to avoid overloading*
+          vex::task::sleep(20);
+        }
       }
-
+      stopRobot(brake);
     }
 
   

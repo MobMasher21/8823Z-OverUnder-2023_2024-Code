@@ -201,6 +201,7 @@ void pre_auton(void) {
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
+  driveBase.setDriveBaseWidth(13);
   
   // Setup inertial sensor settings
   driveBase.setupInertialSensor(6);
@@ -217,6 +218,8 @@ void pre_auton(void) {
   driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);  // p, i, d, error, error time, timeout
   driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);  // p, i, d, error, error time, timeout
   driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
+  driveBase.setupArcPID(0, 0, 0, 20, 2, 100);  // p, i, d, error, error time, timeout  //! NEEDS TUNING
+  driveBase.setupArcDriftPID(0, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout  //! NEEDS TUNING
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);

@@ -18,13 +18,12 @@ namespace evAPI
     if(arcDirection == RIGHT) dirMod = -1;
 
     int dStart = previousHeading;  // Heading of the robot before the turn
-    int dWorking = previousHeading * dirMod;  // Sets the start heading to be the correct sign for right or left turn 
     int dTurn = headingChange;  // The angle of the turn arc
+    int dWorking = dTurn * dirMod;  // Sets the start heading to be the correct sign for right or left turn 
     int lArc = travelDistance;  // Length of the arc
 
     double tStart = (dStart - 90) * (M_PI / 180);  // Starting angle along arc circle
     double tArc = dWorking * (M_PI / 180);  // Overall angle of the arc
-    double tTan = dStart * (M_PI / 180);  // Angle of the tangent line of the starting point
     double tSec = .5 * tArc;  // Angle of the secant line relative to the tangent lin on the turning arc of the circle
     double tTurn = (M_PI / 2) - (tSec + tStart);  // Angle of the secant line relative to the x-axis
 
