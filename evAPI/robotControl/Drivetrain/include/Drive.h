@@ -75,10 +75,11 @@ namespace evAPI {
       void setStoppingMode(brakeType mode);
 
       /*----- motor ports and reverses -----*/
+
       /**
        * @brief Sets the cartage type that is used in the motors.
       */
-      void setGearbox(gearSetting driveGear);    //sets gearbox for all motors
+      void setGearbox(gearSetting driveGear);
 
       /**
        * @brief Configures the left side of the base to have one motor.
@@ -206,7 +207,7 @@ namespace evAPI {
        * @brief Sets up the left encoder on the base.
        * @param port The port the encoder is in.
        * @param wheelSize The size of the wheel the encoder is connected to in inches.
-       * @param reverse. Optional. Controls is the encoder is reversed or not.
+       * @param reverse Optional. Controls is the encoder is reversed or not.
       */
       void leftEncoderSetup(int port, double wheelSize, bool reverse = false);
 
@@ -214,7 +215,7 @@ namespace evAPI {
        * @brief Sets up the right encoder on the base.
        * @param port The port the encoder is in.
        * @param wheelSize The size of the wheel the encoder is connected to in inches.
-       * @param reverse. Optional. Controls is the encoder is reversed or not.
+       * @param reverse Optional. Controls is the encoder is reversed or not.
       */
       void rightEncoderSetup(int port, double wheelSize, bool reverse = false);
 
@@ -238,7 +239,7 @@ namespace evAPI {
        * @param minStopError The minimum error required for the PID to finish.
        * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
        *                   minStopError for the PID to finish.
-       * @param The amount of cycles the PID needs to take before it times out and exits.
+       * @param timeoutTime The amount of cycles the PID needs to take before it times out and exits.
       */
       void setupDrivePID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
@@ -250,7 +251,7 @@ namespace evAPI {
        * @param minStopError The minimum error required for the PID to finish.
        * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
        *                   minStopError for the PID to finish.
-       * @param The amount of cycles the PID needs to take before it times out and exits.
+       * @param timeoutTime The amount of cycles the PID needs to take before it times out and exits.
       */
       void setupTurnPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
@@ -262,7 +263,7 @@ namespace evAPI {
        * @param minStopError The minimum error required for the PID to finish.
        * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
        *                   minStopError for the PID to finish.
-       * @param The amount of cycles the PID needs to take before it times out and exits.
+       * @param timeoutTime The amount of cycles the PID needs to take before it times out and exits.
       */
       void setupDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
@@ -274,7 +275,7 @@ namespace evAPI {
        * @param minStopError The minimum error required for the PID to finish.
        * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
        *                   minStopError for the PID to finish.
-       * @param The amount of cycles the PID needs to take before it times out and exits.
+       * @param timeoutTime The amount of cycles the PID needs to take before it times out and exits.
       */
       void setupArcPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
@@ -286,7 +287,7 @@ namespace evAPI {
        * @param minStopError The minimum error required for the PID to finish.
        * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
        *                   minStopError for the PID to finish.
-       * @param The amount of cycles the PID needs to take before it times out and exits.
+       * @param timeoutTime The amount of cycles the PID needs to take before it times out and exits.
       */
       void setupArcDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
@@ -409,6 +410,8 @@ namespace evAPI {
        * @param direction The direction to turn in.
        * @param angle The angle to turn to.
        * @param speed. Optional The top speed to turn at.
+       * @warning If using a base that easily moves from side to side, it is recommended that you 
+       *          keep the speed less than 50. Otherwise, your robot may drift excessively.
       */
       void arcTurn(double radius, vex::turnType direction, int angle, int speed);
 
@@ -435,7 +438,7 @@ namespace evAPI {
   
       /************ Sensors ************/
       /*----- movement -----*/
-      
+
       /**
        * @returns True if the base motors are moving.
       */
