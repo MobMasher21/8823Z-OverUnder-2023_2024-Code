@@ -2,7 +2,6 @@
 /*                                                                            */
 /*    Module:       PID.h                                                     */
 /*    Author:       Jackson Area Robotics                                     */
-/*    Created:      ???                                                       */
 /*    Description:  PID class.                                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/

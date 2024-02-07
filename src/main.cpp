@@ -31,26 +31,31 @@ digital_out *backLeftWing;
 digital_out *backRightWing;
 
 // Controller callback function declarations ------------------------------
-void controlFrontWings(bool left, bool right); //Control the front wings
-void controlBackWings(bool left, bool right); //Control the back wings
+void setFrontWings(bool left, bool right); //Control the front wings
+void setBackWings(bool left, bool right); //Control the back wings
 void toggleFrontWings(); //Toggle the status of the front wings
 void toggleBackWings(); //Toggle the status of the front wings
+void toggleFrontLeft();
+void toggleFrontRight();
+void toggleBackLeft();
+void toggleBackRight();
 void puncherSpeedIncrement(void); //Increments the speed of the puncher by 5
 void puncherSpeedDecrement(void); //Decrements the speed of the puncher by 5
 void puncherManualToggle(void);   //Enables manual control of the puncher
 void puncherModeToggle(void);     //Toggles the mode of the puncher
 
 // Setup controller button names ------------------------------------------
-#define PUNCHER_FIRE_BUTTON ButtonR2
+#define PUNCHER_FIRE_BUTTON ButtonL1
+#define PUNCHER_STOP_BUTTON ButtonL2
 #define PUNCHER_MODE_BUTTON ButtonA
-#define PUNCHER_STOP_BUTTON ButtonX
-#define PUNCHER_MANUAL_BUTTON ButtonY
-#define PUNCHER_SPEED_INC ButtonLeft
-#define PUNCHER_SPEED_DEC ButtonRight
+#define PUNCHER_MANUAL_BUTTON ButtonX
+#define PUNCHER_SPEED_INC ButtonUp
+#define PUNCHER_SPEED_DEC ButtonLeft
 
-#define INTK_IN_BUTTON ButtonL1
-#define INTK_OUT_BUTTON ButtonL2
-#define FRONT_WINGS_BUTTON ButtonR1
+#define INTK_IN_BUTTON ButtonR1
+#define INTK_OUT_BUTTON ButtonR2
+#define FRONT_LEFT_WINGS_BUTTON ButtonRight
+#define FRONT_RIGHT_WINGS_BUTTON ButtonY
 #define BACK_LEFT_WINGS_BUTTON ButtonDown
 #define BACK_RIGHT_WINGS_BUTTON ButtonB
 
@@ -121,8 +126,8 @@ bool puncherAutoPrimeEnabled = true;
 /*---------------------------------------------------------------------------------*/
 void pre_auton(void) {
   //* Set object pointers ====================================================
-  frontLeftWing  = new digital_out(Brain.ThreeWirePort.A);
-  frontRightWing = new digital_out(Brain.ThreeWirePort.B);
+  frontRightWing = new digital_out(Brain.ThreeWirePort.A);
+  frontLeftWing  = new digital_out(Brain.ThreeWirePort.B);
   backLeftWing   = new digital_out(Brain.ThreeWirePort.C);
   backRightWing  = new digital_out(Brain.ThreeWirePort.D);
 
@@ -201,7 +206,7 @@ void pre_auton(void) {
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
-  driveBase.setDriveBaseWidth(13);
+  driveBase.setDriveBaseWidth(11.625);
   
   // Setup inertial sensor settings
   driveBase.setupInertialSensor(6);
@@ -218,17 +223,18 @@ void pre_auton(void) {
   driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);  // p, i, d, error, error time, timeout
   driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);  // p, i, d, error, error time, timeout
   driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
-  driveBase.setupArcPID(0, 0, 0, 20, 2, 100);  // p, i, d, error, error time, timeout  //! NEEDS TUNING
-  driveBase.setupArcDriftPID(0, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout  //! NEEDS TUNING
+  driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);  // p, i, d, error, error time, timeout
+  driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
   driveControl.setHandicaps(1, 0.6);  // main drive, turning
 
   //* Setup controller callbacks =============================================
-  primaryController.FRONT_WINGS_BUTTON.pressed(toggleFrontWings);
-  primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackWings);
-  //primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleFrontWings);
+  primaryController.FRONT_LEFT_WINGS_BUTTON.pressed(toggleFrontLeft);
+  primaryController.FRONT_RIGHT_WINGS_BUTTON.pressed(toggleFrontRight);
+  primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackLeft);
+  primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleBackRight);
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
@@ -264,8 +270,8 @@ void autonomous(void) {
 
       //Launch triballs for 40 seconds
       puncherMotor.spin(fwd, 12, voltageUnits::volt);
-      this_thread::sleep_for(30000);
-      //this_thread::sleep_for(10000);
+      //this_thread::sleep_for(30000);
+      this_thread::sleep_for(10000);
       puncherMotor.stop(coast);
       this_thread::sleep_for(100);
 
@@ -275,12 +281,19 @@ void autonomous(void) {
       {
         this_thread::sleep_for(5);
       }
-      driveBase.setDriveHeading(106);
+      driveBase.setDriveHeading(109);
 
       //Spin the intake to prevent triballs from getting stuck
       intakeMotor.spin(reverse, 100, percent);
 
       //Drive to other side of the field
+      driveBase.driveBackward(8);
+      driveBase.turnToHeading(230);
+      driveBase.arcTurn(32, right, 32, 40);
+      driveBase.driveForward(53);
+      driveBase.arcTurn(12, right, 90, 40);
+
+      /* //Drive to other side of the field
       driveBase.driveBackward(5);
       driveBase.turnToHeading(250);
       driveBase.driveForward(16);
@@ -310,7 +323,7 @@ void autonomous(void) {
       driveBase.turnToHeading(300);
 
       //Second push
-      controlFrontWings(true, true);
+      setFrontWings(true, true);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
@@ -323,30 +336,7 @@ void autonomous(void) {
       driveBase.stopRobot();
       
       //Drive to second push point
-      controlFrontWings(false, false);
-      driveBase.driveBackward(35);
-      break;
-
-      //driveBase.driveForward(8);
-      /* driveBase.turnToHeading(0);
-      driveBase.driveForward(40);
-      driveBase.turnToHeading(235);
-
-      //Second push
-      controlFrontWings(true, true);
-      driveBase.spinBase(100, 100);
-      vex::task::sleep(800);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(200);
-      driveBase.stopRobot();
-
-      //Move Back from goal
-      controlFrontWings(false, false);
+      setFrontWings(false, false);
       driveBase.driveBackward(35); */
 
       intakeMotor.stop();
@@ -397,7 +387,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      controlFrontWings(false, true);
+      setFrontWings(false, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -416,7 +406,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
 
       //grab ball 4
-      controlFrontWings(false, false);
+      setFrontWings(false, false);
       driveBase.turnToHeading(180);
       driveBase.driveForward(20);
       driveBase.turnToHeading(270);
@@ -488,7 +478,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      controlFrontWings(false, true);
+      setFrontWings(false, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -507,11 +497,11 @@ void autonomous(void) {
       driveBase.driveBackward(28);
 
       //Go touch the bar
-      controlFrontWings(false, false);
+      setFrontWings(false, false);
       driveBase.turnToHeading(210);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(35);
-      controlFrontWings(true, false);
+      setFrontWings(true, false);
       driveBase.setTurnSpeed(20);
       driveBase.turnToHeading(155);
 
@@ -613,13 +603,21 @@ void autonomous(void) {
 
     //*TEST AUTOS
     case AUTO_TEST_PID:
-      // driveBase.driveForward(39.5);
-      // this_thread::sleep_for(3000);
-      // driveBase.driveBackward(39.5);
+      /* driveBase.driveForward(39.5);
+      this_thread::sleep_for(3000);
+      driveBase.driveBackward(39.5); */
 
-      driveBase.turnToHeading(90);
+      /* driveBase.turnToHeading(90);
       this_thread::sleep_for(500);
-      driveBase.turnToHeading(0);
+      driveBase.turnToHeading(0); */
+
+      driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);  // p, i, d, error, error time, timeout
+      driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
+
+      driveBase.arcTurn(24, right, 90, 40);
+      /* this_thread::sleep_for(1500);
+      driveBase.arcTurn(12, left, 90, 100); */
+
       break;
 
     //*Do nothing auto
@@ -703,7 +701,7 @@ void usercontrol(void) {
     }
 
     //Print out the angle of the catapult
-    printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
+    //printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
 
     //========================================================================
 
@@ -756,13 +754,13 @@ int main() {
 }
 
 //*Controller callback definitions
-void controlFrontWings(bool left, bool right)
+void setFrontWings(bool left, bool right)
 {
   frontLeftWing->set(left);
   frontRightWing->set(right);
 }
 
-void controlBackWings(bool left, bool right)
+void setBackWings(bool left, bool right)
 {
   backLeftWing->set(left);
   backRightWing->set(right);
@@ -780,6 +778,26 @@ void toggleBackWings()
   bool newWingStatus = !backLeftWing->value();
   backLeftWing->set(newWingStatus);
   backRightWing->set(newWingStatus);
+}
+
+void toggleFrontLeft()
+{
+  frontLeftWing->set(!frontLeftWing->value());
+}
+
+void toggleFrontRight()
+{
+  frontRightWing->set(!frontRightWing->value());
+}
+
+void toggleBackLeft()
+{
+  backLeftWing->set(!backLeftWing->value());
+}
+
+void toggleBackRight()
+{
+  backRightWing->set(!backRightWing->value());
 }
 
 void puncherSpeedIncrement(void)

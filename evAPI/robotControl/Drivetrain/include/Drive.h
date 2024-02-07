@@ -106,7 +106,7 @@ namespace evAPI {
       void turnToHeading(int angle, int speed);  //enter an angle and speed to turn
       void turnToHeading(int angle);  //enter an angle to turn
 
-      void arcTurn(double radius, leftAndRight direction, int angle, int speed);  // turns in an arc
+      void arcTurn(double radius, vex::turnType direction, int angle, int speed);  // turns in an arc
 
       /*----- odo tracking -----*/
       void odoThreadCall();  // command only called by odo thread loop

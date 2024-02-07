@@ -201,7 +201,7 @@ namespace evAPI {
       turnToHeading(angle, turnSpeed);
     }
 
-    void Drive::arcTurn(double radius, leftAndRight direction, int angle, int speed) {  // turns in an arc
+    void Drive::arcTurn(double radius, vex::turnType direction, int angle, int speed) {  // turns in an arc
       //! I HAVE NO FUCKING IDEA IF THIS WORKS OR NOT BECAUSE I WROTE THIS AT 11 O'CLOCK AT NIGHT I HAVE A BIG ASS
       //! HEADACHE AND IM HOPPED UP ON PAIN KILLERS SO I WISH LUCK TO WHOEVER ON OUR TEAM IS STUCK WITH THE JOB OF FINDING OUT
       //! WHAT THE HELL IS GOING ON BELOW HERE
@@ -213,8 +213,8 @@ namespace evAPI {
       int error;  // desired value - sensor value
       int driftError;  // difference between wheel power ratio - current power ratio (1000x for math purposes)
       int desiredValue;  // angle of rotation sensor that we want
-      int outerDistance;  // length of the outer arc of the turn
-      int innerDistance;  // length of the inner arc of the turn
+      double outerDistance;  // length of the outer arc of the turn
+      double innerDistance;  // length of the inner arc of the turn
       double wheelPowerRatio;  // ratio of length between outer and inner wheel
       bool isPIDRunning = true;  // is true as the PID is running
       int moveSpeed;  // the speed the motors are set to every cycle
@@ -223,8 +223,8 @@ namespace evAPI {
       arcDriftPID.setTotalError(0);
       arcPID.resetTimeout();
 
-      outerDistance = (((radius + (driveBaseWidth / 2)) * 2) * M_PI) * (angle / 360);  // inches of outer arc
-      innerDistance = (((radius - (driveBaseWidth / 2)) * 2) * M_PI) * (angle / 360);  // inches of inner arc
+      outerDistance = (((radius + (driveBaseWidth / 2)) * 2) * M_PI) * ((double)angle / 360);  // inches of outer arc
+      innerDistance = (((radius - (driveBaseWidth / 2)) * 2) * M_PI) * ((double)angle / 360);  // inches of inner arc
       wheelPowerRatio = innerDistance / outerDistance;
       
       //*resets encoders*
@@ -234,9 +234,11 @@ namespace evAPI {
       if(isDebugMode) printf("leftAngle: %f\n", rightTracker->readTrackerPosition(rightDriveTracker));
         
       //*print debug header*
-      if(isDebugMode) printf("position, error, moveSpeed\n");
+      if(isDebugMode) printf("outerDistance: %f\n", outerDistance);
+      if(isDebugMode) printf("innerDistance: %f\n", innerDistance);
+      if(isDebugMode) printf("driveBaseWidth: %f\n", driveBaseWidth);
       
-      if(direction == LEFT) {
+      if(direction == vex::left) {
         if(rightEncoder) {
           desiredValue = outerDistance * rightEncoderDegsPerInch;
         } else {
@@ -245,6 +247,7 @@ namespace evAPI {
         if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
         if(isDebugMode) printf("wheelPowerRatio = %f\n", wheelPowerRatio);
 
+        if(isDebugMode) printf("position, error, moveSpeed\n");
         //*main PID loop*
         while(isPIDRunning) {
           //*get encoder positions*
@@ -267,7 +270,7 @@ namespace evAPI {
           spinBase((moveSpeed * wheelPowerRatio) + (driftPower / 1000), moveSpeed); // outer wheel always moves at same speed and inner wheel changes to adapt
 
           //*stopping code*
-          if(drivePID.isSettled()) {isPIDRunning = false;}
+          if(arcPID.isSettled()) {isPIDRunning = false;}
 
           //*print debug data*
           if(isDebugMode) {
@@ -279,7 +282,7 @@ namespace evAPI {
           //*wait to avoid overloading*
           vex::task::sleep(20);
         }
-      } else if(direction == RIGHT) {
+      } else if(direction == vex::right) {
         if(leftEncoder) {
           desiredValue = outerDistance * leftEncoderDegsPerInch;
         } else {
@@ -288,6 +291,7 @@ namespace evAPI {
         if(isDebugMode) printf("desiredValue: %i\n", desiredValue);
         if(isDebugMode) printf("wheelPowerRatio = %f\n", wheelPowerRatio);
 
+        if(isDebugMode) printf("position, error, moveSpeed\n");
         //*main PID loop*
         while(isPIDRunning) {
           //*get encoder positions*
@@ -310,7 +314,7 @@ namespace evAPI {
           spinBase(moveSpeed, (moveSpeed * wheelPowerRatio) + (driftPower / 1000));  // outer wheel always moves at same speed and inner wheel changes to adapt
 
           //*stopping code*
-          if(drivePID.isSettled()) {isPIDRunning = false;}
+          if(arcPID.isSettled()) {isPIDRunning = false;}
 
           //*print debug data*
           if(isDebugMode) {
