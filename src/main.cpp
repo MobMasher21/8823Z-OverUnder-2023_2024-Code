@@ -215,16 +215,17 @@ void pre_auton(void) {
   // Set default speeds
   driveBase.setDriveSpeed(100);
   driveBase.setTurnSpeed(100);
+  driveBase.setArcTurnSpeed(40);
 
   //Set stopping mode
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);  // p, i, d, error, error time, timeout
-  driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
-  driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);  // p, i, d, error, error time, timeout
-  driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);  // p, i, d, error, error time, timeout
+  driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);
+  driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);
+  driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);
+  driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
+  driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
   //* Setup for base driver contorl ==========================================
   driveControl.setPrimaryStick(leftStick);
@@ -289,9 +290,9 @@ void autonomous(void) {
       //Drive to other side of the field
       driveBase.driveBackward(8);
       driveBase.turnToHeading(230);
-      driveBase.arcTurn(32, right, 32, 40);
+      driveBase.arcTurn(32, right, 32);
       driveBase.driveForward(53);
-      driveBase.arcTurn(12, right, 90, 40);
+      driveBase.arcTurn(12, right, 90);
 
       /* //Drive to other side of the field
       driveBase.driveBackward(5);
@@ -307,7 +308,7 @@ void autonomous(void) {
       driveBase.spinBase(-100, -100);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) < -10) && (driveBase.getBaseSpeed(right) < -10)) {
+      while((driveBase.getMotorSpeed(left) < -10) && (driveBase.getMotorSpeed(right) < -10)) {
         vex::task::sleep(5);
       }
 
@@ -328,7 +329,7 @@ void autonomous(void) {
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 10) && (driveBase.getBaseSpeed(right) > 10)) {
+      while((driveBase.getMotorSpeed(left) > 10) && (driveBase.getMotorSpeed(right) > 10)) {
         vex::task::sleep(5);
       }
 
@@ -396,7 +397,7 @@ void autonomous(void) {
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
+      while((driveBase.getMotorSpeed(left) > 80) && (driveBase.getMotorSpeed(right) > 80)) {
         vex::task::sleep(5);
       }
 
@@ -422,7 +423,7 @@ void autonomous(void) {
       driveBase.spinBase(100, 100);
       vex::task::sleep(600);
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
+      while((driveBase.getMotorSpeed(left) > 80) && (driveBase.getMotorSpeed(right) > 80)) {
         vex::task::sleep(5);
       }
       intakeMotor.stop(coast);
@@ -487,7 +488,7 @@ void autonomous(void) {
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 80) && (driveBase.getBaseSpeed(right) > 80)) {
+      while((driveBase.getMotorSpeed(left) > 80) && (driveBase.getMotorSpeed(right) > 80)) {
         vex::task::sleep(5);
       }
 
@@ -532,7 +533,7 @@ void autonomous(void) {
       vex::task::sleep(100);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getBaseSpeed(left) > 20) && (driveBase.getBaseSpeed(right) > 20)) {
+      while((driveBase.getMotorSpeed(left) > 20) && (driveBase.getMotorSpeed(right) > 20)) {
         vex::task::sleep(5);
       }
 

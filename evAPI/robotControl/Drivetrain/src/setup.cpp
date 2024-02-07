@@ -184,54 +184,54 @@ namespace evAPI {
   }
 
   /*----- pid setup -----*/
-  void Drive::setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+  void Drive::setupDrivePID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime) {
     drivePID.setConstants(kp, ki, kd);
-    drivePID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    drivePID.setStoppings(minStopError, timeToStop, timeoutTime);
     driveP = kp;
     driveI = ki;
     driveD = kd;
-    driveMaxStopError = maxStopError;
-    driveTimeToStop = timeToStop;    
+    driveMaxStopError = minStopError;
+    driveTimeToStop = timeToStop;
   }
 
-  void Drive::setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+  void Drive::setupTurnPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime) {
     turnPID.setConstants(kp, ki, kd);
-    turnPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    turnPID.setStoppings(minStopError, timeToStop, timeoutTime);
     turnP = kp;
     turnI = ki;
     turnD = kd;
-    turnMaxStopError = maxStopError;
-    turnTimeToStop = timeToStop;    
+    turnMaxStopError = minStopError;
+    turnTimeToStop = timeToStop;
   }
 
-  void Drive::setupDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+  void Drive::setupDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime) {
     driftPID.setConstants(kp, ki, kd);
-    driftPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    driftPID.setStoppings(minStopError, timeToStop, timeoutTime);
     driftP = kp;
     driftI = ki;
     driftD = kd;
-    driftMaxStopError = maxStopError;
-    driftTimeToStop = timeToStop;    
+    driftMaxStopError = minStopError;
+    driftTimeToStop = timeToStop;
   }
 
-  void Drive::setupArcPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+  void Drive::setupArcPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime) {
     arcPID.setConstants(kp, ki, kd);
-    arcPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    arcPID.setStoppings(minStopError, timeToStop, timeoutTime);
     arcP = kp;
     arcI = ki;
     arcD = kd;
-    arcMaxStopError = maxStopError;
-    arcTimeToStop = timeToStop;    
+    arcMaxStopError = minStopError;
+    arcTimeToStop = timeToStop;
   }
 
-  void Drive::setupArcDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime) {
+  void Drive::setupArcDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime) {
     arcDriftPID.setConstants(kp, ki, kd);
-    arcDriftPID.setStoppings(maxStopError, timeToStop, timeoutTime);
+    arcDriftPID.setStoppings(minStopError, timeToStop, timeoutTime);
     arcDriftP = kp;
     arcDriftI = ki;
     arcDriftD = kd;
-    arcDriftMaxStopError = maxStopError;
-    arcDriftTimeToStop = timeToStop;    
+    arcDriftMaxStopError = minStopError;
+    arcDriftTimeToStop = timeToStop;
   }
 
   /*----- inertial setup -----*/

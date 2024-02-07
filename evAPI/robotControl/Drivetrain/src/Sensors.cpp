@@ -7,7 +7,7 @@ namespace evAPI
     return leftMotor1->isSpinning() || rightMotor1->isSpinning();
   }
 
-  double Drive::getBaseSpeed(turnType side)
+  double Drive::getMotorSpeed(turnType side)
   {
     double wheelVelocity;
 

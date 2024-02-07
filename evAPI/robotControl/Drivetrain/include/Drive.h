@@ -32,100 +32,421 @@ namespace evAPI {
     public:
   
       /****** constructors ******/
-      Drive( void );    //empty constructor
-      Drive(gearSetting driveGear);    //sets gearbox for all motors
+
+      /**
+       * @brief Creates a drivetrain object.
+      */
+      Drive( void );
+
+      /**
+       * @brief Creates a drivetrain object.
+       * @param driveGear Optional. Sets the cartage type for all the base motors.
+      */
+      Drive(gearSetting driveGear);
   
       /****** debug ******/
-      void setDebugState(bool mode); //allows you to toggle debug mode
-      void printAllEncoderData();  //prints all 3 encoder values to the terminal
+
+      /**
+       * @brief Controls debug mode, which prints out information when driving.
+       * @param mode Enables or disables debug mode.
+      */
+      void setDebugState(bool mode);
+
+      /**
+       * @brief Prints all the data from the encoders to the terminal.
+      */
+      void printAllEncoderData();
 
       /*********** setup ***********/
       /*----- Base Setup -----*/
-      void geartrainSetup(float diameter, int gearIN, int gearOUT);  //used for setting up wheel size and gear ratio
+
+      /**
+       * @brief Sets up the geartrain values for the base.
+       * @param diameter The diameter of the wheels in inches.
+       * @param gearIN The number of teeth on the gears connected to the motors.
+       * @param gearOUT The number of teeth on the gears connected to the wheels.
+      */
+      void geartrainSetup(float diameter, int gearIN, int gearOUT);
      
-     /**
-      * @brief Sets the stopping mode for the base.
-      * @param mode The stopping mode.
-     */
+      /**
+       * @brief Sets the stopping mode for the base.
+       * @param mode The stopping mode.
+      */
       void setStoppingMode(brakeType mode);
 
       /*----- motor ports and reverses -----*/
+      /**
+       * @brief Sets the cartage type that is used in the motors.
+      */
       void setGearbox(gearSetting driveGear);    //sets gearbox for all motors
-      void leftPortSetup(int port1);    //left motor port setup for 2 motor drive
-      void leftPortSetup(int port1, int port2);    //left motor port setup for 4 motor drive
-      void leftPortSetup(int port1, int port2, int port3);    //left motor port setup for 6 motor drive
-      void leftPortSetup(int port1, int port2, int port3, int port4);    //left motor port setup for 8 motor drive
-      void rightPortSetup(int port1);    //right motor port setup for 2 motor drive
-      void rightPortSetup(int port1, int port2);    //right motor port setup for 4 motor drive
-      void rightPortSetup(int port1, int port2, int port3);    //right motor port setup for 6 motor drive
-      void rightPortSetup(int port1, int port2, int port3, int port4);    //right motor port setup for 8 motor drive
-      void leftReverseSetup(bool reverse1);    //left motor reverse setup for 2 motor drive
-      void leftReverseSetup(bool reverse1, bool reverse2);    //left motor reverse setup for 4 motor drive
-      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3);    //left motor reverse setup for 6 motor drive
-      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);    //left motor reverse setup for 8 motor drive
-      void rightReverseSetup(bool reverse1);    //right motor reverse setup for 2 motor drive
-      void rightReverseSetup(bool reverse1, bool reverse2);    //right motor reverse setup for 4 motor drive
-      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3);    //right motor reverse setup for 6 motor drive
-      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);    //right motor reverse setup for 8 motor drive
+
+      /**
+       * @brief Configures the left side of the base to have one motor.
+       * @param port1 The port the motor is in.
+      */
+      void leftPortSetup(int port1);
+
+      /**
+       * @brief Configures the left side of the base to have two motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+      */
+      void leftPortSetup(int port1, int port2);
+
+      /**
+       * @brief Configures the left side of the base to have three motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+       * @param port3 The port the third motor is in.
+      */
+      void leftPortSetup(int port1, int port2, int port3);
+
+      /**
+       * @brief Configures the left side of the base to have four motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+       * @param port3 The port the third motor is in.
+       * @param port4 The port the forth motor is in.
+      */
+      void leftPortSetup(int port1, int port2, int port3, int port4);
+
+      /**
+       * @brief Configures the right side of the base to have one motor.
+       * @param port1 The port the motor is in.
+      */
+      void rightPortSetup(int port1);
+
+      /**
+       * @brief Configures the right side of the base to have two motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+      */
+      void rightPortSetup(int port1, int port2);
+
+      /**
+       * @brief Configures the right side of the base to have three motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+       * @param port3 The port the third motor is in.
+      */
+      void rightPortSetup(int port1, int port2, int port3);
+
+      /**
+       * @brief Configures the right side of the base to have four motors.
+       * @param port1 The port the first motor is in.
+       * @param port2 The port the second motor is in.
+       * @param port3 The port the third motor is in.
+       * @param port4 The port the forth motor is in.
+      */
+      void rightPortSetup(int port1, int port2, int port3, int port4);
+
+      /**
+       * @brief Sets what motors are reversed in the left side.
+       * @param reverse1 The reversed status of the first motor.
+      */
+      void leftReverseSetup(bool reverse1);
+
+      /**
+       * @brief Sets what motors are reversed in the left side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+      */
+      void leftReverseSetup(bool reverse1, bool reverse2);
+
+      /**
+       * @brief Sets what motors are reversed in the left side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+       * @param reverse3 The reversed status of the third motor.
+      */
+      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3);
+
+      /**
+       * @brief Sets what motors are reversed in the left side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+       * @param reverse3 The reversed status of the third motor.
+       * @param reverse4 The reversed status of the forth motor.
+      */
+      void leftReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);
+
+      /**
+       * @brief Sets what motors are reversed in the right side.
+       * @param reverse1 The reversed status of the first motor.
+      */
+      void rightReverseSetup(bool reverse1);
+
+      /**
+       * @brief Sets what motors are reversed in the right side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+      */
+      void rightReverseSetup(bool reverse1, bool reverse2);
+
+      /**
+       * @brief Sets what motors are reversed in the right side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+       * @param reverse3 The reversed status of the third motor.
+      */
+      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3);
+
+      /**
+       * @brief Sets what motors are reversed in the right side.
+       * @param reverse1 The reversed status of the first motor.
+       * @param reverse2 The reversed status of the second motor.
+       * @param reverse3 The reversed status of the third motor.
+       * @param reverse4 The reversed status of the forth motor.
+      */
+      void rightReverseSetup(bool reverse1, bool reverse2, bool reverse3, bool reverse4);
 
       /*----- encoder setup -----*/
-      void leftEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for left encoder
-      void rightEncoderSetup(int port, double wheelSize, bool reverse);  //setup values for right encoder
-      void leftFullReset();  //resets all position data about left encoder
-      void rightFullReset();  //resets all position data about right encoder
+
+      /**
+       * @brief Sets up the left encoder on the base.
+       * @param port The port the encoder is in.
+       * @param wheelSize The size of the wheel the encoder is connected to in inches.
+       * @param reverse. Optional. Controls is the encoder is reversed or not.
+      */
+      void leftEncoderSetup(int port, double wheelSize, bool reverse = false);
+
+      /**
+       * @brief Sets up the right encoder on the base.
+       * @param port The port the encoder is in.
+       * @param wheelSize The size of the wheel the encoder is connected to in inches.
+       * @param reverse. Optional. Controls is the encoder is reversed or not.
+      */
+      void rightEncoderSetup(int port, double wheelSize, bool reverse = false);
+
+      /**
+       * @brief Resets all position data for the left encoder.
+      */
+      void leftFullReset();
+
+      /**
+       * @brief Resets all position data for the right encoder.
+      */
+      void rightFullReset();
 
       /*----- pid setup -----*/
-      void setupDrivePID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
-      void setupTurnPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
-      void setupDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
-      void setupArcPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
-      void setupArcDriftPID(double kp, double ki, double kd, int maxStopError, int timeToStop, int timeoutTime);
+
+      /**
+       * @brief Sets up the PID controller for driving straight.
+       * @param kp The proportional value for the PID.
+       * @param ki The integral value for the PID.
+       * @param kd The derivative value for the PID.
+       * @param minStopError The minimum error required for the PID to finish.
+       * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
+       *                   minStopError for the PID to finish.
+       * @param The amount of cycles the PID needs to take before it times out and exits.
+      */
+      void setupDrivePID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
+
+      /**
+       * @brief Sets up the PID controller for point turning.
+       * @param kp The proportional value for the PID.
+       * @param ki The integral value for the PID.
+       * @param kd The derivative value for the PID.
+       * @param minStopError The minimum error required for the PID to finish.
+       * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
+       *                   minStopError for the PID to finish.
+       * @param The amount of cycles the PID needs to take before it times out and exits.
+      */
+      void setupTurnPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
+
+      /**
+       * @brief Sets up the PID controller for drift control when driving straight.
+       * @param kp The proportional value for the PID.
+       * @param ki The integral value for the PID.
+       * @param kd The derivative value for the PID.
+       * @param minStopError The minimum error required for the PID to finish.
+       * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
+       *                   minStopError for the PID to finish.
+       * @param The amount of cycles the PID needs to take before it times out and exits.
+      */
+      void setupDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
+
+      /**
+       * @brief Sets up the PID controller for arc turning.
+       * @param kp The proportional value for the PID.
+       * @param ki The integral value for the PID.
+       * @param kd The derivative value for the PID.
+       * @param minStopError The minimum error required for the PID to finish.
+       * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
+       *                   minStopError for the PID to finish.
+       * @param The amount of cycles the PID needs to take before it times out and exits.
+      */
+      void setupArcPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
+
+      /**
+       * @brief Sets up the PID controller for drift control when arc turning.
+       * @param kp The proportional value for the PID.
+       * @param ki The integral value for the PID.
+       * @param kd The derivative value for the PID.
+       * @param minStopError The minimum error required for the PID to finish.
+       * @param timeToStop The amount of cycles the PID needs to run for with the error being less than
+       *                   minStopError for the PID to finish.
+       * @param The amount of cycles the PID needs to take before it times out and exits.
+      */
+      void setupArcDriftPID(double kp, double ki, double kd, int minStopError, int timeToStop, int timeoutTime);
 
       /*----- inertial setup -----*/
-      void setupInertialSensor(int port);  //sets the port of the inertial sensor
-      void calibrateInertial();  //calibrate the inertial sensor
-      bool isInertialCalibrating();  //is the inertial sensor calibrating
-      void setDriveHeading(int angle);  //sets the current heading of the inertial sensor
+
+      /**
+       * @brief Sets up an inertial sensor.
+       * @param port The port the sensor is in.
+      */
+      void setupInertialSensor(int port);
+
+      /**
+       * @brief Calibrates the inertial sensor.
+      */
+      void calibrateInertial();
+
+      /**
+       * @brief Checks if the inertial sensor is calibrating.
+       * @returns True if the sensor is calibrating.
+      */
+      bool isInertialCalibrating();
+
+      /**
+       * @brief Sets the current heading of the base.
+       * @param angle The angle the robot is facing from 0-360 degrees.
+      */
+      void setDriveHeading(int angle);
       
       /************ movement ************/
+
       /*----- manual movement -----*/
-      void spinBase(int leftSpeed, int rightSpeed);  //spins both sides at speeds that are set in the function
-      void stopRobot();  //stops robot with type coast
-      void stopRobot(brakeType stoppingMode);  //stops robot with given type
+      /**
+       * @brief Spins the motors in each side with a given speed in percent.
+       * @param leftSpeed The speed of the left motors.
+       * @param rightSpeed The speed of the right motors.
+      */
+      void spinBase(int leftSpeed, int rightSpeed);
+
+      /**
+       * @brief Stops the base motors with a brake type of coast.
+      */
+      void stopRobot();
+
+      /**
+       * @brief Stops the base motors with a specified stopping mode.
+       * @param stoppingMode The was the base motors will stop.
+      */
+      void stopRobot(brakeType stoppingMode);
   
       /*----- automatic -----*/
-      void setDriveSpeed(int speed);  //sets the drive speed for when one is not entered
-      void setTurnSpeed(int speed);  //sets the drive speed for when one is not entered
-      void setDriveBaseWidth(double width);  //sets the distance between the two wheels for arc turns
 
-      void driveForward(double distance, int speed);  //enter a distance and speed to go forward
-      void driveForward(double distance);  //enter a distance to go forward
-      void driveBackward(double distance, int speed);  //enter a distance and speed to go backward
-      void driveBackward(double distance);  //enter a distance to go backward
+      /**
+       * @brief Sets the default drive speed when using the drive functions.
+       * @param speed The top speed of the base in percent.
+      */
+      void setDriveSpeed(int speed);
 
-      void turnToHeading(int angle, int speed);  //enter an angle and speed to turn
-      void turnToHeading(int angle);  //enter an angle to turn
+      /**
+       * @brief Sets the default point turn speed when using the turn functions.
+       * @param speed The top speed of the base in percent.
+      */
+      void setTurnSpeed(int speed);
 
-      void arcTurn(double radius, vex::turnType direction, int angle, int speed);  // turns in an arc
+      /**
+       * @brief Sets the default arc turn speed when using the turn functions.
+       * @param speed The top speed of the base in percent.
+       * @warning If using a base that easily moves from side to side, it is recommended that you 
+       *          keep this value less than 50. Otherwise, your robot may drift excessively.
+      */
+      void setArcTurnSpeed(int speed);
+
+      /**
+       * @brief Sets the width of the base.
+       * @param width The width of the base in inches.
+      */
+      void setDriveBaseWidth(double width);
+
+      /**
+       * @brief Drives the robot forward.
+       * @param distance The distance to drive in inches.
+       * @param speed Optional. The top speed to drive at.
+      */
+      void driveForward(double distance, int speed);
+
+      /**
+       * @brief Drives the robot forward.
+       * @param distance The distance to drive in inches.
+      */
+      void driveForward(double distance);
+
+      /**
+       * @brief Drives the robot backward.
+       * @param distance The distance to drive in inches.
+       * @param speed Optional. The top speed to drive at.
+      */
+      void driveBackward(double distance, int speed);
+
+      /**
+       * @brief Drives the robot backward.
+       * @param distance The distance to drive in inches.
+      */
+      void driveBackward(double distance);
+
+      /**
+       * @brief Turns the robot to a specified heading.
+       * @param angle The heading to turn to in degrees.
+       * @param speed Optional. The top speed to turn at.
+      */
+      void turnToHeading(int angle, int speed);
+
+      /**
+       * @brief Turns the robot to a specified heading.
+       * @param angle The heading to turn to in degrees.
+      */
+      void turnToHeading(int angle);
+
+      /**
+       * @brief Turn the robot in an arc.
+       * @param radius The radius of the arc in inches.
+       * @param direction The direction to turn in.
+       * @param angle The angle to turn to.
+       * @param speed. Optional The top speed to turn at.
+      */
+      void arcTurn(double radius, vex::turnType direction, int angle, int speed);
+
+      /**
+       * @brief Turn the robot in an arc.
+       * @param radius The radius of the arc in inches.
+       * @param direction The direction to turn in.
+       * @param angle The angle to turn to.
+      */
+      void arcTurn(double radius, vex::turnType direction, int angle);
 
       /*----- odo tracking -----*/
-      void odoThreadCall();  // command only called by odo thread loop
-      void startOdoThread();  // starts the odo thread
+
+      /**
+       * @brief Calls the function for the odometry thread.
+       *!@warning DO NOT CALL THIS FUNCTION!
+      */
+      void odoThreadCall();
+
+      /**
+       * @brief Stars the odometry thread.
+      */
+      void startOdoThread();
   
       /************ Sensors ************/
       /*----- movement -----*/
+      
       /**
        * @returns True if the base motors are moving.
       */
       bool isMoving();
 
       /**
-       * @brief Gets the wheel speed of teh specified side.
-       * @param side The side to get the wheel speed from.
-       * @returns The speed of the wheel.
-       * @warning Doesn't fully function yet.
+       * @brief Gets the motor speed of the specified side.
+       * @param side The side to get the speed from.
+       * @returns The speed of the motors.
       */
-      double getBaseSpeed(turnType side);
+      double getMotorSpeed(turnType side);
   
     private:
       /************ motors ************/
@@ -181,8 +502,9 @@ namespace evAPI {
       PID driftPID;
       PID arcPID;
       PID arcDriftPID;
-      int driveSpeed;
-      int turnSpeed;
+      int driveSpeed = 80;
+      int turnSpeed = 60;
+      int arcTurnSpeed = 40;
       double driveBaseWidth;  //distance between the two wheels from center;
 
       double driveP;
