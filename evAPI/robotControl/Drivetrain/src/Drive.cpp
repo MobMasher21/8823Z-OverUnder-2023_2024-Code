@@ -204,6 +204,43 @@ namespace evAPI {
     turnToHeading(angle, turnSpeed);
   }
 
+  void Drive::turnFor(double angle, vex::turnType direction, int speed)
+  {
+    double targetHeading;
+
+    //*Limit the angle to be between 0-360
+    while(angle >= 360) angle -= 360;
+    while(angle < 0) angle += 360;
+
+    //*Turn in the proper direction
+    if(direction == turnType::left)
+    {
+      //Calculate the target heading
+      targetHeading = turnSensor->heading() - angle;
+      while(targetHeading >= 360) targetHeading -= 360;
+      while(targetHeading < 0) targetHeading += 360;
+
+      //Turn to the desired heading
+      turnToHeading(targetHeading, speed);
+    }
+
+    else
+    {
+      //Calculate the target heading
+      targetHeading = turnSensor->heading() + angle;
+      while(targetHeading >= 360) targetHeading -= 360;
+      while(targetHeading < 0) targetHeading += 360;
+      
+      //Turn to the desired heading
+      turnToHeading(targetHeading, speed);
+    }
+  }
+
+  void Drive::turnFor(double angle, vex::turnType direction)
+  {
+    turnFor(angle, direction, turnSpeed);
+  }
+
   void Drive::arcTurn(double radius, vex::turnType direction, int angle, int speed) {  // turns in an arc
     //*setup of all variables*
     double leftPosition;  //angle of left encoder

@@ -405,6 +405,21 @@ namespace evAPI {
       void turnToHeading(int angle);
 
       /**
+       * @brief Turns the robot a specified amount.
+       * @param angle The amount of degrees to turn.
+       * @param direction The direction of the turn.
+       * @param speed Optional. The top speed of the turn.
+      */
+      void turnFor(double angle, vex::turnType direction, int speed);
+
+      /**
+       * @brief Turns the robot a specified amount.
+       * @param angle The amount of degrees to turn.
+       * @param direction The direction of the turn.
+      */
+      void turnFor(double angle, vex::turnType direction);
+
+      /**
        * @brief Turn the robot in an arc.
        * @param radius The radius of the arc in inches.
        * @param direction The direction to turn in.
