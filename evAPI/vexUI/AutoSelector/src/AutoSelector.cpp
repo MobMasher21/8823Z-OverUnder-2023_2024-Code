@@ -2,8 +2,7 @@
 
 namespace evAPI {
   // This is the work around for the vex thread call not taking class members
-  void threadFunction( void );  // Function that is run in the thread
-  AutoSelector * thisContext;
+  void threadFunction(void *thisContextRaw);  // Function that is run in the thread
 
   AutoSelector::AutoSelector() {  // Constructor to set up page turning buttons
     pageBack = new Button(-1, &pageTurner);
@@ -14,8 +13,6 @@ namespace evAPI {
     pageForward->setButtonSize(60, 30);
     pageBack->setButtonIcon((bool*)arrows.previousPageArrow, 0, 0);
     pageForward->setButtonIcon((bool*)arrows.nextPageArrow, 0, 0);
-
-    thisContext = this;
   }
 
   int AutoSelector::getSelectedButton() {  // Returns the selectedButton
@@ -181,7 +178,7 @@ namespace evAPI {
 
   void AutoSelector::startThread() {  // Starts the main loop thread for the auto selector
     printButtons();
-    selectorThread = new thread(threadFunction);
+    selectorThread = new thread(threadFunction, this);
   }
 
   // ------------------ PRIVATE ---------------------------
@@ -258,8 +255,10 @@ namespace evAPI {
 
   }
 
-  void threadFunction( void ) {  // Function that is run in the thread
+  void threadFunction(void *thisContextRaw) {  // Function that is run in the thread
     static bool prePressState;
+    AutoSelector *thisContext = (AutoSelector*)thisContextRaw;
+
     while(1) {
       if(Brain.Screen.pressing() && !prePressState) {
         thisContext->pressed();

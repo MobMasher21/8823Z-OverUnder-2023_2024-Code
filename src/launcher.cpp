@@ -11,21 +11,10 @@
 #include "../evAPI/Common/include/generalFunctions.h"
 #include "launcher.h"
 
-//Structure that stores pointers to critical data needed by the thread
-struct launcherThreadData
-{
-  launcher *launcherObject;
-  std::vector<double> *criticalAngles;
-  std::vector<launcher::controllerMappingData> *controllerMappings;
-};
-
 int launcherThread(void *launcherDataRaw)
 {
   //Convert the input data back into a launcher object
-  launcherThreadData *launcherData = (launcherThreadData*)launcherDataRaw;
-  launcher *Launcher = launcherData->launcherObject;
-  std::vector<double> *criticalAngles = launcherData->criticalAngles;
-  std::vector<launcher::controllerMappingData> *controllerMappings = launcherData->controllerMappings;
+  launcher *Launcher = (launcher*)launcherDataRaw;
 
   //Overrides all automatic motor control
   bool controllerOverride = false;
@@ -39,19 +28,20 @@ int launcherThread(void *launcherDataRaw)
     if(launcherController.errorData == evAPI::evError::No_Error)
     {
       //*Check controller buttons
-      for(size_t i = 0; i < controllerMappings->size(); i++)
+      for(size_t i = 0; i < Launcher->controllerMappings.size(); i++)
       {
         //Get the current button state
         evAPI::buttonStatus buttonMode;
-        buttonMode = evAPI::getButtonStatus(launcherController.data, controllerMappings->at(i).controllerButton);
+        buttonMode = evAPI::getButtonStatus(launcherController.data, 
+                                            Launcher->controllerMappings.at(i).controllerButton);
 
         //Check if the button is in the right state
-        if(buttonMode == controllerMappings->at(i).buttonState)
+        if(buttonMode == Launcher->controllerMappings.at(i).buttonState)
         {
           evAPI::evErrorUInt selectedCriticalAngleID;
 
           //*Run button action code
-          switch(controllerMappings->at(i).launcherAction)
+          switch(Launcher->controllerMappings.at(i).launcherAction)
           {
             case launcher::CONTROLLER_LAUNCH:
               Launcher->spinLauncher();
@@ -69,7 +59,7 @@ int launcherThread(void *launcherDataRaw)
               break;
 
             case launcher::CONTROLLER_SET_CRITICAL:
-              Launcher->selectCriticalAngle(controllerMappings->at(i).otherData);
+              Launcher->selectCriticalAngle(Launcher->controllerMappings.at(i).otherData);
               break;
 
             case launcher::CONTROLLER_INCREMENT_CRITICAL:
@@ -80,7 +70,7 @@ int launcherThread(void *launcherDataRaw)
               if(selectedCriticalAngleID.errorData == evAPI::evError::No_Error)
               {
                 //Roll back to 0 if the critical angle is at the final value
-                if(selectedCriticalAngleID.data == criticalAngles->size()-1)
+                if(selectedCriticalAngleID.data == Launcher->criticalAngles.size()-1)
                 {
                   Launcher->selectCriticalAngle(0);
                 }
@@ -226,13 +216,8 @@ evAPI::evError launcher::startThread()
     return evAPI::evError::Data_Already_Exists;
   }
 
-  static launcherThreadData launcherData;
-  launcherData.launcherObject = this;
-  launcherData.criticalAngles = &this->criticalAngles;
-  launcherData.controllerMappings = &this->controllerMappings;
-
   //Create the thread
-  launcherControlThread = new thread(launcherThread, &launcherData);
+  launcherControlThread = new thread(launcherThread, this);
 
   return evAPI::evError::No_Error;
 }

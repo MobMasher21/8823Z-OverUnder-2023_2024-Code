@@ -15,8 +15,7 @@
 namespace evAPI
 {
   /**
-   * @brief A list of all the errors the evError enum contains. This will be returned as the output of
-   * a function.
+   * @brief A collections of various errors functions in the evAPI can output.
   */
   enum class evError
   {

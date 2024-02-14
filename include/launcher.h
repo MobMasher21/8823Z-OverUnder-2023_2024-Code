@@ -33,6 +33,17 @@ class launcher
     ~launcher();
 
     /**
+     * @brief Adds a motor to the launcher.
+     * @param port The port the motor is in.
+     * @param gears The cartridge in the motor.
+     * @param reverse Optional. The reverse flag for the motor.
+     * @returns An evError. No_Device_In_Port if there aren't any devices in the port.
+     *          Incorrect_Device_In_Port if the device in the port isn't a rotation sensor.
+     *          No_Error if there aren't any errors.
+    */
+    //evAPI::evError addMotor(int32_t port, gearSetting gears, bool reverse = false);
+
+    /**
      * @brief Adds a rotation sensor. Allows the launcher to automatically set its position
      *        after firing.
      * @param sensor A rotation sensor object.
@@ -235,7 +246,17 @@ class launcher
 
     std::vector<controllerMappingData> controllerMappings;
 
+    /**
+     * @brief Initialises the motors.
+    */
     void launcherInit();
+
+    /**
+     * @brief A friend function that is used as the thread for the launcher.
+     * @param launcherDataRaw The address of a launcher object.
+     * @returns 0
+    */
+    friend int launcherThread(void *launcherDataRaw);
 };
 
 #endif // LAUNCHER_H

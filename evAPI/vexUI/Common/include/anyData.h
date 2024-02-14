@@ -32,6 +32,7 @@ namespace evAPI
   /**
    * @brief A template class used to store a pointer to a variable, and return its values
    *        as a string. Should be created with an anyDataCore 
+   * @tparam T The type of data that will be stored in the anyData object.
    * @example anyDataCore *data = anyData<int>; 
   */
   template<typename T> class anyData: public anyDataCore
@@ -43,6 +44,8 @@ namespace evAPI
       /**
        * @brief Creates a new anyData object that points to the set data.
        * @param data A pointer to the data to store.
+       * @returns An evError. Object_Property_Not_Specified if data is invalid.
+       *          No_Error if their aren't any errors.
       */
       evError setData(void *newData);
 

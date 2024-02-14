@@ -194,6 +194,9 @@ void pre_auton(void) {
   UI.primaryControllerUI.addData(INERTIAL_CALIBRATE_SCREEN, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(INERTIAL_CALIBRATING_TEXT, "Calibrating...");
 
+  //*Secondary Controller 
+  UI.secondaryControllerUI.addData(0, "Battery: ", batteryLevel);
+
   //Start the threads
   UI.startThreads();
 
@@ -210,7 +213,6 @@ void pre_auton(void) {
   
   // Setup inertial sensor settings
   driveBase.setupInertialSensor(6);
-  driveBase.calibrateInertial();
 
   // Set default speeds
   driveBase.setDriveSpeed(100);
@@ -222,7 +224,7 @@ void pre_auton(void) {
 
   // Setup PID
   driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);
-  driveBase.setupTurnPID(0.6, 2, 0.125, 5, 1, 100);
+  driveBase.setupTurnPID(0.54, 0.2, 0.1, 3, 1, 100);
   driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);
   driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
   driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
@@ -246,6 +248,7 @@ void pre_auton(void) {
 
   //*Display calibrating information
   UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
+  driveBase.calibrateInertial();
   while(driveBase.isInertialCalibrating())
   {
     this_thread::sleep_for(5);
@@ -263,6 +266,8 @@ void autonomous(void) {
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
+      driveBase.setTurnSpeed(80);
+
       //Turn to proper heading
       driveBase.setDriveHeading(133);
       driveBase.turnFor(24, left);
@@ -270,10 +275,10 @@ void autonomous(void) {
       this_thread::sleep_for(500);
 
       //Launch triballs for 30 seconds
-      /* puncherMotor.spin(fwd, 12, voltageUnits::volt);
+      puncherMotor.spin(fwd, 12, voltageUnits::volt);
       //this_thread::sleep_for(30000);
       this_thread::sleep_for(10000);
-      puncherMotor.stop(coast); */
+      puncherMotor.stop(coast);
       this_thread::sleep_for(100);
 
       //Reset the heading after launching
@@ -291,78 +296,63 @@ void autonomous(void) {
       driveBase.driveBackward(8);
       driveBase.turnFor(121, right);
       driveBase.arcTurn(34, right, 32);
-      driveBase.driveForward(53);
-      driveBase.arcTurn(12, right, 180);
+      driveBase.driveForward(65);
 
-      break;
+      //Realign with the wall
+      driveBase.turnFor(90, right);
+      driveBase.spinBase(-20, -20);
+      vex::task::sleep(800);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getMotorSpeed(left) < -15) && (driveBase.getMotorSpeed(right) < -15)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(50);
+      driveBase.stopRobot();
+      driveBase.setDriveHeading(0);
+      vex::task::sleep(50);
+      driveBase.driveForward(14);
+      driveBase.arcTurn(12, right, 90);
+      //break;
       
-      //Push triballs into goal
-      //driveBase.turnToHeading(90);
-      driveBase.driveForward(15);
+      //First push into goal
+      driveBase.driveForward(14);
       driveBase.turnFor(90, left);
       driveBase.driveForward(23);
       driveBase.turnFor(90, left);
+      //driveBase.turnToHeading(270);
       setFrontWings(false, true);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getMotorSpeed(left) > 80) && (driveBase.getMotorSpeed(right) > 80)) {
+      while((driveBase.getMotorSpeed(left) > 50) && (driveBase.getMotorSpeed(right) > 50)) {
         vex::task::sleep(5);
       }
 
       vex::task::sleep(200);
       driveBase.stopRobot();
       setFrontWings(false, false);
-      driveBase.driveBackward(15);
+      driveBase.driveBackward(35);
 
-
-
-      /* //Drive to other side of the field
-      driveBase.driveBackward(5);
-      driveBase.turnToHeading(250);
-      driveBase.driveForward(16);
-      driveBase.turnToHeading(270);
-      driveBase.driveForward(70);
-
-      //Drive to side of goal
-      driveBase.turnToHeading(315);
-      driveBase.driveBackward(30);
-      driveBase.turnToHeading(180);
-      driveBase.spinBase(-100, -100);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getMotorSpeed(left) < -10) && (driveBase.getMotorSpeed(right) < -10)) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(200);
-      driveBase.stopRobot();
-
-      //Drive to second push point
-      driveBase.driveForward(15);
-      driveBase.turnToHeading(90);
-      driveBase.driveForward(40);
-      driveBase.turnToHeading(0);
-      driveBase.driveForward(10);
-      driveBase.turnToHeading(300);
-
-      //Second push
-      setFrontWings(true, true);
+      //Second push into goal
+      driveBase.turnFor(90, right);
+      driveBase.driveForward(30);
+      driveBase.turnFor(90, left);
+      setFrontWings(true, false);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getMotorSpeed(left) > 10) && (driveBase.getMotorSpeed(right) > 10)) {
+      while((driveBase.getMotorSpeed(left) > 50) && (driveBase.getMotorSpeed(right) > 50)) {
         vex::task::sleep(5);
       }
 
       vex::task::sleep(200);
       driveBase.stopRobot();
-      
-      //Drive to second push point
       setFrontWings(false, false);
-      driveBase.driveBackward(35); */
+      driveBase.driveBackward(35);
 
       intakeMotor.stop();
 
@@ -632,12 +622,13 @@ void autonomous(void) {
       this_thread::sleep_for(3000);
       driveBase.driveBackward(39.5); */
 
-      /* driveBase.turnToHeading(90);
+      driveBase.setupTurnPID(0.54, 0.2, 0.1, 3, 1, 100);
+      driveBase.turnToHeading(90);
       this_thread::sleep_for(500);
-      driveBase.turnToHeading(0); */
+      driveBase.turnToHeading(0);
 
-      driveBase.arcTurn(-12, right, -45, 40);
-      /* this_thread::sleep_for(1500);
+      /* driveBase.arcTurn(-12, right, -45, 40);
+      this_thread::sleep_for(1500);
       driveBase.arcTurn(12, left, 90, 100); */
 
       break;

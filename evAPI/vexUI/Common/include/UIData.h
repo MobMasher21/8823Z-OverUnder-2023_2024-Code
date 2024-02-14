@@ -39,13 +39,19 @@ namespace evAPI
       ~UIData();
 
       /**
-       * @brief Sets the data and name stored in the object
+       * @brief Sets the data and name stored in the object.
+       * 
+       * @tparam T The type of data being stored.
+       * @param labelIn A name attached to the UIData object.
+       * @param dataIn An pointer to the data to store
+       * @returns An evError. Invalid_Argument_Data if labelIn is invalid.
+       *          No_Error if there aren't any errors.
       */
       template<typename T> evError setData(const char *labelIn, T *dataIn);
 
       /**
-       * @brief Retuns a UIDataReturn structure. It contains the label, data, evError, and a 
-       *        hasChanged flag.
+       * @returns A UIDataReturn structure. It contains the label, data, evError, and a 
+       *          hasChanged flag.
       */
       UIDataReturn getData();
   };
