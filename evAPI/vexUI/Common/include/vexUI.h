@@ -20,11 +20,10 @@ namespace evAPI
   {
     private:
       //*Threads used for updating the UIs
-      //vex::thread *brainUIThread = nullptr;
       vex::thread *controllerUIThread = nullptr;
 
     public:
-      vexUI(/* args */);
+      vexUI();
       ~vexUI();
 
       /**
@@ -39,12 +38,12 @@ namespace evAPI
       /**
        * @brief The UI for the primary controller. Displays three lines of data at a time, but can scroll to display different lines.
       */
-      controllerUI primaryControllerUI = controllerUI(&primaryController.Screen);
+      controllerUI primaryControllerUI = controllerUI(primaryController.Screen);
 
       /**
        * @brief The UI for the secondary controller. Displays three lines of data at a time, but can scroll to display different lines.
       */
-      controllerUI secondaryControllerUI = controllerUI(&secondaryController.Screen);
+      controllerUI secondaryControllerUI = controllerUI(secondaryController.Screen);
 
       /**
        * @brief The UI for the auto selector. Consists of pages that each contain 8 customizable buttons. Pages can be switched
@@ -53,8 +52,6 @@ namespace evAPI
       AutoSelector autoSelectorUI = AutoSelector();
 
   };
-
-  //extern vexUI UI;
   
 } // namespace evAPI
 

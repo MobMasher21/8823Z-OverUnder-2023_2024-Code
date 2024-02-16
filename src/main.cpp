@@ -176,7 +176,7 @@ void pre_auton(void) {
 
   //Setup parameters for auto selector
   //UI.autoSelectorUI.setSelectedButton(AUTO_FOUR_BALL_GOAL_SIDE);
-  UI.autoSelectorUI.setSelectedButton(AUTO_SKILLS_1);
+  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -486,14 +486,14 @@ void autonomous(void) {
       intakeMotor.stop();
 
       //Change tuning values to allow the robot to move smoothly
-      driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
-      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
+      /* driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
+      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout */
 
       intakeMotor.spin(fwd, 20, pct);
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      setFrontWings(false, true);
+      setFrontWings(true, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -502,23 +502,25 @@ void autonomous(void) {
       vex::task::sleep(800);
 
       //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getMotorSpeed(left) > 80) && (driveBase.getMotorSpeed(right) > 80)) {
+      while((driveBase.getMotorSpeed(left) > 90) && (driveBase.getMotorSpeed(right) > 90)) {
         vex::task::sleep(5);
       }
 
       intakeMotor.stop();
       vex::task::sleep(200);
       driveBase.stopRobot();
-      driveBase.driveBackward(28);
+      setFrontWings(false, false);
+      driveBase.driveBackward(25);
 
       //Go touch the bar
-      setFrontWings(false, false);
-      driveBase.turnToHeading(210);
-      intakeMotor.spin(fwd, 100, pct);
-      driveBase.driveForward(35);
-      setFrontWings(true, false);
-      driveBase.setTurnSpeed(20);
-      driveBase.turnToHeading(155);
+      //driveBase.turnToHeading(25);
+      driveBase.turnFor(70, left);
+      driveBase.driveBackward(35);
+      setBackWings(false, true);
+      //driveBase.setTurnSpeed(20);
+      driveBase.turnToHeading(90);
+      driveBase.driveBackward(4);
+      driveBase.turnToHeading(100);
 
       break;
 
@@ -527,7 +529,35 @@ void autonomous(void) {
       driveBase.setDriveSpeed(100);
       driveBase.setTurnSpeed(100);
 
+      driveBase.setDriveHeading(300);
+
+      //Push triball in
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(1200);
+      driveBase.stopRobot(brake);
+
+      //Go remove other triball
+      driveBase.arcTurn(20, left, 40);
+      driveBase.driveForward(8);
+      setBackWings(false, true);
+      driveBase.arcTurn(21, left, 50);
+      setBackWings(false, false);
+
+      //Lower intake
       //Drop intake and grab first ball
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+      this_thread::sleep_for(900);
+      puncherMotor.stop(coast);
+      vex::task::sleep(500);
+      intakeMotor.stop();
+
+      //Push triballs over
+      intakeMotor.spin(reverse, 100, percent);
+      driveBase.driveForward(27);
+
+
+
+      /* //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       this_thread::sleep_for(770);
       intakeMotor.spin(fwd, 100, pct);
@@ -556,8 +586,6 @@ void autonomous(void) {
       driveBase.driveBackward(20);
 
       //Change tuning values to allow the robot to move smoothly
-      driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
-      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout
 
       //Drive to match load triball
       driveBase.turnToHeading(185);
@@ -581,7 +609,7 @@ void autonomous(void) {
       driveBase.driveBackward(3);
       driveBase.turnToHeading(120);
       //wingPistons->set(true);
-      intakeMotor.stop();
+      intakeMotor.stop(); */
 
       break;
 

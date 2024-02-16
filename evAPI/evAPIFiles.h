@@ -6,6 +6,7 @@
 #include "../evAPI/Common/include/PID.h"
 #include "../evAPI/Common/include/colors.h"
 #include "../evAPI/Common/include/evAPIBasicConfig.h"
+#include "../evAPI/Common/include/vexPrivateRebuild.h"
 
 #include "../evAPI/robotControl/Drivetrain/include/Drive.h"
 #include "../evAPI/robotControl/DriverBaseControl/include/DriverBaseControl.h"

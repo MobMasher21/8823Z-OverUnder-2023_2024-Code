@@ -12,9 +12,9 @@
 
 namespace evAPI
 {
-  controllerUI::controllerUI(vex::controller::lcd *controller)
+  controllerUI::controllerUI(vex::controller::lcd &controller)
   {
-    parentController = controller;
+    parentController = &controller;
   }
   
   controllerUI::~controllerUI()

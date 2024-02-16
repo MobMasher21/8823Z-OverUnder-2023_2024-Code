@@ -3,7 +3,9 @@
 /*    Module:       controllerUI.h                                            */
 /*    Author:       Jayden Liffick                                            */
 /*    Created:      Oct 24, 2023                                              */
-/*    Description:  Class for the UI on each of the controllers.              */
+/*    Description:  Class for the UI on each of the controllers. It pairs     */
+/*                  with the vexUI class, and should not have any objects     */
+/*                  created outside of it.                                    */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -18,6 +20,10 @@
 
 namespace evAPI
 {
+  /**
+   * @brief Class for the UI on each of the controllers. It pairs with the vexUI class, 
+   *        and should not have any objects created outside of it.
+  */
   class controllerUI
   {
     private:
@@ -33,11 +39,7 @@ namespace evAPI
       //True is the screen is being updated
       bool updatingScreen = false;
 
-    public:
-      controllerUI(vex::controller::lcd *controller);
-      ~controllerUI();
-
-      /**
+            /**
        * @brief Updates all the data points on the controller screen if their values have changed.
        * @param exitIfUpdating Optional. Set to true if the function should just exit if the screen is
        *                       being updated.
@@ -45,8 +47,6 @@ namespace evAPI
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
        *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
-       * @warning This function is called by the UI thread. DO NOT RUN UNLESS YOU KNOW WHAT YOU 
-       *          ARE DOING!
       */
       evError updateScreenData(bool exitIfUpdating = false);
 
@@ -58,10 +58,19 @@ namespace evAPI
        *          Object_State_Is_Changing: If the screen is being updated and exitIfUpdating if true.
        *          No_Data_Defined: If there is no currently defined values to display.
        *          No_Error: The screen is updated successfully.
-       * @warning This function is called by the UI thread. DO NOT RUN UNLESS YOU KNOW WHAT YOU 
-       *          ARE DOING!
       */
       evError updateScreen(bool exitIfUpdating = false);
+
+      /**
+       * @brief A function that acts as a thread for both controller UIs.
+       * @param UIClass A pointer to a vexUI object.
+       * @returns 0
+      */
+      friend int controllerThread(void *UIClass);
+
+    public:
+      controllerUI(vex::controller::lcd &controller);
+      ~controllerUI();
 
       /**
        * @brief Scrolls down the screen by one if possible.

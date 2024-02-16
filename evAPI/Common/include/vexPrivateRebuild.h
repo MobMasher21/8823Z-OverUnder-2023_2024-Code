@@ -11,7 +11,6 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-// #include "stdarg.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +48,7 @@ uint32_t vexTaskAdd(int (* callback)(void), int interval, const char *label);
 uint32_t vexTaskAddWithArg(int (* callback)(void), int interval, void *arg, const char *label);
 
 /**
- * @brief Adds a task.
+ * @brief Adds a task with a priority.
  * @param callback The function to run as the task.
  * @param interval Unknown. Whenever used by vex, it is 2.
  * @param label The name of the task.
@@ -60,7 +59,7 @@ uint32_t vexTaskAddWithArg(int (* callback)(void), int interval, void *arg, cons
 uint32_t vexTaskAddWithPriority(int (* callback)(void), int interval, const char *label, int32_t priority);
 
 /**
- * @brief Adds a task with an argument.
+ * @brief Adds a task with an argument and a priority.
  * @param callback The function to run as the task.
  * @param interval Unknown. Whenever used by vex, it is 2.
  * @param arg A pointer to the argument data for the task.
@@ -74,7 +73,7 @@ uint32_t vexTaskAddWithPriorityWithArg(int (* callback)(void), int interval, voi
   vexTaskBreakpointDump
   vexTaskBreakpointSet
   vexTaskCheckTimeslice
-  undefined vexTaskCompletionIdSet();
+  undefined vexTaskCompletionIdSet(  );
   vexTaskFree
   vexTaskGet
   vexTaskGetArgs
@@ -82,22 +81,49 @@ uint32_t vexTaskAddWithPriorityWithArg(int (* callback)(void), int interval, voi
 */
 
 /**
- * @brief Gets the callback and 
- * @param index 
- * @param callback_id 
- * @returns 
+ * @brief Gets the callback and ID of a task.
+ * @param index The index of the task to get the data from.
+ * @param callback_id A pointer to a variable that will store the ID of the task.
+ * @returns The callback function of the task.
 */
 void *vexTaskGetCallbackAndId(uint32_t index, int *callback_id);
 
+/**
+ * @returns The index of the task this function is called in.
+*/
+uint32_t vexTaskGetIndex();
+
 /*
-  uint32_t vexTaskGetIndex();
   uint32_t vexTaskGetTaskIndex();
   vexTaskGetTaskIndexWithId
-  uint32_t vexTaskHardwareConcurrency(void);
-  vexTaskPriorityGet
-  int32_t vexTaskPriorityGetWithId(void *callback, int ID);
-  vexTaskPrioritySet
-  undefined vexTaskPrioritySetWithId(void *callback, int ID, long priority);
+*/
+
+/**
+ * @returns How many tasks the VEX computer can run concurrently.
+*/
+uint32_t vexTaskHardwareConcurrency(void);
+
+//vexTaskPriorityGet
+
+/**
+ * @brief Gets the priority of a task.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+ * @returns The current priority of the task.
+*/
+int32_t vexTaskPriorityGetWithId(void *callback, int ID);
+
+//vexTaskPrioritySet
+
+/**
+ * @brief Sets the priority of a task.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+ * @param priority The new priority for the task.
+*/
+undefined vexTaskPrioritySetWithId(void *callback, int ID, uint32_t priority);
+
+/*
   vexTaskProgramResume
   vexTaskProgramSuspend
 */
@@ -112,10 +138,22 @@ undefined vexTaskRemoveAllUser(int *main);
 /*
   vexTaskResume
   vexTaskResumeWithCurrent
-  undefined vexTaskResumeWithId(void *callback, int ID);
-  undefined vexTasksDump();
-  vexTaskSetArgs
 */
+
+/**
+ * @brief Resumes a task.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+*/
+undefined vexTaskResumeWithId(void *callback, int ID);
+
+/**
+ * @brief Has an unknown purpose.
+*/
+undefined vexTasksDump();
+
+//vexTaskSetArgs
+
 
 /**
  * @brief Pauses the task / thread it is run in for a specified amount of ms.
@@ -123,8 +161,14 @@ undefined vexTaskRemoveAllUser(int *main);
 */
 void vexTaskSleep(uint32_t time);
 
+/**
+ * @brief Checks if tasks are running.
+ * @returns True if tasks are running.
+ * @warning This function is untested and may have strange behavior.
+*/
+uint32_t vexTasksRun();
+
 /*
-  uint32_t vexTasksRun();
   vexTaskStackDefaultSizeGet
   vexTaskStackSizeGet
   vexTaskStackTopGet
@@ -147,13 +191,35 @@ uint32_t vexTaskStateGetWithId(void *callback, int ID);
   vexTaskStop
   vexTaskStopAll
   vexTaskStopAllUser
-  undefined vexTaskStopWithId(void *callback, int ID);
+*/
+
+/**
+ * @brief Stops a task.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+*/
+undefined vexTaskStopWithId(void *callback, int ID);
+
+/*
   vexTaskSuspend
   vexTaskSuspendCurrent
-  undefined vexTaskSuspendWithId(void *callback, int ID);
-  vexTaskWaitForExit
-  undefined vexTaskWaitForExitWithId(void *callback, int ID);
 */
+
+/**
+ * @brief Suspends a task.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+*/
+undefined vexTaskSuspendWithId(void *callback, int ID);
+
+//vexTaskWaitForExit
+
+/**
+ * @brief Waits for a given task to exit.
+ * @param callback A callback to the task function.
+ * @param ID The ID of the task.
+*/
+undefined vexTaskWaitForExitWithId(void *callback, int ID);
 
 /**
  * @brief Has an unknown purpose, but is always called after all tasks are stopped.
@@ -161,15 +227,16 @@ uint32_t vexTaskStateGetWithId(void *callback, int ID);
 undefined vexTaskYield();
 
 //*Display functions
-/**
- * @returns 1 if the display is set to light mode. 0 in dark mode.
-*/
-int vexDisplayThemeIdGet();
 
 /**
- * @returns 1 if the display is inverted. 0 in normal mode.
+ * @returns True if the display is set to light mode. False in dark mode.
 */
-int vexDisplayRotateFlagGet();
+bool vexDisplayThemeIdGet();
+
+/**
+ * @returns True if the display is inverted. False in normal mode.
+*/
+bool vexDisplayRotateFlagGet();
 
 void vexDisplayClipRegionSetWithIndex(int32_t index, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 
