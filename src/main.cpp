@@ -457,18 +457,22 @@ void autonomous(void) {
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       //this_thread::sleep_for(800);
-      while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
-      {
-        this_thread::sleep_for(5);
-      }
-      puncherMotor.stop(hold);
-      intakeMotor.spin(fwd, 100, pct);
-      vex::task::sleep(500);
-      intakeMotor.stop();
+
+      thread ([]() {
+        while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+        {
+          this_thread::sleep_for(5);
+        }
+        puncherMotor.stop(hold);
+        intakeMotor.spin(fwd, 100, pct);
+        vex::task::sleep(500);
+        intakeMotor.stop();
+      }).detach();
+
 
       //First drive move before dropping match load ball
       driveBase.driveForward(40);
-      driveBase.turnToHeading(63);
+      driveBase.turnToHeading(60);
 
       //Drop match load ball
       intakeMotor.spin(reverse, 100, pct);
@@ -510,17 +514,16 @@ void autonomous(void) {
       vex::task::sleep(200);
       driveBase.stopRobot();
       setFrontWings(false, false);
-      driveBase.driveBackward(25);
+      driveBase.driveBackward(15);
 
       //Go touch the bar
-      //driveBase.turnToHeading(25);
-      driveBase.turnFor(70, left);
+      driveBase.turnToHeading(25);
       driveBase.driveBackward(35);
       setBackWings(false, true);
       //driveBase.setTurnSpeed(20);
-      driveBase.turnToHeading(90);
-      driveBase.driveBackward(4);
       driveBase.turnToHeading(100);
+      driveBase.driveBackward(10);
+      driveBase.turnToHeading(105);
 
       break;
 
