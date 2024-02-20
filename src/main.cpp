@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Cameron Barclay, Jayden Liffick, Teo Carrion              */
+/*    Authors:      Cameron Barclay, Jayden Liffick, Teo Carrion              */
 /*    Created:      12/6/2023, 10:45:31 PM                                    */
-/*    Description:  All code for team 8823Z robot.                            */
+/*    Description:  Main code for team 8823Z robot.                           */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -68,8 +68,9 @@ enum autoOptions {
   //Page 1
   AUTO_SKILLS_1 = 0,
   AUTO_FOUR_BALL_GOAL_SIDE = 1,
-  AUTO_DO_NOTHING = 4,
   AUTO_GOAL_SIDE = 3,
+  AUTO_DO_NOTHING = 4,
+  AUTO_ELIMINATION_LOAD_SIDE = 5,
   AUTO_LOAD_SIDE = 7,
 
   //Page 2
@@ -135,6 +136,7 @@ void pre_auton(void) {
   // Add all the buttons
   UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
   UI.autoSelectorUI.addButton(AUTO_FOUR_BALL_GOAL_SIDE, cyan);
+  UI.autoSelectorUI.addButton(AUTO_ELIMINATION_LOAD_SIDE, cyan);
   UI.autoSelectorUI.addButton(AUTO_GOAL_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_LOAD_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_DO_NOTHING, red);
@@ -146,6 +148,7 @@ void pre_auton(void) {
   // Set all the titles
   UI.autoSelectorUI.setButtonTitle(AUTO_SKILLS_1, "Skills Auto");
   UI.autoSelectorUI.setButtonTitle(AUTO_FOUR_BALL_GOAL_SIDE, "Four Ball Goal");
+  UI.autoSelectorUI.setButtonTitle(AUTO_ELIMINATION_LOAD_SIDE, "Bracket Load");
   UI.autoSelectorUI.setButtonTitle(AUTO_GOAL_SIDE, "Goal Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_LOAD_SIDE, "Load Side");
   UI.autoSelectorUI.setButtonTitle(AUTO_DO_NOTHING, "DO NOTHING!");
@@ -157,6 +160,7 @@ void pre_auton(void) {
   // Set all the descriptions
   UI.autoSelectorUI.setButtonDescription(AUTO_SKILLS_1, "Shoots all the match loads into the field, then attempts to push them into the goal.");
   UI.autoSelectorUI.setButtonDescription(AUTO_FOUR_BALL_GOAL_SIDE, "Runs on goal side. Scores the colored ball and 3 green ones.");
+  UI.autoSelectorUI.setButtonDescription(AUTO_ELIMINATION_LOAD_SIDE, "Runs on load side. Pushes the colored triball out and 2 triballs to the other side.");
   UI.autoSelectorUI.setButtonDescription(AUTO_GOAL_SIDE, "Scores three triballs, including the match load, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_LOAD_SIDE, "Scores the match load, pushes two triballs to the other side, and touches the bar.");
   UI.autoSelectorUI.setButtonDescription(AUTO_DO_NOTHING, "The robot will do nothing.");
@@ -167,6 +171,7 @@ void pre_auton(void) {
   // Select all the icons
   UI.autoSelectorUI.setButtonIcon(AUTO_SKILLS_1, UI.autoSelectorUI.icons.skills);
   UI.autoSelectorUI.setButtonIcon(AUTO_FOUR_BALL_GOAL_SIDE, UI.autoSelectorUI.icons.number4);
+  UI.autoSelectorUI.setButtonIcon(AUTO_ELIMINATION_LOAD_SIDE, UI.autoSelectorUI.icons.number2);
   UI.autoSelectorUI.setButtonIcon(AUTO_GOAL_SIDE, UI.autoSelectorUI.icons.leftArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
   UI.autoSelectorUI.setButtonIcon(AUTO_DO_NOTHING, UI.autoSelectorUI.icons.exclamationMark);
@@ -175,7 +180,6 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  //UI.autoSelectorUI.setSelectedButton(AUTO_FOUR_BALL_GOAL_SIDE);
   UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -449,6 +453,10 @@ void autonomous(void) {
 
       break;
 
+    case AUTO_ELIMINATION_LOAD_SIDE:
+      //TODO: Put code in from Milford branch when Teo uploads it
+      break;
+
     case AUTO_GOAL_SIDE:
       //Set speeds
       driveBase.setDriveSpeed(100);
@@ -456,8 +464,6 @@ void autonomous(void) {
 
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
-      //this_thread::sleep_for(800);
-
       thread ([]() {
         while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
         {
@@ -467,8 +473,8 @@ void autonomous(void) {
         intakeMotor.spin(fwd, 100, pct);
         vex::task::sleep(500);
         intakeMotor.stop();
+        //vex::this_thread::yield();
       }).detach();
-
 
       //First drive move before dropping match load ball
       driveBase.driveForward(40);
@@ -487,12 +493,6 @@ void autonomous(void) {
       //Align with goal and ram in first two triballs
       driveBase.turnToHeading(270);
       this_thread::sleep_for(400);
-      intakeMotor.stop();
-
-      //Change tuning values to allow the robot to move smoothly
-      /* driveBase.setupDrivePID(0.12, 0.07, 0.05, 10, 2, 100);  // p, i, d, error, error time, timeout
-      driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout */
-
       intakeMotor.spin(fwd, 20, pct);
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
@@ -531,7 +531,6 @@ void autonomous(void) {
       //Set drive base parameters
       driveBase.setDriveSpeed(100);
       driveBase.setTurnSpeed(100);
-
       driveBase.setDriveHeading(300);
 
       //Push triball in
@@ -558,67 +557,20 @@ void autonomous(void) {
       intakeMotor.spin(reverse, 100, percent);
       driveBase.driveForward(27);
 
-
-
-      /* //Drop intake and grab first ball
-      puncherMotor.spin(fwd, puncherSpeed, pct);
-      this_thread::sleep_for(770);
-      intakeMotor.spin(fwd, 100, pct);
-      puncherMotor.stop(hold);
-      vex::task::sleep(200);
-      intakeMotor.stop();
-
-      //Put the match load triball in front of the goal
-      driveBase.driveForward(49);
-      driveBase.turnToHeading(270);
-      intakeMotor.spin(reverse, 100, pct);
-      this_thread::sleep_for(200);
-      intakeMotor.stop();
-
-      //Push triballs into goal
-      driveBase.spinBase(100, 100);
-      vex::task::sleep(100);
-
-      //Runs the motors until it has runs into the goal and can't move
-      while((driveBase.getMotorSpeed(left) > 20) && (driveBase.getMotorSpeed(right) > 20)) {
-        vex::task::sleep(5);
-      }
-
-      vex::task::sleep(200);
-      driveBase.stopRobot();
-      driveBase.driveBackward(20);
-
-      //Change tuning values to allow the robot to move smoothly
-
-      //Drive to match load triball
-      driveBase.turnToHeading(185);
-      driveBase.driveForward(28);
-      driveBase.turnToHeading(90);
-      driveBase.driveBackward(23);
-      driveBase.turnToHeading(143);
-
-      //Puh the triball out
-      //wingPistons->set(true);
-      driveBase.driveForward(15);
-      driveBase.turnToHeading(70);
-      //wingPistons->set(false);
-
-      //Push triballs to other side
-      driveBase.turnToHeading(125);
-      intakeMotor.spin(reverse, 100, percent);
-      driveBase.driveForward(20);
-      driveBase.turnToHeading(85);
-      driveBase.driveForward(21);
-      driveBase.driveBackward(3);
-      driveBase.turnToHeading(120);
-      //wingPistons->set(true);
-      intakeMotor.stop(); */
-
       break;
 
-    //*Basic skills auto the spins the catapult
+    //*Basic skills auto that launches triballs
     case AUTO_BASIC_SKILLS:
-      puncherMotor.spin(fwd, 80, percent);
+      driveBase.setTurnSpeed(80);
+
+      //Turn to proper heading
+      driveBase.setDriveHeading(133);
+      driveBase.turnFor(24, left);
+      driveBase.stopRobot(hold);
+      this_thread::sleep_for(500);
+
+      //Launch triballs
+      puncherMotor.spin(fwd, 12, voltageUnits::volt);
       break;
 
     //*Scores the prelaod triball in the goal
