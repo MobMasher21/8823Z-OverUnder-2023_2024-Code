@@ -22,8 +22,8 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 vexUI UI;
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
-motor puncherMotor = motor(PORT10, redGearBox, true);
-motor intakeMotor = motor(PORT9, blueGearBox, false);
+motor puncherMotor = motor(PORT21, redGearBox, true);
+motor intakeMotor = motor(PORT11, blueGearBox, false);
 rotation puncherEncoder = rotation(PORT7, false);
 digital_out *frontLeftWing;
 digital_out *frontRightWing;
@@ -208,8 +208,8 @@ void pre_auton(void) {
   driveBase.setDebugState(true);
 
   // Setup motor settings
-  driveBase.leftPortSetup(11, 12, 13);
-  driveBase.rightPortSetup(18, 19, 20);
+  driveBase.leftPortSetup(2, 3, 1);
+  driveBase.rightPortSetup(4, 19, 20);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
