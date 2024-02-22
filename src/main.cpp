@@ -176,7 +176,7 @@ void pre_auton(void) {
 
   //Setup parameters for auto selector
   //UI.autoSelectorUI.setSelectedButton(AUTO_FOUR_BALL_GOAL_SIDE);
-  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_DO_NOTHING);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -469,7 +469,6 @@ void autonomous(void) {
         intakeMotor.stop();
       }).detach();
 
-
       //First drive move before dropping match load ball
       driveBase.driveForward(40);
       driveBase.turnToHeading(60);
@@ -480,12 +479,12 @@ void autonomous(void) {
       intakeMotor.stop();
 
       //Aim and grab second ball
-      driveBase.turnToHeading(306);
+      driveBase.turnToHeading(302);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(27);
 
       //Align with goal and ram in first two triballs
-      driveBase.turnToHeading(270);
+      driveBase.turnToHeading(93);
       this_thread::sleep_for(400);
       intakeMotor.stop();
 
@@ -494,8 +493,6 @@ void autonomous(void) {
       driveBase.setupTurnPID(0.6, 1, 0.125, 6, 2, 100);  // p, i, d, error, error time, timeout */
 
       intakeMotor.spin(fwd, 20, pct);
-      driveBase.driveBackward(12);
-      driveBase.driveForward(8);
       driveBase.turnToHeading(90);
       setFrontWings(true, true);
       intakeMotor.spin(reverse, 100, percent);
@@ -518,13 +515,16 @@ void autonomous(void) {
 
       //Go touch the bar
       driveBase.turnToHeading(25);
-      driveBase.driveBackward(35);
-      setBackWings(false, true);
+      driveBase.driveBackward(36);
       //driveBase.setTurnSpeed(20);
-      driveBase.turnToHeading(100);
-      driveBase.driveBackward(10);
+      driveBase.turnToHeading(95);
+      driveBase.spinBase(-50, -50);
+      vex::task::sleep(100);
+      while((driveBase.getMotorSpeed(left) < -10) && (driveBase.getMotorSpeed(right) < -10)) {
+      vex::task::sleep(10);
+      }
+      setBackWings(false, true);
       driveBase.turnToHeading(105);
-
       break;
 
     case AUTO_LOAD_SIDE:
@@ -543,7 +543,7 @@ void autonomous(void) {
       driveBase.arcTurn(20, left, 40);
       driveBase.driveForward(8);
       setBackWings(false, true);
-      driveBase.arcTurn(21, left, 50);
+      driveBase.arcTurn(22, left, 50);
       setBackWings(false, false);
 
       //Lower intake
@@ -622,12 +622,6 @@ void autonomous(void) {
       break;
 
     //*Scores the prelaod triball in the goal
-    case AUTO_BASIC_GOAL_SIDE:
-      //!UNTESTED
-      driveBase.setDriveSpeed(100);
-      driveBase.driveBackward(42);
-      driveBase.driveForward(12);
-      break;
 
     //*Descores the triball in the match load zone 
     case AUTO_BASIC_LOAD_SIDE:
@@ -666,8 +660,60 @@ void autonomous(void) {
 
     //*Do nothing auto
     case AUTO_DO_NOTHING:
-      //!DO NOTHING HERE
-      break;
+    //!DO NOTHING HERE
+
+    //!UNTESTED
+
+    puncherMotor.spin(fwd, puncherSpeed, pct);
+    thread ([]() {
+      while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+      {
+        this_thread::sleep_for(5);
+      }
+      puncherMotor.stop(hold);
+    }).detach();
+
+    thread ([]() {
+      frontLeftWing->set(true);
+      this_thread::sleep_for(400);
+      frontLeftWing->set(false);
+    }).detach();
+
+    driveBase.setDriveSpeed(100);
+    intakeMotor.spin(fwd, 100, pct);
+    driveBase.driveForward(50);
+
+    driveBase.driveBackward(5);
+    driveBase.turnFor(70, right);
+    frontLeftWing->set(true);
+
+    driveBase.spinBase(50, 50);
+    intakeMotor.spin(reverse, 100, pct);
+    this_thread::sleep_for(1000);
+    driveBase.stopRobot();
+    frontLeftWing->set(false);
+
+ 
+    driveBase.driveBackward(18);
+    driveBase.turnFor(60, left);
+    driveBase.driveBackward(48);
+
+    // add back in once turn to heading is implemented
+    // driveBase.turnFor(105, right);
+
+    // driveBase.spinBase(-100, -100);
+    // this_thread::sleep_for(2000);
+    // driveBase.stopRobot();
+
+    // driveBase.driveForward(6);
+
+    // driveBase.spinBase(-100, -100);
+    // this_thread::sleep_for(1000);
+    // driveBase.stopRobot();
+
+    // driveBase.driveForward(3);
+
+    break;
 
     //*Default auto that runs if an unknown ID is selected
     default:
