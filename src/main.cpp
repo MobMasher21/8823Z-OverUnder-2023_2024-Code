@@ -208,8 +208,8 @@ void pre_auton(void) {
   driveBase.setDebugState(true);
 
   // Setup motor settings
-  driveBase.leftPortSetup(2, 3, 1);
-  driveBase.rightPortSetup(4, 19, 20);
+  driveBase.leftPortSetup(4, 19, 20);
+  driveBase.rightPortSetup(2, 3, 1);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
