@@ -4,8 +4,8 @@
 		"json": 2
 	},
 	"project": {
-		"name": "Milford",
-		"description": "Code for 8823Z at the Milford Competition.",
+		"name": "Harrison",
+		"description": "Code for 8823Z at the Harrison Competition.",
 		"creationDate": "12/6/2023, 10:45:31 PM",
 		"platform": "V5",
 		"language": "cpp",

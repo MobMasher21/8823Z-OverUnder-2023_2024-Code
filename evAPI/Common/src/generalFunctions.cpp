@@ -168,6 +168,10 @@ namespace evAPI
         errorString = "Incorrect_Device_In_Port";
         break;
 
+      case evError::Invalid_Device_In_Port:
+        errorString = "Invalid_Device_In_Port";
+        break;
+
       case evError::No_Data_Defined:
         errorString = "No_Data_Defined";
         break;
@@ -216,22 +220,37 @@ namespace evAPI
     return errorString;
   }
 
-  evError isCorrectDeviceInPort(int32_t port, V5_DeviceType type)
+  evErrorBool isCorrectDeviceInPort(int32_t port, V5_DeviceType type)
   {
     //Get the current device in the port
-    vex::device Port = vex::device(port);
+    vex::device deviceCheck = vex::device(port);
 
-    //Return true if "type" matches the type in the port
-    if(Port.type() == type)
+    //Return data
+    evErrorBool returnValue;
+    returnValue.data = false;
+
+    //*Return depending on the type of device in the port.
+    if(deviceCheck.type() == type)
     {
-      return evError::No_Error;
+      returnValue.errorData = evError::No_Error;
+      returnValue.data = true;
     }
 
-    else if(Port.type() == kDeviceTypeNoSensor)
+    else if(deviceCheck.type() == kDeviceTypeNoSensor)
     {
-      return evError::No_Device_In_Port;
+      returnValue.errorData = evError::No_Device_In_Port;
     }
 
-    return evError::Incorrect_Device_In_Port;
+    else if(deviceCheck.type() == kDeviceTypeUndefinedSensor)
+    {
+      returnValue.errorData = evError::Invalid_Device_In_Port;
+    }
+
+    else
+    {
+      returnValue.errorData = evError::Incorrect_Device_In_Port;
+    }
+
+    return returnValue;
   }
 }

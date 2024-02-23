@@ -19,6 +19,8 @@ namespace evAPI
   */
   enum class evError
   {
+    //!Unhandled_Error : Only used by evErrorToString when it gets an evError it doesn't know
+    
     No_Error = 0,
 
     //*Hardware Device config errors
@@ -27,6 +29,7 @@ namespace evAPI
     No_Device_Defined, //General use cases.
     No_Device_In_Port,
     Incorrect_Device_In_Port,
+    Invalid_Device_In_Port,
 
     //*Software Device config errors
     No_Data_Defined,
@@ -60,6 +63,7 @@ namespace evAPI
   typedef evErrorData<unsigned int> evErrorUInt;
   typedef evErrorData<float> evErrorFloat;
   typedef evErrorData<double> evErrorDouble;
+  typedef evErrorData<bool> evErrorBool;
   typedef evErrorData<std::string> evErrorString;
 
 } // namespace evAPI

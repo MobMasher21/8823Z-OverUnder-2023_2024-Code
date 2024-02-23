@@ -93,8 +93,12 @@ void *vexTaskGetCallbackAndId(uint32_t index, int *callback_id);
 */
 uint32_t vexTaskGetIndex();
 
+/**
+ * @returns Gets the task index of a task.
+*/
+uint32_t vexTaskGetTaskIndex();
+
 /*
-  uint32_t vexTaskGetTaskIndex();
   vexTaskGetTaskIndexWithId
 */
 

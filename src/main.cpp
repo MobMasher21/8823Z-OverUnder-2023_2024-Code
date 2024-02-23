@@ -120,7 +120,7 @@ double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
 int puncherSpeed = 100;
 puncherMode puncherLaunchMode = PUNCHER_BLOCK;
-bool puncherAutoPrimeEnabled = true;
+bool puncherAutoPrimeEnabled = false;
 
 /*---------------------------------------------------------------------------------*/
 /*                             Pre-Autonomous Functions                            */
@@ -245,7 +245,7 @@ void pre_auton(void) {
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
-  primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
+  //primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
 
   //*Catapult
   puncherEncoder.resetPosition();
@@ -661,43 +661,20 @@ void usercontrol(void) {
     }
 
     //* Control the catapult code -------------------------
-    if(puncherSpeed != puncherSpeedOld)
-    {
-      printf("Speed: %i\n", puncherSpeed);
-      puncherSpeedOld = puncherSpeed;
-    }
-
-    //Motor control from either the user or robot
     if(primaryController.PUNCHER_STOP_BUTTON.pressing())
     {
       puncherMotor.stop(coast);
     }
 
-    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
-            || (puncherAutoPrimeEnabled && (CRNT_PUNCHER_ANGL < puncherAngle))
-    )
+    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing())
     {
-      puncherMotor.spin(fwd, puncherSpeed, pct);
+      puncherMotor.spin(fwd, puncherSpeed, percent);
     }
 
     else
     {
       puncherMotor.stop(hold);
     }
-
-    //Control the target angle
-    if(puncherLaunchMode == PUNCHER_LAUNCH)
-    {
-      puncherAngle = puncherAngleLaunch;
-    }
-    
-    else
-    {
-      puncherAngle = puncherAngleBlock;
-    }
-
-    //Print out the angle of the catapult
-    //printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
 
     //========================================================================
 

@@ -168,12 +168,12 @@ launcher::~launcher()
 evAPI::evError launcher::addSensor(vex::rotation &sensor)
 {
   //Get the status of the port the sensor is connected to
-  evAPI::evError portStatus = evAPI::isCorrectDeviceInPort(sensor.index(), sensor.type());
+  evAPI::evErrorBool portStatus = evAPI::isCorrectDeviceInPort(sensor);
 
   //Exit if the rotation sensor isn't detected
-  if(portStatus != evAPI::evError::No_Error)
+  if(!portStatus.data)
   {
-    return portStatus;
+    return portStatus.errorData;
   }
 
   //Map the sensor pointer to the rotation sensor object
@@ -197,10 +197,13 @@ evAPI::evErrorDouble launcher::getSensorAngle()
     return returnValue;
   }
 
+  //Get the status of the port the sensor is connected to
+  evAPI::evErrorBool portStatus = evAPI::isCorrectDeviceInPort(*launcherSensor);
+
   //Return if the sensor isn't installed
-  if(!launcherSensor->installed())
+  if(!portStatus.data)
   {
-    returnValue.errorData = evAPI::evError::No_Device_In_Port;
+    returnValue.errorData = portStatus.errorData;
     return returnValue;
   }
 
