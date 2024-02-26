@@ -4,8 +4,8 @@
 		"json": 2
 	},
 	"project": {
-		"name": "Harrison",
-		"description": "Code for 8823Z at the Harrison Competition.",
+		"name": "State",
+		"description": "8823Z code for the Ohio State Championship",
 		"creationDate": "12/6/2023, 10:45:31 PM",
 		"platform": "V5",
 		"language": "cpp",

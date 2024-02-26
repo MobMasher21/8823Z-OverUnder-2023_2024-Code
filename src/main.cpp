@@ -25,24 +25,19 @@ vexUI UI;
 motor puncherMotor = motor(PORT12, redGearBox, true);
 motor intakeMotor = motor(PORT11, blueGearBox, false);
 rotation puncherEncoder = rotation(PORT13, false);
-digital_out *frontLeftWing;
-digital_out *frontRightWing;
-digital_out *backLeftWing;
-digital_out *backRightWing;
+digital_out *leftWing;
+digital_out *rightWing;
+digital_out *PTOPistons;
 
 // Controller callback function declarations ------------------------------
-void setFrontWings(bool left, bool right); //Control the front wings
-void setBackWings(bool left, bool right); //Control the back wings
-void toggleFrontWings(); //Toggle the status of the front wings
-void toggleBackWings(); //Toggle the status of the front wings
-void toggleFrontLeft();
-void toggleFrontRight();
-void toggleBackLeft();
-void toggleBackRight();
+void setWings(bool left, bool right); //Control the front wings
+void toggleWings(); //Toggle the status of the front wings
+void toggleLeftWing();
+void toggleRightWing();
+void togglePTO();
 void puncherSpeedIncrement(void); //Increments the speed of the puncher by 5
 void puncherSpeedDecrement(void); //Decrements the speed of the puncher by 5
 void puncherManualToggle(void);   //Enables manual control of the puncher
-void puncherModeToggle(void);     //Toggles the mode of the puncher
 
 // Setup controller button names ------------------------------------------
 #define PUNCHER_FIRE_BUTTON ButtonL1
@@ -54,10 +49,9 @@ void puncherModeToggle(void);     //Toggles the mode of the puncher
 
 #define INTK_IN_BUTTON ButtonR1
 #define INTK_OUT_BUTTON ButtonR2
-#define FRONT_LEFT_WINGS_BUTTON ButtonRight
-#define FRONT_RIGHT_WINGS_BUTTON ButtonY
-#define BACK_LEFT_WINGS_BUTTON ButtonDown
-#define BACK_RIGHT_WINGS_BUTTON ButtonB
+#define LEFT_WINGS_BUTTON ButtonRight
+#define RIGHT_WINGS_BUTTON ButtonY
+#define PTO_TRIGGER_BUTTON ButtonA
 
 // Speed and handicap variables -------------------------------------------
 int intakeSpeed = 100;
@@ -85,7 +79,7 @@ enum autoOptions {
 
 //Variables to display on the controller
 uint32_t batteryLevel = Brain.Battery.capacity();
-std::string puncherModeText = "Block";
+std::string PTOModeText = "Disabled";
 std::string selectedAutoName = "";
 
 //Setup controller UI IDs
@@ -94,7 +88,7 @@ enum controllerOptions
   //Match Screen
   MATCH_SCREEN = 0,
   PUNCHER_SPEED_DISPLAY,
-  PUNCHER_MODE_TEXT,
+  PTO_STATUS,
 
   //Disabled / Auto Screen
   DISABLED_AUTO_SCREEN = 3,
@@ -108,18 +102,10 @@ enum controllerOptions
 };
 
 //Puncher control
-enum puncherMode
-{
-  PUNCHER_LAUNCH = 0,
-  PUNCHER_BLOCK = 1
-};
-
 const double puncherAngleLaunch = 285;
-const double puncherAngleBlock = 240;
 double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
 int puncherSpeed = 50;
-puncherMode puncherLaunchMode = PUNCHER_BLOCK;
 bool puncherAutoPrimeEnabled = false;
 
 /*---------------------------------------------------------------------------------*/
@@ -127,10 +113,9 @@ bool puncherAutoPrimeEnabled = false;
 /*---------------------------------------------------------------------------------*/
 void pre_auton(void) {
   //* Set object pointers ====================================================
-  frontRightWing = new digital_out(Brain.ThreeWirePort.A);
-  frontLeftWing  = new digital_out(Brain.ThreeWirePort.B);
-  backLeftWing   = new digital_out(Brain.ThreeWirePort.C);
-  backRightWing  = new digital_out(Brain.ThreeWirePort.D);
+  rightWing  = new digital_out(Brain.ThreeWirePort.A);
+  leftWing   = new digital_out(Brain.ThreeWirePort.B);
+  PTOPistons = new digital_out(Brain.ThreeWirePort.D);
 
   //* Setup for auto selection UI ============================================
   // Add all the buttons
@@ -188,7 +173,7 @@ void pre_auton(void) {
   //Driver Control Screen
   UI.primaryControllerUI.addData(MATCH_SCREEN, "Battery: ", batteryLevel);
   UI.primaryControllerUI.addData(PUNCHER_SPEED_DISPLAY, "Puncher Speed: ", puncherSpeed);
-  UI.primaryControllerUI.addData(PUNCHER_MODE_TEXT, "Puncher ", puncherModeText);
+  UI.primaryControllerUI.addData(PTO_STATUS, "PTO: ", PTOModeText);
 
   //Disabled Screen
   UI.primaryControllerUI.addData(DISABLED_AUTO_SCREEN, "Battery: ", batteryLevel);
@@ -239,15 +224,12 @@ void pre_auton(void) {
   driveControl.setHandicaps(1, 0.6);  // main drive, turning
 
   //* Setup controller callbacks =============================================
-  primaryController.FRONT_LEFT_WINGS_BUTTON.pressed(toggleFrontLeft);
-  primaryController.FRONT_RIGHT_WINGS_BUTTON.pressed(toggleFrontRight);
-  //primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackLeft);
-  //primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleBackRight);
+  primaryController.LEFT_WINGS_BUTTON.pressed(toggleLeftWing);
+  primaryController.RIGHT_WINGS_BUTTON.pressed(toggleRightWing);
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
-  //primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
-  primaryController.ButtonA.pressed(toggleBackRight);
+  primaryController.PTO_TRIGGER_BUTTON.pressed(togglePTO);
 
   //*Catapult
   puncherEncoder.resetPosition();
@@ -328,7 +310,7 @@ void autonomous(void) {
       driveBase.driveForward(23);
       driveBase.turnFor(90, left);
       //driveBase.turnToHeading(270);
-      setFrontWings(false, true);
+      setWings(false, true);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
@@ -339,14 +321,14 @@ void autonomous(void) {
 
       vex::task::sleep(200);
       driveBase.stopRobot();
-      setFrontWings(false, false);
+      setWings(false, false);
       driveBase.driveBackward(35);
 
       //Second push into goal
       driveBase.turnFor(90, right);
       driveBase.driveForward(30);
       driveBase.turnFor(90, left);
-      setFrontWings(true, false);
+      setWings(true, false);
       driveBase.spinBase(100, 100);
       vex::task::sleep(800);
 
@@ -357,7 +339,7 @@ void autonomous(void) {
 
       vex::task::sleep(200);
       driveBase.stopRobot();
-      setFrontWings(false, false);
+      setWings(false, false);
       driveBase.driveBackward(35);
 
       intakeMotor.stop();
@@ -372,7 +354,7 @@ void autonomous(void) {
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       //this_thread::sleep_for(800);
-      while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+      while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
       {
         this_thread::sleep_for(5);
       }
@@ -408,7 +390,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      setFrontWings(false, true);
+      setWings(false, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -427,7 +409,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
 
       //grab ball 4
-      setFrontWings(false, false);
+      setWings(false, false);
       driveBase.turnToHeading(180);
       driveBase.driveForward(20);
       driveBase.turnToHeading(270);
@@ -456,8 +438,54 @@ void autonomous(void) {
       break;
 
     case AUTO_ELIMINATION_LOAD_SIDE:
-      //TODO: Put code in from Milford branch when Teo uploads it
-      
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+      thread ([]() {
+        while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
+        {
+          this_thread::sleep_for(5);
+        }
+        puncherMotor.stop(hold);
+      }).detach();
+
+      thread ([]() {
+        setWings(true, false);
+        this_thread::sleep_for(400);
+        setWings(false, false);
+      }).detach();
+
+      driveBase.setDriveSpeed(100);
+      intakeMotor.spin(fwd, 100, pct);
+      driveBase.driveForward(50);
+
+      driveBase.driveBackward(5);
+      driveBase.turnFor(70, right);
+      setWings(true, false);
+
+      driveBase.spinBase(50, 50);
+      intakeMotor.spin(reverse, 100, pct);
+      this_thread::sleep_for(1000);
+      driveBase.stopRobot();
+      setWings(false, false);
+
+      driveBase.driveBackward(18);
+      driveBase.turnFor(60, left);
+      driveBase.driveBackward(48);
+
+      //Add back in once turn to heading is implemented
+      /* driveBase.turnFor(105, right);
+
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(2000);
+      driveBase.stopRobot();
+
+      driveBase.driveForward(6);
+
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(1000);
+      driveBase.stopRobot();
+
+      driveBase.driveForward(3); */
+
       break;
 
     case AUTO_GOAL_SIDE:
@@ -468,7 +496,7 @@ void autonomous(void) {
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       thread ([]() {
-        while(CRNT_PUNCHER_ANGL < puncherAngleBlock)
+        while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
         {
           this_thread::sleep_for(5);
         }
@@ -500,7 +528,7 @@ void autonomous(void) {
       driveBase.driveBackward(12);
       driveBase.driveForward(8);
       driveBase.turnToHeading(90);
-      setFrontWings(true, true);
+      setWings(true, true);
       intakeMotor.spin(reverse, 100, percent);
       vex::task::sleep(400);
 
@@ -516,13 +544,13 @@ void autonomous(void) {
       intakeMotor.stop();
       vex::task::sleep(200);
       driveBase.stopRobot();
-      setFrontWings(false, false);
+      setWings(false, false);
       driveBase.driveBackward(15);
 
       //Go touch the bar
       driveBase.turnToHeading(25);
       driveBase.driveBackward(35);
-      setBackWings(false, true);
+      //setBackWings(false, true);
       //driveBase.setTurnSpeed(20);
       driveBase.turnToHeading(100);
       driveBase.driveBackward(10);
@@ -544,9 +572,9 @@ void autonomous(void) {
       //Go remove other triball
       driveBase.arcTurn(20, left, 40);
       driveBase.driveForward(8);
-      setBackWings(false, true);
+      //setBackWings(false, true);
       driveBase.arcTurn(21, left, 50);
-      setBackWings(false, false);
+      //setBackWings(false, false);
 
       //Lower intake
       //Drop intake and grab first ball
@@ -597,9 +625,9 @@ void autonomous(void) {
     case AUTO_BASIC_LOAD_SIDE:
       //!UNTESTED
       //Set speeds
-      setFrontWings(true, false);
+      setWings(true, false);
       driveBase.turnFor(200, left);
-      setFrontWings(false, false);
+      setWings(false, false);
       break;
 
     //*TEST AUTOS
@@ -642,8 +670,7 @@ void autonomous(void) {
 /*                                 User Control Task                               */
 /*---------------------------------------------------------------------------------*/
 void usercontrol(void) {
-  double puncherAngle;
-  int puncherSpeedOld = -5;
+  double puncherAngle = puncherAngleLaunch;
 
   UI.primaryControllerUI.setScreenLine(MATCH_SCREEN);
 
@@ -667,20 +694,26 @@ void usercontrol(void) {
     }
 
     //* Control the catapult code -------------------------
+    //Motor control from either the user or robot
     if(primaryController.PUNCHER_STOP_BUTTON.pressing())
     {
       puncherMotor.stop(coast);
     }
 
-    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing())
+    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
+            || (puncherAutoPrimeEnabled && (CRNT_PUNCHER_ANGL < puncherAngle))
+    )
     {
-      puncherMotor.spin(fwd, puncherSpeed, percent);
+      puncherMotor.spin(fwd, puncherSpeed, pct);
     }
 
     else
     {
       puncherMotor.stop(hold);
     }
+
+    //Print out the angle of the catapult
+    printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
 
     //========================================================================
 
@@ -706,23 +739,15 @@ int main() {
     //*Update controller UI data
     batteryLevel = Brain.Battery.capacity();
 
-    //Update catapult mode text
-    if(puncherAutoPrimeEnabled)
+    //Update PTO Status
+    if(PTOPistons->value())
     {
-      if(puncherLaunchMode == PUNCHER_LAUNCH)
-      {
-        puncherModeText = "Launch";
-      }
-
-      else
-      {
-        puncherModeText = "Block";
-      }
+      PTOModeText = "Enabled";
     }
 
     else
     {
-      puncherModeText = "Manual";
+      PTOModeText = "Disabled";
     }
 
     //Update auto name
@@ -733,50 +758,32 @@ int main() {
 }
 
 //*Controller callback definitions
-void setFrontWings(bool left, bool right)
+void setWings(bool left, bool right)
 {
-  frontLeftWing->set(left);
-  frontRightWing->set(right);
+  leftWing->set(left);
+  rightWing->set(right);
 }
 
-void setBackWings(bool left, bool right)
+void toggleWings()
 {
-  backLeftWing->set(left);
-  backRightWing->set(right);
+  bool newWingStatus = !leftWing->value();
+  leftWing->set(newWingStatus);
+  rightWing->set(newWingStatus);
 }
 
-void toggleFrontWings()
+void toggleLeftWing()
 {
-  bool newWingStatus = !frontLeftWing->value();
-  frontLeftWing->set(newWingStatus);
-  frontRightWing->set(newWingStatus);
+  leftWing->set(!leftWing->value());
 }
 
-void toggleBackWings()
+void toggleRightWing()
 {
-  bool newWingStatus = !backLeftWing->value();
-  backLeftWing->set(newWingStatus);
-  backRightWing->set(newWingStatus);
+  rightWing->set(!rightWing->value());
 }
 
-void toggleFrontLeft()
+void togglePTO()
 {
-  frontLeftWing->set(!frontLeftWing->value());
-}
-
-void toggleFrontRight()
-{
-  frontRightWing->set(!frontRightWing->value());
-}
-
-void toggleBackLeft()
-{
-  backLeftWing->set(!backLeftWing->value());
-}
-
-void toggleBackRight()
-{
-  backRightWing->set(!backRightWing->value());
+  PTOPistons->set(!PTOPistons->value());
 }
 
 void puncherSpeedIncrement(void)
@@ -808,17 +815,4 @@ void puncherSpeedDecrement(void)
 void puncherManualToggle(void)
 {
   puncherAutoPrimeEnabled = !puncherAutoPrimeEnabled;
-}
-
-void puncherModeToggle(void)
-{
-  if(puncherLaunchMode == PUNCHER_BLOCK)
-  {
-    puncherLaunchMode = PUNCHER_LAUNCH;
-  }
-
-  else
-  {
-    puncherLaunchMode = PUNCHER_BLOCK;
-  }
 }
