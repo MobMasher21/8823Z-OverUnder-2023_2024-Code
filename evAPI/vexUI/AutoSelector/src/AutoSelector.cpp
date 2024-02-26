@@ -74,6 +74,11 @@ namespace evAPI {
     }
   }
 
+  int AutoSelector::addButton(int ID, uint32_t buttonColor)
+  {
+    return addButton(ID, vex::color(buttonColor));
+  }
+
   int AutoSelector::addButton(int ID, color buttonColor) {  // Adds a button with the set ID and vex color object. Returns button count
     bool buttonExits = doesButtonExist(ID);
 

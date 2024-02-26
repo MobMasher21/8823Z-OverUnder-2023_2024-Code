@@ -59,6 +59,14 @@ namespace evAPI {
        * @param buttonColor The base color of the button.
        * @returns The ID of the button if it was created. 0 if a button with that ID already exists.
       */
+      int addButton(int ID, uint32_t buttonColor);
+
+      /**
+       * @brief Adds a button to the Auto Selector.
+       * @param ID The ID of the new button.
+       * @param buttonColor The base color of the button.
+       * @returns The ID of the button if it was created. 0 if a button with that ID already exists.
+      */
       int addButton(int ID, color buttonColor);
   
       /**

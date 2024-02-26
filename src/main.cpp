@@ -47,11 +47,11 @@ void puncherManualToggle(void);   //Enables manual control of the puncher
 #define PUNCHER_SPEED_INC ButtonUp
 #define PUNCHER_SPEED_DEC ButtonLeft
 
-#define INTK_IN_BUTTON ButtonR1
-#define INTK_OUT_BUTTON ButtonR2
+#define INTAKE_IN_BUTTON ButtonR1
+#define INTAKE_OUT_BUTTON ButtonR2
 #define LEFT_WINGS_BUTTON ButtonRight
 #define RIGHT_WINGS_BUTTON ButtonY
-#define PTO_TRIGGER_BUTTON ButtonA
+#define PTO_TOGGLE_BUTTON ButtonA
 
 // Speed and handicap variables -------------------------------------------
 int intakeSpeed = 100;
@@ -98,13 +98,12 @@ enum controllerOptions
   //Inertial Calibration Screen
   INERTIAL_CALIBRATE_SCREEN = 6,
   INERTIAL_CALIBRATING_TEXT
-
 };
 
 //Puncher control
 const double puncherAngleLaunch = 285;
-double cataStartAngle = 0;
-#define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
+double puncherStartAngle = 0;
+#define CURRENT_PUNCHER_ANGLE (puncherEncoder.angle(deg) - puncherStartAngle)
 int puncherSpeed = 50;
 bool puncherAutoPrimeEnabled = false;
 
@@ -119,9 +118,9 @@ void pre_auton(void) {
 
   //* Setup for auto selection UI ============================================
   // Add all the buttons
-  UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff, 0x10, 0xa0);  //color is 0xff10a0
+  UI.autoSelectorUI.addButton(AUTO_SKILLS_1, 0xff10a0);
   UI.autoSelectorUI.addButton(AUTO_FOUR_BALL_GOAL_SIDE, cyan);
-  UI.autoSelectorUI.addButton(AUTO_ELIMINATION_LOAD_SIDE, cyan);
+  UI.autoSelectorUI.addButton(AUTO_ELIMINATION_LOAD_SIDE, DodgerBlue);
   UI.autoSelectorUI.addButton(AUTO_GOAL_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_LOAD_SIDE, blue);
   UI.autoSelectorUI.addButton(AUTO_DO_NOTHING, red);
@@ -229,10 +228,11 @@ void pre_auton(void) {
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
-  primaryController.PTO_TRIGGER_BUTTON.pressed(togglePTO);
+  primaryController.PTO_TOGGLE_BUTTON.pressed(togglePTO);
 
-  //*Catapult
+  //*Puncher
   puncherEncoder.resetPosition();
+  puncherStartAngle = puncherEncoder.angle();
 
   //*Display calibrating information
   UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
@@ -241,6 +241,9 @@ void pre_auton(void) {
   {
     this_thread::sleep_for(5);
   }
+
+  //Show the selected autonomous
+  UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 }
 
 
@@ -354,7 +357,7 @@ void autonomous(void) {
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       //this_thread::sleep_for(800);
-      while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
+      while(CURRENT_PUNCHER_ANGLE < puncherAngleLaunch)
       {
         this_thread::sleep_for(5);
       }
@@ -440,7 +443,7 @@ void autonomous(void) {
     case AUTO_ELIMINATION_LOAD_SIDE:
       puncherMotor.spin(fwd, puncherSpeed, pct);
       thread ([]() {
-        while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
+        while(CURRENT_PUNCHER_ANGLE < puncherAngleLaunch)
         {
           this_thread::sleep_for(5);
         }
@@ -496,7 +499,7 @@ void autonomous(void) {
       //Drop intake and grab first ball
       puncherMotor.spin(fwd, puncherSpeed, pct);
       thread ([]() {
-        while(CRNT_PUNCHER_ANGL < puncherAngleLaunch)
+        while(CURRENT_PUNCHER_ANGLE < puncherAngleLaunch)
         {
           this_thread::sleep_for(5);
         }
@@ -685,15 +688,15 @@ void usercontrol(void) {
     driveControl.driverLoop();
 
     //* Control the intake code ---------------------------
-    if(primaryController.INTK_IN_BUTTON.pressing()) {
+    if(primaryController.INTAKE_IN_BUTTON.pressing()) {
       intakeMotor.spin(fwd, intakeSpeed, pct);
-    } else if(primaryController.INTK_OUT_BUTTON.pressing()) {
+    } else if(primaryController.INTAKE_OUT_BUTTON.pressing()) {
       intakeMotor.spin(reverse, intakeSpeed, pct);
     } else {
       intakeMotor.stop(coast);
     }
 
-    //* Control the catapult code -------------------------
+    //* Control the puncher code -------------------------
     //Motor control from either the user or robot
     if(primaryController.PUNCHER_STOP_BUTTON.pressing())
     {
@@ -701,7 +704,7 @@ void usercontrol(void) {
     }
 
     else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
-            || (puncherAutoPrimeEnabled && (CRNT_PUNCHER_ANGL < puncherAngle))
+            || (puncherAutoPrimeEnabled && (CURRENT_PUNCHER_ANGLE < puncherAngle))
     )
     {
       puncherMotor.spin(fwd, puncherSpeed, pct);
@@ -712,8 +715,8 @@ void usercontrol(void) {
       puncherMotor.stop(hold);
     }
 
-    //Print out the angle of the catapult
-    printf("\n%f\n\n", CRNT_PUNCHER_ANGL);
+    //Print out the angle of the puncher
+    printf("\n%f\n\n", CURRENT_PUNCHER_ANGLE);
 
     //========================================================================
 
@@ -731,8 +734,6 @@ int main() {
 
   // Run the pre-autonomous function.
   pre_auton();
-
-  UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
