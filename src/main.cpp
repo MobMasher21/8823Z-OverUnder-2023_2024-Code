@@ -22,9 +22,9 @@ DriverBaseControl driveControl = DriverBaseControl(&primaryController, RCControl
 vexUI UI;
 
 // Setup vex component objects (motors, sensors, etc.) --------------------
-motor puncherMotor = motor(PORT21, redGearBox, true);
+motor puncherMotor = motor(PORT12, redGearBox, true);
 motor intakeMotor = motor(PORT11, blueGearBox, false);
-rotation puncherEncoder = rotation(PORT7, false);
+rotation puncherEncoder = rotation(PORT13, false);
 digital_out *frontLeftWing;
 digital_out *frontRightWing;
 digital_out *backLeftWing;
@@ -118,7 +118,7 @@ const double puncherAngleLaunch = 285;
 const double puncherAngleBlock = 240;
 double cataStartAngle = 0;
 #define CRNT_PUNCHER_ANGL (puncherEncoder.angle(deg) - cataStartAngle)
-int puncherSpeed = 100;
+int puncherSpeed = 50;
 puncherMode puncherLaunchMode = PUNCHER_BLOCK;
 bool puncherAutoPrimeEnabled = false;
 
@@ -180,7 +180,8 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_BASIC_GOAL_SIDE);
+  UI.autoSelectorUI.setSelectedPage(1);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -208,15 +209,15 @@ void pre_auton(void) {
   driveBase.setDebugState(true);
 
   // Setup motor settings
-  driveBase.leftPortSetup(4, 19, 20);
-  driveBase.rightPortSetup(2, 3, 1);
+  driveBase.leftPortSetup(14, 15, 16);
+  driveBase.rightPortSetup(2, 9, 1);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
   driveBase.setDriveBaseWidth(11.625);
   
   // Setup inertial sensor settings
-  driveBase.setupInertialSensor(6);
+  driveBase.setupInertialSensor(17);
 
   // Set default speeds
   driveBase.setDriveSpeed(100);
@@ -227,9 +228,9 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.12, 0.10, 0.05, 20, 2, 100);
-  driveBase.setupTurnPID(0.54, 0.2, 0.1, 3, 1, 100);
-  driveBase.setupDriftPID(0.15, 0, 0, 1, 0, 0);
+  driveBase.setupDrivePID(0.06, 0.1, 0, 15, 2, 1000);
+  driveBase.setupDriftPID(0.075, 0, 0, 1, 0, 0);
+  driveBase.setupTurnPID(0.3, 0, 0, 10, 1, 100);
   driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
   driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
@@ -240,12 +241,13 @@ void pre_auton(void) {
   //* Setup controller callbacks =============================================
   primaryController.FRONT_LEFT_WINGS_BUTTON.pressed(toggleFrontLeft);
   primaryController.FRONT_RIGHT_WINGS_BUTTON.pressed(toggleFrontRight);
-  primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackLeft);
-  primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleBackRight);
+  //primaryController.BACK_LEFT_WINGS_BUTTON.pressed(toggleBackLeft);
+  //primaryController.BACK_RIGHT_WINGS_BUTTON.pressed(toggleBackRight);
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
   //primaryController.PUNCHER_MODE_BUTTON.pressed(puncherModeToggle);
+  primaryController.ButtonA.pressed(toggleBackRight);
 
   //*Catapult
   puncherEncoder.resetPosition();
@@ -279,7 +281,7 @@ void autonomous(void) {
       this_thread::sleep_for(500);
 
       //Launch triballs for 30 seconds
-      puncherMotor.spin(fwd, 12, voltageUnits::volt);
+      puncherMotor.spin(fwd, puncherSpeed, pct);
       //this_thread::sleep_for(30000);
       this_thread::sleep_for(10000);
       puncherMotor.stop(coast);
@@ -455,6 +457,7 @@ void autonomous(void) {
 
     case AUTO_ELIMINATION_LOAD_SIDE:
       //TODO: Put code in from Milford branch when Teo uploads it
+      
       break;
 
     case AUTO_GOAL_SIDE:
@@ -570,14 +573,23 @@ void autonomous(void) {
       this_thread::sleep_for(500);
 
       //Launch triballs
-      puncherMotor.spin(fwd, 12, voltageUnits::volt);
+      puncherMotor.spin(fwd, puncherSpeed, pct);
       break;
 
     //*Scores the prelaod triball in the goal
     case AUTO_BASIC_GOAL_SIDE:
-      //!UNTESTED
       driveBase.setDriveSpeed(100);
-      driveBase.driveBackward(42);
+
+      driveBase.spinBase(-100, -100);
+      vex::task::sleep(800);
+
+      //Runs the motors until it has runs into the goal and can't move
+      while((driveBase.getMotorSpeed(left) < -20) && (driveBase.getMotorSpeed(right) < -20)) {
+        vex::task::sleep(5);
+      }
+
+      vex::task::sleep(250);
+      driveBase.stopRobot();
       driveBase.driveForward(12);
       break;
 
@@ -585,34 +597,28 @@ void autonomous(void) {
     case AUTO_BASIC_LOAD_SIDE:
       //!UNTESTED
       //Set speeds
-      driveBase.setDriveSpeed(100);
-      driveBase.setTurnSpeed(75);
-
-      //Descore the triball
-      driveBase.driveForward(14);
-      //wingPistons->set(true);
-      driveBase.driveForward(20);
-      driveBase.turnToHeading(40);
-      this_thread::sleep_for(500);
-      driveBase.turnToHeading(115);
-      //wingPistons->set(false);
-      driveBase.turnToHeading(325); //!VALUE NEEDS TO BE CONFIRMED
+      setFrontWings(true, false);
+      driveBase.turnFor(200, left);
+      setFrontWings(false, false);
       break;
 
     //*TEST AUTOS
     case AUTO_TEST_PID:
-      /* driveBase.driveForward(39.5);
-      this_thread::sleep_for(3000);
-      driveBase.driveBackward(39.5); */
+      driveBase.setupDrivePID(0.06, 0.1, 0, 15, 2, 1000);
+      driveBase.setupDriftPID(0.075, 0, 0, 1, 0, 0);
+      driveBase.setupTurnPID(0.3, 0, 0, 10, 1, 100);
+      driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
+      driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
-      driveBase.setupTurnPID(0.54, 0.2, 0.1, 3, 1, 100);
-      driveBase.turnToHeading(90);
+      driveBase.driveForward(48); 
+      /* this_thread::sleep_for(3000);
+      driveBase.driveBackward(48); */
+
+      /* driveBase.turnToHeading(90);
       this_thread::sleep_for(500);
-      driveBase.turnToHeading(0);
+      driveBase.turnToHeading(0); */
 
-      /* driveBase.arcTurn(-12, right, -45, 40);
-      this_thread::sleep_for(1500);
-      driveBase.arcTurn(12, left, 90, 100); */
+      /* driveBase.arcTurn(12, right, 45, 40); */
 
       break;
 
