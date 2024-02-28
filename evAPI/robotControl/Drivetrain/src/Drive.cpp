@@ -365,8 +365,7 @@ namespace evAPI {
     stopRobot(brake);
   }
 
-  void Drive::arcTurn(double radius, vex::turnType direction, int angle)
-  {
+  void Drive::arcTurn(double radius, vex::turnType direction, int angle) {
     arcTurn(radius, direction, angle, arcTurnSpeed);
   }
 

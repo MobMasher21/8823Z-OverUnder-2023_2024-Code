@@ -444,7 +444,7 @@ namespace evAPI {
        * @brief Calls the function for the odometry thread.
        *!@warning DO NOT CALL THIS FUNCTION!
       */
-      void odoThreadCall();
+      void odoThreadFunction();
 
       /**
        * @brief Stars the odometry thread.

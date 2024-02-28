@@ -2,7 +2,7 @@
 
 namespace evAPI
 {
-  
+
   void OdoMath::setPosition(int xPos, int yPos) {  // sets the current robot position
     xPosition = xPos;
     yPosition = yPos;
