@@ -101,11 +101,11 @@ enum controllerOptions
 };
 
 //Puncher control
-const double puncherAngleLaunch = 285;
-double puncherStartAngle = 0;
+const double puncherAngleLaunch = 315;
+double puncherStartAngle = puncherEncoder.angle(deg);
 #define CURRENT_PUNCHER_ANGLE (puncherEncoder.angle(deg) - puncherStartAngle)
 int puncherSpeed = 50;
-bool puncherAutoPrimeEnabled = false;
+bool puncherAutoPrimeEnabled = true;
 
 /*---------------------------------------------------------------------------------*/
 /*                             Pre-Autonomous Functions                            */
@@ -230,9 +230,11 @@ void pre_auton(void) {
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
   primaryController.PTO_TOGGLE_BUTTON.pressed(togglePTO);
 
+  puncherMotor.setBrake(coast);
+
   //*Puncher
   puncherEncoder.resetPosition();
-  puncherStartAngle = puncherEncoder.angle();
+  puncherStartAngle = puncherEncoder.position(deg);
 
   //*Display calibrating information
   UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
@@ -704,7 +706,7 @@ void usercontrol(void) {
     }
 
     else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
-            || (puncherAutoPrimeEnabled && (CURRENT_PUNCHER_ANGLE < puncherAngle))
+            // || (puncherAutoPrimeEnabled && (CURRENT_PUNCHER_ANGLE > puncherAngle))
     )
     {
       puncherMotor.spin(fwd, puncherSpeed, pct);
@@ -712,7 +714,7 @@ void usercontrol(void) {
 
     else
     {
-      puncherMotor.stop(hold);
+      puncherMotor.stop(coast);
     }
 
     //Print out the angle of the puncher
