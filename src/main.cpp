@@ -34,7 +34,7 @@ void setWings(bool left, bool right); //Control the front wings
 void toggleWings(); //Toggle the status of the front wings
 void toggleLeftWing();
 void toggleRightWing();
-void togglePTO();
+void enablePTO();
 void puncherSpeedIncrement(void); //Increments the speed of the puncher by 5
 void puncherSpeedDecrement(void); //Decrements the speed of the puncher by 5
 void puncherManualToggle(void);   //Enables manual control of the puncher
@@ -51,7 +51,7 @@ void puncherManualToggle(void);   //Enables manual control of the puncher
 #define INTAKE_OUT_BUTTON ButtonR2
 #define LEFT_WINGS_BUTTON ButtonRight
 #define RIGHT_WINGS_BUTTON ButtonY
-#define PTO_TOGGLE_BUTTON ButtonA
+#define PTO_TRIGGER_BUTTON ButtonA
 
 // Speed and handicap variables -------------------------------------------
 int intakeSpeed = 100;
@@ -104,7 +104,7 @@ enum controllerOptions
 const double puncherAngleLaunch = 315;
 double puncherStartAngle = puncherEncoder.angle(deg);
 #define CURRENT_PUNCHER_ANGLE (puncherEncoder.angle(deg) - puncherStartAngle)
-int puncherSpeed = 50;
+int puncherSpeed = 70;
 bool puncherAutoPrimeEnabled = true;
 
 /*---------------------------------------------------------------------------------*/
@@ -228,7 +228,7 @@ void pre_auton(void) {
   primaryController.PUNCHER_SPEED_INC.pressed(puncherSpeedIncrement);
   primaryController.PUNCHER_SPEED_DEC.pressed(puncherSpeedDecrement);
   primaryController.PUNCHER_MANUAL_BUTTON.pressed(puncherManualToggle);
-  primaryController.PTO_TOGGLE_BUTTON.pressed(togglePTO);
+  primaryController.PTO_TRIGGER_BUTTON.pressed(enablePTO);
 
   puncherMotor.setBrake(coast);
 
@@ -236,16 +236,17 @@ void pre_auton(void) {
   puncherEncoder.resetPosition();
   puncherStartAngle = puncherEncoder.position(deg);
 
-  //*Display calibrating information
-  UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
+  //*Display calibrating and autonomous information if connected to a field or comp switch
+  if(isConnectToField()) UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
+
+  //Calibrate inertial.
   driveBase.calibrateInertial();
   while(driveBase.isInertialCalibrating())
   {
     this_thread::sleep_for(5);
   }
 
-  //Show the selected autonomous
-  UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
+  if(isConnectToField()) UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 }
 
 
@@ -675,8 +676,6 @@ void autonomous(void) {
 /*                                 User Control Task                               */
 /*---------------------------------------------------------------------------------*/
 void usercontrol(void) {
-  double puncherAngle = puncherAngleLaunch;
-
   UI.primaryControllerUI.setScreenLine(MATCH_SCREEN);
 
   //Make sure the stopping mode for the base is correct
@@ -705,9 +704,7 @@ void usercontrol(void) {
       puncherMotor.stop(coast);
     }
 
-    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing() 
-            // || (puncherAutoPrimeEnabled && (CURRENT_PUNCHER_ANGLE > puncherAngle))
-    )
+    else if(primaryController.PUNCHER_FIRE_BUTTON.pressing())
     {
       puncherMotor.spin(fwd, puncherSpeed, pct);
     }
@@ -718,7 +715,7 @@ void usercontrol(void) {
     }
 
     //Print out the angle of the puncher
-    printf("\n%f\n\n", CURRENT_PUNCHER_ANGLE);
+    // printf("\n%f\n\n", CURRENT_PUNCHER_ANGLE);
 
     //========================================================================
 
@@ -784,9 +781,9 @@ void toggleRightWing()
   rightWing->set(!rightWing->value());
 }
 
-void togglePTO()
+void enablePTO()
 {
-  PTOPistons->set(!PTOPistons->value());
+  PTOPistons->set(true);
 }
 
 void puncherSpeedIncrement(void)
