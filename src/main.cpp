@@ -164,8 +164,8 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_BASIC_GOAL_SIDE);
-  UI.autoSelectorUI.setSelectedPage(1);
+  UI.autoSelectorUI.setSelectedButton(AUTO_TEST_PID);
+  UI.autoSelectorUI.setSelectedPage(2);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
   //*Setup controller UI
@@ -194,7 +194,7 @@ void pre_auton(void) {
 
   // Setup motor settings
   driveBase.leftPortSetup(14, 15, 16);
-  driveBase.rightPortSetup(2, 9, 1);
+  driveBase.rightPortSetup(2, 9, 3);
   driveBase.leftReverseSetup(true, true, true);
   driveBase.rightReverseSetup(false, false, false);
   driveBase.geartrainSetup(3.25, 36, 60);
@@ -638,9 +638,11 @@ void autonomous(void) {
 
     //*TEST AUTOS
     case AUTO_TEST_PID:
-      driveBase.setupDrivePID(0.06, 0.1, 0, 15, 2, 1000);
-      driveBase.setupDriftPID(0.075, 0, 0, 1, 0, 0);
+      driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
+      driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
+
       driveBase.setupTurnPID(0.3, 0, 0, 10, 1, 100);
+      
       driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
       driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
