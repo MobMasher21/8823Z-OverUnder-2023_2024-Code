@@ -164,7 +164,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_TEST_PID);
+  UI.autoSelectorUI.setSelectedButton(AUTO_ELIMINATION_LOAD_SIDE);
   UI.autoSelectorUI.setSelectedPage(2);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -212,10 +212,10 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.06, 0.1, 0, 15, 2, 1000);
-  driveBase.setupDriftPID(0.075, 0, 0, 1, 0, 0);
-  driveBase.setupTurnPID(0.3, 0, 0, 10, 1, 100);
-  driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
+  driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
+  driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
+  driveBase.setupTurnPID(0.65, 0, 0.5, 3, 1, 100);
+  driveBase.setupArcPID(0.1, 5, 0, 3, 2, 200);
   driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
   //* Setup for base driver contorl ==========================================
@@ -444,21 +444,27 @@ void autonomous(void) {
       break;
 
     case AUTO_ELIMINATION_LOAD_SIDE:
-      puncherMotor.spin(fwd, puncherSpeed, pct);
       thread ([]() {
-        while(CURRENT_PUNCHER_ANGLE < puncherAngleLaunch)
-        {
-          this_thread::sleep_for(5);
-        }
-        puncherMotor.stop(hold);
-      }).detach();
-
-      thread ([]() {
-        setWings(true, false);
-        this_thread::sleep_for(400);
+        // setWings(false, true);
+        this_thread::sleep_for(200);
         setWings(false, false);
       }).detach();
 
+      intakeMotor.spin(forward, 100, pct);
+      // drive to triball
+      driveBase.driveForward(50.5);
+      // drive back
+      driveBase.driveBackward(32);
+
+      // turn to face wall
+      driveBase.turnToHeading(77);
+      // 
+      driveBase.driveBackward(38);
+
+      driveBase.setDriveHeading(90);
+
+
+      /*
       driveBase.setDriveSpeed(100);
       intakeMotor.spin(fwd, 100, pct);
       driveBase.driveForward(50);
@@ -476,7 +482,7 @@ void autonomous(void) {
       driveBase.driveBackward(18);
       driveBase.turnFor(60, left);
       driveBase.driveBackward(48);
-
+      */
       //Add back in once turn to heading is implemented
       /* driveBase.turnFor(105, right);
 
@@ -641,12 +647,16 @@ void autonomous(void) {
       driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
       driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
 
-      driveBase.setupTurnPID(0.3, 0, 0, 10, 1, 100);
+      driveBase.setupTurnPID(0.65, 0, 0.5, 3, 1, 100);
       
-      driveBase.setupArcPID(0.1, 5, 0, 10, 2, 200);
+      driveBase.setupArcPID(0.1, 5, 0, 3, 2, 200);
       driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
-      driveBase.driveForward(48); 
+      // driveBase.driveForward(48); 
+
+      // driveBase.turnFor(120, left);
+      driveBase.arcTurn(15, right, 90);
+
       /* this_thread::sleep_for(3000);
       driveBase.driveBackward(48); */
 
