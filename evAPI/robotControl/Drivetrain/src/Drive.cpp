@@ -254,6 +254,7 @@ namespace evAPI {
     bool isPIDRunning = true;  // is true as the PID is running
     int moveSpeed;  // the speed the motors are set to every cycle
     int driftPower;  // output of the drift PID
+    double slowStart = 0;
     arcPID.setTotalError(0);
     arcDriftPID.setTotalError(0);
     arcPID.resetTimeout();
@@ -329,6 +330,10 @@ namespace evAPI {
       if(isDebugMode) printf("position, error, moveSpeed\n");
       //*main PID loop*
       while(isPIDRunning) {
+        if(slowStart < 1)
+        {
+          slowStart += 0.005;
+        }
         //*get encoder positions*
         leftPosition = leftTracker->readTrackerPosition(leftDriveTracker);
         rightPosition = rightTracker->readTrackerPosition(rightDriveTracker);
@@ -338,7 +343,7 @@ namespace evAPI {
         driftError = (wheelPowerRatio - (rightPosition / leftPosition)) * 1000; // desired ratio - current ratio
 
         //*adding all tunning values*
-        moveSpeed = arcPID.compute(error);
+        moveSpeed = arcPID.compute(error) * slowStart;
         driftPower = arcDriftPID.compute(driftError);
 
         //*speed cap
