@@ -250,6 +250,7 @@ void pre_auton(void) {
 }
 
 
+
 /*---------------------------------------------------------------------------------*/
 /*                                 Autonomous Task                                 */
 /*---------------------------------------------------------------------------------*/
@@ -257,7 +258,6 @@ void autonomous(void) {
 
   //Times how long auto takes
   timer autoTimer;
-  timer autoUseTimer; //Timer used during autos
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
@@ -274,13 +274,11 @@ void autonomous(void) {
       this_thread::sleep_for(100);
 
       //Turn to face goal
-      driveBase.turnFor(90, right);
+      driveBase.turnToHeading(90);
 
       //Shove triballs into goal twice
       driveBase.spinBase(-100, -100);
-      this_thread::sleep_for(200);
-      autoUseTimer.reset();
-      this_thread::sleep_for(800);
+      this_thread::sleep_for(1000);
       // while (((driveBase.getMotorSpeed(left) < -20) && (driveBase.getMotorSpeed(right) < -20)) ) {
       //   vex::task::sleep(5);
       // }
@@ -290,29 +288,51 @@ void autonomous(void) {
       driveBase.driveForward(6);
 
       driveBase.spinBase(-100, -100);
-      this_thread::sleep_for(200);
-      autoUseTimer.reset();
-      this_thread::sleep_for(800);
+      this_thread::sleep_for(1000);
       // while (((driveBase.getMotorSpeed(left) < -20) && (driveBase.getMotorSpeed(right) < -20)) ) {
       //   vex::task::sleep(5);
       // }
       this_thread::sleep_for(100);
       driveBase.stopRobot();
 
+      driveBase.driveForward(8);
+      driveBase.turnFor(90, left);
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(350);
+      driveBase.stopRobot();
+
+      this_thread::sleep_for(750);
       //Reset heading
-      driveBase.setDriveHeading(180);
+      driveBase.setDriveHeading(90);
 
       //Drive to bar
-      driveBase.driveForward(9);
-      driveBase.turnToHeading(85);
-      driveBase.driveForward(43);
+      driveBase.driveForward(50);
+      driveBase.turnToHeading(0);
 
       //Turn and push triballs to other side
       setWings(true, true);
       driveBase.turnToHeading(5);
       intakeMotor.spin(reverse, 100, percent);
-      driveBase.driveForward(80);
+      driveBase.driveForward(75);
 
+      driveBase.driveBackward(7);
+      driveBase.spinBase(100, 100);
+      this_thread::sleep_for(250);
+      driveBase.stopRobot();
+      
+      setWings(false, false);
+      intakeMotor.spin(forward, 100, pct);
+
+      driveBase.turnToHeading(90);
+
+      driveBase.driveBackward(24);
+      driveBase.turnToHeading(0);
+      driveBase.driveForward(24);
+      driveBase.turnToHeading(90);
+
+      driveBase.driveForward(50);
+
+      
       break;
 
     case AUTO_FOUR_BALL_GOAL_SIDE:
