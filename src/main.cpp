@@ -164,7 +164,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_ELIMINATION_LOAD_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_TEST_PID);
   UI.autoSelectorUI.setSelectedPage(0);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -214,7 +214,7 @@ void pre_auton(void) {
   // Setup PID
   driveBase.setupDrivePID(0.087, 10, 0.005, 16, 2, 125);
   driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
-  driveBase.setupTurnPID(0.65, 0, 0.5, 3, 1, 100);
+  driveBase.setupTurnPID(0.65, 0, .65, 3, 1, 100);
   driveBase.setupArcPID(0.1, 5, 0, 3, 2, 200);
   driveBase.setupArcDriftPID(0.2, 0, 0, 1, 0, 0);
 
@@ -245,7 +245,7 @@ void pre_auton(void) {
   {
     this_thread::sleep_for(5);
   }
-
+  printf("is calibrated\n");
   if(isConnectToField()) UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 }
 
@@ -462,24 +462,7 @@ void autonomous(void) {
       break;
 
     case AUTO_GOAL_SIDE:
-      //Set speeds
-      driveBase.setDriveSpeed(100);
-      driveBase.setTurnSpeed(95);
-
-      //Drop intake and grab first ball
-      puncherMotor.spin(fwd, puncherSpeed, pct);
-      thread ([]() {
-        while(CURRENT_PUNCHER_ANGLE < puncherAngleLaunch)
-        {
-          this_thread::sleep_for(5);
-        }
-        puncherMotor.stop(hold);
-        intakeMotor.spin(fwd, 100, pct);
-        vex::task::sleep(500);
-        intakeMotor.stop();
-        //vex::this_thread::yield();
-      }).detach();
-
+      
       //First drive move before dropping match load ball
       driveBase.driveForward(40);
       driveBase.turnToHeading(60);
@@ -607,7 +590,7 @@ void autonomous(void) {
       driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
       driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
 
-      driveBase.setupTurnPID(0.65, 0, 0.5, 3, 1, 100);
+      driveBase.setupTurnPID(0.65, 0, .65, 3, 1, 100);
       
       driveBase.setupArcPID(0.3, 5, 0, 6, 2, 2000);
       driveBase.setupArcDriftPID(0, 0, 0, 1, 0, 0);
@@ -616,8 +599,8 @@ void autonomous(void) {
 
       // driveBase.driveForward(48); 
 
-      // driveBase.turnFor(120, left);
-      driveBase.arcTurn(20, right, 50);
+      driveBase.turnFor(120, left);
+      // driveBase.arcTurn(20, right, 50);
 
       /* this_thread::sleep_for(3000);
       driveBase.driveBackward(48); */
