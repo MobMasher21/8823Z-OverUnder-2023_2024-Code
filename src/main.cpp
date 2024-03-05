@@ -164,7 +164,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_SKILLS_1);
+  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
   UI.autoSelectorUI.setSelectedPage(0);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -431,59 +431,33 @@ void autonomous(void) {
       break;
 
     case AUTO_ELIMINATION_LOAD_SIDE:
-      thread ([]() {
-        // setWings(false, true);
-        this_thread::sleep_for(200);
-        setWings(false, false);
-      }).detach();
+       intakeMotor.setVelocity(100, pct);
 
-      intakeMotor.spin(forward, 100, pct);
-      // drive to triball
-      driveBase.driveForward(50.5);
-      // drive back
-      driveBase.driveBackward(32);
+      intakeMotor.spin(forward);
 
-      // turn to face wall
-      driveBase.turnToHeading(77);
-      // 
-      driveBase.driveBackward(38);
+      driveBase.driveForward(50);
+      this_thread::sleep_for(500);
+      driveBase.driveBackward(33);
 
+      driveBase.turnToHeading(80);
+      driveBase.driveBackward(33);
       driveBase.setDriveHeading(90);
 
+      driveBase.driveForward(4);
+      driveBase.turnToHeading(140);
+      setWings(false, true);
+      driveBase.driveForward(24, 60);
 
-      /*
-      driveBase.setDriveSpeed(100);
-      intakeMotor.spin(fwd, 100, pct);
-      driveBase.driveForward(50);
+      driveBase.turnToHeading(45, 50);
+      //driveBase.setTurnSpeed(80);
 
-      driveBase.driveBackward(5);
-      driveBase.turnFor(70, right);
-      setWings(true, false);
-
-      driveBase.spinBase(50, 50);
-      intakeMotor.spin(reverse, 100, pct);
-      this_thread::sleep_for(1000);
-      driveBase.stopRobot();
       setWings(false, false);
-
-      driveBase.driveBackward(18);
-      driveBase.turnFor(60, left);
-      driveBase.driveBackward(48);
-      */
-      //Add back in once turn to heading is implemented
-      /* driveBase.turnFor(105, right);
-
-      driveBase.spinBase(-100, -100);
-      this_thread::sleep_for(2000);
-      driveBase.stopRobot();
-
-      driveBase.driveForward(6);
-
-      driveBase.spinBase(-100, -100);
-      this_thread::sleep_for(1000);
-      driveBase.stopRobot();
-
-      driveBase.driveForward(3); */
+      vex::task::sleep(100);
+      driveBase.turnToHeading(110, 80);
+      intakeMotor.spin(reverse);
+      vex::task::sleep(100);
+      driveBase.driveForward(32);
+      driveBase.driveBackward(32);
 
       break;
 
@@ -558,34 +532,33 @@ void autonomous(void) {
       break;
 
     case AUTO_LOAD_SIDE:
-      //Set drive base parameters
-      driveBase.setDriveSpeed(100);
-      driveBase.setTurnSpeed(100);
-      driveBase.setDriveHeading(300);
+      intakeMotor.setVelocity(100, pct);
 
-      //Push triball in
-      driveBase.spinBase(-100, -100);
-      this_thread::sleep_for(1200);
-      driveBase.stopRobot(brake);
+      intakeMotor.spin(forward);
 
-      //Go remove other triball
-      driveBase.arcTurn(20, left, 40);
-      driveBase.driveForward(8);
-      //setBackWings(false, true);
-      driveBase.arcTurn(21, left, 50);
-      //setBackWings(false, false);
+      driveBase.driveForward(50);
+      this_thread::sleep_for(500);
+      driveBase.driveBackward(33);
 
-      //Lower intake
-      //Drop intake and grab first ball
-      puncherMotor.spin(fwd, puncherSpeed, pct);
-      this_thread::sleep_for(900);
-      puncherMotor.stop(coast);
-      vex::task::sleep(500);
-      intakeMotor.stop();
+      driveBase.turnToHeading(80);
+      driveBase.driveBackward(33);
+      driveBase.setDriveHeading(90);
 
-      //Push triballs over
-      intakeMotor.spin(reverse, 100, percent);
-      driveBase.driveForward(27);
+      driveBase.driveForward(2);
+      driveBase.turnToHeading(150);
+      setWings(false, true);
+      driveBase.driveForward(24, 60);
+
+      driveBase.turnToHeading(45, 50);
+      //driveBase.setTurnSpeed(80);
+
+      setWings(false, false);
+      vex::task::sleep(100);
+      driveBase.turnToHeading(110, 80);
+      intakeMotor.spin(reverse);
+      vex::task::sleep(100);
+      driveBase.driveForward(32);
+      driveBase.driveForward(9, 50);
 
       break;
 
