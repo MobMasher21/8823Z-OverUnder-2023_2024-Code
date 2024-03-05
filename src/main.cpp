@@ -104,7 +104,7 @@ enum controllerOptions
 const double puncherAngleLaunch = 315;
 double puncherStartAngle = puncherEncoder.angle(deg);
 #define CURRENT_PUNCHER_ANGLE (puncherEncoder.angle(deg) - puncherStartAngle)
-int puncherSpeed = 70;
+int puncherSpeed = 53;
 bool puncherAutoPrimeEnabled = true;
 
 /*---------------------------------------------------------------------------------*/
@@ -212,7 +212,7 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
+  driveBase.setupDrivePID(0.087, 10, 0.005, 16, 2, 125);
   driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
   driveBase.setupTurnPID(0.65, 0, 0.5, 3, 1, 100);
   driveBase.setupArcPID(0.1, 5, 0, 3, 2, 200);
@@ -261,9 +261,12 @@ void autonomous(void) {
 
   switch (UI.autoSelectorUI.getSelectedButton()) {
     case AUTO_SKILLS_1:
+      //Hold intake triball
+      intakeMotor.spin(fwd, 50, percent);
+
       //Launch triballs to other side of field
-      // puncherMotor.spin(forward, puncherSpeed, pct);
-      // this_thread::sleep_for(2 * 1000);
+      puncherMotor.spin(forward, puncherSpeed, pct);
+      this_thread::sleep_for(27000);
       puncherMotor.stop();
 
       //Recalibrate inertial
@@ -285,7 +288,7 @@ void autonomous(void) {
       this_thread::sleep_for(100);
       driveBase.stopRobot();
 
-      driveBase.driveForward(6);
+      /* driveBase.driveForward(6);
 
       driveBase.spinBase(-100, -100);
       this_thread::sleep_for(1000);
@@ -293,7 +296,7 @@ void autonomous(void) {
       //   vex::task::sleep(5);
       // }
       this_thread::sleep_for(100);
-      driveBase.stopRobot();
+      driveBase.stopRobot(); */
 
       driveBase.driveForward(8);
       driveBase.turnFor(90, left);
@@ -305,34 +308,35 @@ void autonomous(void) {
       //Reset heading
       driveBase.setDriveHeading(90);
 
-      //Drive to bar
-      driveBase.driveForward(50);
-      driveBase.turnToHeading(0);
-
-      //Turn and push triballs to other side
-      setWings(true, true);
-      driveBase.turnToHeading(5);
+      //Drive under bar
+      driveBase.driveForward(10);
+      driveBase.turnToHeading(135);
+      driveBase.driveForward(30);
+      driveBase.turnToHeading(90);
       intakeMotor.spin(reverse, 100, percent);
-      driveBase.driveForward(75);
+      this_thread::sleep_for(100);
+      driveBase.driveForward(65);
 
-      driveBase.driveBackward(7);
+      //First push
+      driveBase.turnToHeading(225);
+      driveBase.spinBase(-100, -100);
+      this_thread::sleep_for(1500);
+      driveBase.driveForward(10);
+
+      //Go to other triballs
+      driveBase.turnToHeading(270);
+      driveBase.driveForward(18);
+      driveBase.turnToHeading(315);
+      driveBase.driveForward(20);
+      driveBase.turnToHeading(45);
+      
+      //Second push
+      setWings(true, true);
       driveBase.spinBase(100, 100);
-      this_thread::sleep_for(250);
-      driveBase.stopRobot();
-      
+      this_thread::sleep_for(2000);
       setWings(false, false);
-      intakeMotor.spin(forward, 100, pct);
+      driveBase.driveBackward(20);
 
-      driveBase.turnToHeading(90);
-
-      driveBase.driveBackward(24);
-      driveBase.turnToHeading(0);
-      driveBase.driveForward(24);
-      driveBase.turnToHeading(90);
-
-      driveBase.driveForward(50);
-
-      
       break;
 
     case AUTO_FOUR_BALL_GOAL_SIDE:
