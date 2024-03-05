@@ -164,7 +164,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
+  UI.autoSelectorUI.setSelectedButton(AUTO_ELIMINATION_LOAD_SIDE);
   UI.autoSelectorUI.setSelectedPage(0);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -443,8 +443,8 @@ void autonomous(void) {
       driveBase.driveBackward(33);
       driveBase.setDriveHeading(90);
 
-      driveBase.driveForward(4);
-      driveBase.turnToHeading(140);
+      driveBase.driveForward(2);
+      driveBase.turnToHeading(150);
       setWings(false, true);
       driveBase.driveForward(24, 60);
 
@@ -456,7 +456,7 @@ void autonomous(void) {
       driveBase.turnToHeading(110, 80);
       intakeMotor.spin(reverse);
       vex::task::sleep(100);
-      driveBase.driveForward(32);
+      driveBase.driveForward(38);
       driveBase.driveBackward(32);
 
       break;
