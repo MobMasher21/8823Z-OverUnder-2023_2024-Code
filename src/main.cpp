@@ -104,7 +104,7 @@ enum controllerOptions
 const double puncherAngleLaunch = 315;
 double puncherStartAngle = puncherEncoder.angle(deg);
 #define CURRENT_PUNCHER_ANGLE (puncherEncoder.angle(deg) - puncherStartAngle)
-int puncherSpeed = 53;
+int puncherSpeed = 60;
 bool puncherAutoPrimeEnabled = true;
 
 /*---------------------------------------------------------------------------------*/
@@ -164,7 +164,7 @@ void pre_auton(void) {
   UI.autoSelectorUI.setButtonIcon(AUTO_BASIC_LOAD_SIDE, UI.autoSelectorUI.icons.rightArrow);
 
   //Setup parameters for auto selector
-  UI.autoSelectorUI.setSelectedButton(AUTO_SKILLS_1);
+  UI.autoSelectorUI.setSelectedButton(AUTO_LOAD_SIDE);
   UI.autoSelectorUI.setSelectedPage(0);
   UI.autoSelectorUI.setDataDisplayTime(1500);
 
@@ -212,7 +212,7 @@ void pre_auton(void) {
   driveBase.setStoppingMode(brake);
 
   // Setup PID
-  driveBase.setupDrivePID(0.087, 10, 0.005, 16, 2, 125);
+  driveBase.setupDrivePID(0.125, 10, 0.005, 12, 2, 125);
   driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
   driveBase.setupTurnPID(0.65, 0, .65, 3, 1, 100);
   driveBase.setupArcPID(0.1, 5, 0, 3, 2, 200);
@@ -240,12 +240,13 @@ void pre_auton(void) {
   if(isConnectToField()) UI.primaryControllerUI.setScreenLine(INERTIAL_CALIBRATE_SCREEN);
 
   //Calibrate inertial.
+  printf("Calibrating...\n");
   driveBase.calibrateInertial();
   while(driveBase.isInertialCalibrating())
   {
     this_thread::sleep_for(5);
   }
-  printf("is calibrated\n");
+  printf("Calibrated\n");
   if(isConnectToField()) UI.primaryControllerUI.setScreenLine(DISABLED_AUTO_SCREEN);
 }
 
@@ -265,9 +266,9 @@ void autonomous(void) {
       intakeMotor.spin(fwd, 50, percent);
 
       //Launch triballs to other side of field
-      // puncherMotor.spin(forward, puncherSpeed, pct);
-      // this_thread::sleep_for(27000);
-      // puncherMotor.stop();
+      puncherMotor.spin(forward, puncherSpeed, pct);
+      this_thread::sleep_for(27000);
+      puncherMotor.stop();
 
       //Recalibrate inertial
       driveBase.calibrateInertial();
@@ -397,7 +398,7 @@ void autonomous(void) {
 
       driveBase.turnToHeading(222);
       intakeMotor.spin(forward);
-      driveBase.driveForward(19);
+      driveBase.driveForward(20);
 
       driveBase.turnToHeading(65);
 
@@ -412,18 +413,21 @@ void autonomous(void) {
         vex::task::sleep(5);
       }
 
-      driveBase.driveBackward(12);
+      driveBase.driveBackward(6);
+      setWings(false, false);
+      driveBase.turnToHeading(0);
+      driveBase.driveBackward(56);
 
-      driveBase.turnToHeading(30);
-      driveBase.driveBackward(44);
-
-      setWings(false, true);
-      driveBase.turnToHeading(175);
-
+      driveBase.turnToHeading(270);
+      intakeMotor.spin(forward);
+      // setWings(false, true);
+      
+      driveBase.driveForward(25);
+      
       break;
 
     case AUTO_ELIMINATION_LOAD_SIDE:
-       intakeMotor.setVelocity(100, pct);
+      intakeMotor.setVelocity(100, pct);
 
       intakeMotor.spin(forward);
 
@@ -448,7 +452,9 @@ void autonomous(void) {
       driveBase.turnToHeading(110, 80);
       intakeMotor.spin(reverse);
       vex::task::sleep(100);
+      setWings(true, false);
       driveBase.driveForward(38);
+      setWings(false, false);
       driveBase.driveBackward(32);
 
       break;
@@ -533,22 +539,16 @@ void autonomous(void) {
       intakeMotor.spin(reverse);
       vex::task::sleep(100);
       driveBase.driveForward(32);
-      driveBase.driveForward(9, 50);
-
+      driveBase.driveForward(7, 50);
+    
       break;
 
     //*Basic skills auto that launches triballs
     case AUTO_BASIC_SKILLS:
-      driveBase.setTurnSpeed(80);
-
-      //Turn to proper heading
-      driveBase.setDriveHeading(133);
-      driveBase.turnFor(24, left);
-      driveBase.stopRobot(hold);
-      this_thread::sleep_for(500);
-
       //Launch triballs
       puncherMotor.spin(fwd, puncherSpeed, pct);
+      vex::this_thread::sleep_for(27000);
+      puncherMotor.stop(coast);
       break;
 
     //*Scores the prelaod triball in the goal
@@ -580,6 +580,7 @@ void autonomous(void) {
     //*TEST AUTOS
     case AUTO_TEST_PID:
       driveBase.setupDrivePID(0.087, 10, 0.005, 12, 2, 125);
+      driveBase.setupDrivePID(0.125, 10, 0.005, 12, 2, 125);
       driveBase.setupDriftPID(0.015, 0, 0, 1, 0, 0);
 
       driveBase.setupTurnPID(0.65, 0, .65, 3, 1, 100);
@@ -589,9 +590,9 @@ void autonomous(void) {
       driveBase.setArcTurnSpeed(70);
       driveBase.setDriveBaseWidth(12);
 
-      // driveBase.driveForward(48); 
+      driveBase.driveForward(48); 
 
-      driveBase.turnFor(120, left);
+      // driveBase.turnFor(120, left);
       // driveBase.arcTurn(20, right, 50);
 
       /* this_thread::sleep_for(3000);
@@ -629,6 +630,15 @@ void usercontrol(void) {
 
   //Make sure the stopping mode for the base is correct
   driveBase.setStoppingMode(brake);
+
+  if(UI.autoSelectorUI.getSelectedButton() == AUTO_SKILLS_1) {
+    while((primaryController.ButtonL1.pressing() || primaryController.ButtonL2.pressing() ||
+           primaryController.ButtonR1.pressing() || primaryController.ButtonR2.pressing()) == 0) {
+      driveControl.driverLoop();
+      puncherMotor.spin(fwd, puncherSpeed, pct);
+    }
+    puncherMotor.stop(coast);
+  }
 
   // User control code here, inside the loop
   while (1) {
