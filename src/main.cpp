@@ -49,8 +49,8 @@ void puncherManualToggle(void);   //Enables manual control of the puncher
 
 #define INTAKE_IN_BUTTON ButtonR1
 #define INTAKE_OUT_BUTTON ButtonR2
-#define LEFT_WINGS_BUTTON ButtonRight
-#define RIGHT_WINGS_BUTTON ButtonY
+#define LEFT_WINGS_BUTTON ButtonDown
+#define RIGHT_WINGS_BUTTON ButtonB
 #define PTO_TRIGGER_BUTTON ButtonA
 
 // Speed and handicap variables -------------------------------------------
