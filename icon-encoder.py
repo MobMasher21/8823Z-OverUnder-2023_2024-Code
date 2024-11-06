@@ -11,7 +11,7 @@ def main():
     # used to print colors
     term = Terminal()
     # nice error message
-    error = f"{term.bold(argv[0] + ":")} {term.bold_bright_red("error:")}"
+    error = f"{term.bold(argv[0] + ':')} {term.bold_bright_red('error:')}"
     
     args = parse_args()
 

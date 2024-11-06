@@ -4,7 +4,7 @@
 namespace evAPI {
     struct iconArrays {
 %s
-    }
+    };
 }
 
 #endif  //_ICONARAYS_H,
